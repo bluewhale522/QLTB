@@ -401,18 +401,69 @@
                     </div>
 
                     <form id="moveDeviceForm" onsubmit="handleMoveDeviceSubmit(event)" class="space-y-3.5">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã hoặc Chọn Thiết bị <span class="text-red-500">*</span></label>
-                            <select id="moveDeviceSelect" onchange="handleMoveDeviceSelect(this.value)" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                <option value="">-- Chọn thiết bị cần chuyển --</option>
-                            </select>
+                        <!-- Search & Select Device -->
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-semibold text-slate-700">Mã hoặc Chọn Thiết bị <span class="text-red-500">*</span></label>
+                                <span id="moveSearchCountBadge" class="text-[11px] text-blue-600 font-medium hidden"></span>
+                            </div>
+                            
+                            <div class="relative">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none"></i>
+                                <input type="text" id="moveDeviceSearchInput" 
+                                       autocomplete="off"
+                                       placeholder="🔍 Gõ mã (AT-114...), tên máy hoặc vị trí..."
+                                       onfocus="openMoveDeviceDropdown()"
+                                       oninput="searchMoveDevices(this.value)"
+                                       class="w-full text-sm border border-slate-200 rounded-xl pl-9 pr-8 py-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                                <button type="button" id="moveDeviceSearchClear" onclick="clearMoveDeviceSearch()" 
+                                        class="hidden absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 p-0.5 rounded-full hover:bg-slate-200 transition">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                                <!-- Floating Search Results Dropdown -->
+                                <div id="moveDeviceDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-60 overflow-y-auto z-50 divide-y divide-slate-100">
+                                </div>
+                            </div>
+
+                            <!-- Lọc nhanh theo tầng hiện tại -->
+                            <div class="flex items-center justify-between pt-0.5">
+                                <span class="text-[11px] text-slate-500">Lọc theo tầng hiện tại:</span>
+                                <select id="moveFilterCurrentFloor" onchange="filterMoveDevicesByFloor(this.value)" class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-slate-50 text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">Tất cả các tầng</option>
+                                    <option value="Tầng 1">Tầng 1 (1F...)</option>
+                                    <option value="Tầng 2">Tầng 2 (2F...)</option>
+                                    <option value="Tầng 3">Tầng 3 (3F...)</option>
+                                    <option value="Tầng 4">Tầng 4 (4F...)</option>
+                                    <option value="Tầng 5">Tầng 5 (5F...)</option>
+                                    <option value="Tầng 6">Tầng 6 (6F...)</option>
+                                </select>
+                            </div>
+
+                            <!-- Hidden select for compatibility -->
+                            <div class="hidden">
+                                <select id="moveDeviceSelect" onchange="handleMoveDeviceSelect(this.value)">
+                                    <option value="">-- Chọn thiết bị cần chuyển --</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="moveSelectedDeviceId" value="">
+                            <input type="hidden" id="moveSelectedDeviceCode" value="">
                         </div>
 
-                        <!-- Current Location (Before) -->
-                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs space-y-1">
-                            <span class="text-amber-700 font-semibold block">📍 Vị trí hiện tại (Trước khi chuyển):</span>
-                            <span id="moveFromLocationText" class="font-bold text-slate-800 text-sm">Chưa chọn thiết bị</span>
-                            <input type="hidden" id="moveFromLocationInput">
+                        <!-- Current Location & Selected Device Card -->
+                        <div id="moveSelectedDeviceCard" class="p-3 bg-amber-50/80 rounded-xl border border-amber-200 text-xs space-y-2">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <span class="text-[10px] uppercase font-bold tracking-wider text-amber-700 block">Thiết bị đang chọn:</span>
+                                    <div id="moveSelectedDeviceTitle" class="font-bold text-slate-900 text-sm mt-0.5">Chưa chọn thiết bị</div>
+                                    <div id="moveSelectedDeviceCategory" class="text-[11px] text-slate-500">Vui lòng gõ mã/tên ở ô tìm kiếm trên để chọn</div>
+                                </div>
+                                <span id="moveSelectedDeviceStatusBadge" class="hidden px-2 py-0.5 rounded-full text-[10px] font-bold"></span>
+                            </div>
+                            <div class="pt-2 border-t border-amber-200/60 flex items-center justify-between">
+                                <span class="text-amber-800 font-semibold">📍 Vị trí hiện tại:</span>
+                                <span id="moveFromLocationText" class="font-bold text-slate-800 bg-white px-2 py-0.5 rounded-md border border-amber-200">Chưa chọn</span>
+                                <input type="hidden" id="moveFromLocationInput">
+                            </div>
                         </div>
 
                         <!-- New Location (After) -->
@@ -587,15 +638,16 @@
                         <table class="w-full text-left text-xs min-w-[580px]">
                             <thead class="bg-slate-50 text-slate-600 uppercase font-semibold sticky top-0 border-b border-slate-200">
                                 <tr>
-                                    <th class="px-3 py-2.5 whitespace-nowrap w-24">Mã GV</th>
-                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[150px]">Họ tên & Liên hệ</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap w-20">Mã GV</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Họ tên & Liên hệ</th>
                                     <th class="px-3 py-2.5 whitespace-nowrap min-w-[110px]">Tổ / Phòng ban</th>
-                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Vai trò</th>
-                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[80px]">Thao tác</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Tài khoản hệ thống</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[100px]">Vai trò cán bộ</th>
+                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[90px]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="usersTableBody" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="py-6 text-center text-slate-400">Đang tải danh sách...</td></tr>
+                                <tr><td colspan="6" class="py-6 text-center text-slate-400">Đang tải danh sách...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1304,6 +1356,34 @@
                     </div>
                 </div>
 
+                <!-- Tùy chọn cấp tài khoản đăng nhập ngay -->
+                <div class="p-3 bg-indigo-50/70 border border-indigo-200/70 rounded-xl space-y-2.5">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="userGrantAccountCheck" onchange="toggleUserGrantAccountFields(this.checked)" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                        <span class="text-xs font-bold text-indigo-900">🔑 Cấp ngay tài khoản đăng nhập hệ thống</span>
+                    </label>
+                    <div id="userGrantAccountFields" class="hidden space-y-2.5 pt-2 border-t border-indigo-100 text-xs">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Tên đăng nhập (Username)</label>
+                                <input type="text" id="userAccUsername" placeholder="Mặc định lấy mã GV" class="w-full text-xs border border-slate-200 rounded-lg p-2 bg-white focus:ring-1 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Mật khẩu khởi tạo</label>
+                                <input type="text" id="userAccPassword" value="123456" placeholder="Mật khẩu" class="w-full text-xs border border-slate-200 rounded-lg p-2 bg-white focus:ring-1 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-700 mb-1">Vai trò hệ thống</label>
+                            <select id="userAccRole" class="w-full text-xs border border-slate-200 rounded-lg p-2 bg-white focus:ring-1 focus:ring-indigo-500 font-medium">
+                                <option value="manager" selected>✏️ Quản lý sửa đổi (Manager - thao tác thiết bị, mượn trả)</option>
+                                <option value="guest">👁️ Khách vãng lai (Guest - chỉ xem tra cứu)</option>
+                                <option value="admin">🛡️ Quản trị viên (Admin - toàn quyền)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
                     <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
                     <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Thêm người dùng</button>
@@ -1585,6 +1665,79 @@
                 <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm transition flex items-center justify-center min-h-[44px]">
                     <i data-lucide="check" class="w-4 h-4 mr-1.5"></i> Cập nhật mật khẩu mới
                 </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8.3. MODAL CẤP TÀI KHOẢN CHO CÁN BỘ / GIÁO VIÊN -->
+    <div id="grantAccountModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/60 shrink-0">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="key" class="w-5 h-5 mr-2 text-indigo-600"></i> Cấp tài khoản đăng nhập
+                </h3>
+                <button onclick="closeModal('grantAccountModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="grantAccountForm" onsubmit="handleGrantAccountSubmit(event)" class="p-5 space-y-3.5 overflow-y-auto">
+                <input type="hidden" id="grantUserId" value="">
+                <input type="hidden" id="grantUserCode" value="">
+
+                <!-- Thông tin cán bộ nhận tài khoản -->
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+                    <span class="text-slate-500 font-semibold block text-[11px] uppercase tracking-wider">Cán bộ / Giáo viên:</span>
+                    <div class="flex items-center justify-between">
+                        <span id="grantTeacherName" class="font-bold text-slate-900 text-sm">---</span>
+                        <span id="grantTeacherCodeBadge" class="font-mono text-xs px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">---</span>
+                    </div>
+                    <div id="grantTeacherDept" class="text-slate-500 text-[11px]">Tổ chuyên môn: ---</div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập (Username) <span class="text-red-500">*</span></label>
+                    <input type="text" id="grantUsername" required placeholder="Ví dụ: gv001, hoant..."
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium">
+                    <p class="text-[11px] text-slate-400 mt-0.5">Tự động gợi ý từ Mã cán bộ hoặc tùy chỉnh theo ý bạn</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu khởi tạo <span class="text-red-500">*</span></label>
+                    <input type="text" id="grantPassword" required value="123456" placeholder="Tối thiểu 4 ký tự..."
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <p class="text-[11px] text-slate-400 mt-0.5">Mặc định là 123456 (cán bộ có thể đổi sau khi đăng nhập)</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Phân quyền hệ thống (Vai trò) <span class="text-red-500">*</span></label>
+                    <select id="grantRole" required class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-slate-800">
+                        <option value="manager" selected>✏️ Quản lý sửa đổi (Manager - Thao tác thiết bị, mượn trả)</option>
+                        <option value="guest">👁️ Khách vãng lai (Guest - Chỉ xem tra cứu)</option>
+                        <option value="admin">🛡️ Quản trị viên (Admin - Toàn quyền cấu hình)</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" id="grantEmail" placeholder="email@truong.edu.vn"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                        <input type="text" id="grantPhone" placeholder="0901234567"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center space-x-2">
+                    <button type="button" onclick="closeModal('grantAccountModal')" class="w-1/3 py-2.5 text-xs sm:text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">
+                        Hủy
+                    </button>
+                    <button type="submit" class="w-2/3 py-2.5 text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-4 h-4 mr-1.5"></i> Cấp tài khoản ngay
+                    </button>
+                </div>
             </form>
         </div>
     </div>

@@ -303,7 +303,7 @@
         "row4": ""
       }
     ],
-    "devices_count": 103,
+    "devices_count": 105,
     "devices": [
       {
         "row": 5,
@@ -2155,6 +2155,51 @@
         "spec": "",
         "mfg": "",
         "allocated_rooms": []
+      },
+      {
+        "row": 103,
+        "stt": 103,
+        "category": "Âm thanh & Trợ giảng",
+        "name": "Thiet bi Test None",
+        "model_code": "TEST-DEV-NONE-01",
+        "spec": "",
+        "mfg": "",
+        "allocated_rooms": [
+          {
+            "room": "1F1",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "row": 104,
+        "stt": 104,
+        "category": "Thiết bị di chuyển",
+        "name": "Khối giao diện audio (IP-1000AF)",
+        "model_code": "Sigma-AT-114",
+        "spec": "",
+        "mfg": "",
+        "allocated_rooms": [
+          {
+            "room": "1F22",
+            "qty": 1
+          }
+        ]
+      },
+      {
+        "row": 105,
+        "stt": 105,
+        "category": "Thiết bị văn phòng",
+        "name": "Thiết bị test tự động",
+        "model_code": "TEST-DEV-001",
+        "spec": "",
+        "mfg": "",
+        "allocated_rooms": [
+          {
+            "room": "1F22",
+            "qty": 2
+          }
+        ]
       }
     ]
   },
@@ -4441,7 +4486,7 @@
         "row4": ""
       }
     ],
-    "devices_count": 111,
+    "devices_count": 112,
     "devices": [
       {
         "row": 5,
@@ -6744,6 +6789,16 @@
         "category": "Máy tính bàn",
         "name": "Màn hình máy tính để bàn Dell",
         "model_code": "",
+        "spec": "",
+        "mfg": "",
+        "allocated_rooms": []
+      },
+      {
+        "row": 112,
+        "stt": 112,
+        "category": "Thiết bị di chuyển",
+        "name": "Khối giao diện audio (IP-1000AF)",
+        "model_code": "Sigma-AT-114",
         "spec": "",
         "mfg": "",
         "allocated_rooms": []

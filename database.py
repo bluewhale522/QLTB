@@ -76,6 +76,12 @@ def init_db():
     if 'assigned_user' not in dev_cols:
         cursor.execute("ALTER TABLE devices ADD COLUMN assigned_user TEXT")
 
+    # Migration check for account_id column in users
+    cursor.execute("PRAGMA table_info(users)")
+    usr_cols = [r['name'] for r in cursor.fetchall()]
+    if 'account_id' not in usr_cols:
+        cursor.execute("ALTER TABLE users ADD COLUMN account_id INTEGER REFERENCES accounts(id)")
+
 
     # Bảng lịch sử di chuyển vị trí thiết bị
     cursor.execute('''

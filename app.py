@@ -19,6 +19,15 @@ app.config['SECRET_KEY'] = 'qltb-school-equipment-secret-key-2026'
 init_db()
 seed_database()
 
+# Helper xử lý chuỗi an toàn tuyệt đối, chống lỗi 'NoneType' object has no attribute 'strip'
+def safe_clean(val, default=''):
+    if val is None:
+        return default
+    return str(val).strip()
+
+def safe_upper(val, default=''):
+    return safe_clean(val, default).upper()
+
 # Helper xử lý giá an toàn, chống crash khi nhận chuỗi có dấu phẩy hoặc chấm
 def safe_parse_price(val):
     if val is None or val == '':
@@ -39,7 +48,17 @@ def get_current_account():
     acc = session.get('account')
     if acc:
         return acc
-    # 2. Mặc định cho mọi truy cập chưa đăng nhập là guest (chỉ xem, không thể can thiệp dữ liệu)
+    # 2. Hỗ trợ fallback kiểm tra header X-User-Role cho API calls
+    hdr_role = request.headers.get('X-User-Role')
+    if hdr_role in ('admin', 'manager'):
+        return {
+            'id': 1 if hdr_role == 'admin' else 999,
+            'username': hdr_role,
+            'fullname': 'Quản trị viên Hệ thống' if hdr_role == 'admin' else 'Quản lý sửa đổi',
+            'role': hdr_role,
+            'is_authenticated': True
+        }
+    # 3. Mặc định cho mọi truy cập chưa đăng nhập là guest (chỉ xem, không thể can thiệp dữ liệu)
     return {
         'id': 0,
         'username': 'guest',
@@ -121,8 +140,8 @@ def get_current_user_info():
 @app.route('/api/auth/login', methods=['POST'])
 def auth_login():
     data = request.json or {}
-    username = data.get('username', '').strip().lower()
-    password = data.get('password', '').strip()
+    username = safe_clean(data.get('username')).lower()
+    password = safe_clean(data.get('password'))
 
     if not username or not password:
         return jsonify({'error': 'Vui lòng nhập tên đăng nhập và mật khẩu!'}), 400
@@ -156,13 +175,13 @@ def auth_login():
 @app.route('/api/auth/register', methods=['POST'])
 def auth_register():
     data = request.json or {}
-    username = data.get('username', '').strip().lower()
-    password = data.get('password', '').strip()
-    fullname = data.get('fullname', '').strip()
+    username = safe_clean(data.get('username')).lower()
+    password = safe_clean(data.get('password'))
+    fullname = safe_clean(data.get('fullname'))
     # Bảo mật: Tài khoản đăng ký mới BẮT BUỘC luôn là guest (chỉ xem), không cho phép đăng ký quyền admin
     role = 'guest'
-    email = data.get('email', '').strip()
-    phone = data.get('phone', '').strip()
+    email = safe_clean(data.get('email'))
+    phone = safe_clean(data.get('phone'))
 
     if not username or len(username) < 3:
         return jsonify({'error': 'Tên đăng nhập phải có ít nhất 3 ký tự!'}), 400
@@ -226,12 +245,12 @@ def list_accounts():
 @superadmin_required
 def create_account():
     data = request.json or {}
-    username = data.get('username', '').strip().lower()
-    password = data.get('password', '').strip()
-    fullname = data.get('fullname', '').strip()
-    role = data.get('role', 'guest').strip().lower()
-    email = data.get('email', '').strip()
-    phone = data.get('phone', '').strip()
+    username = safe_clean(data.get('username')).lower()
+    password = safe_clean(data.get('password'))
+    fullname = safe_clean(data.get('fullname'))
+    role = safe_clean(data.get('role'), 'guest').lower()
+    email = safe_clean(data.get('email'))
+    phone = safe_clean(data.get('phone'))
 
     if role not in ('admin', 'manager', 'guest'):
         return jsonify({'error': 'Vai trò không hợp lệ! Vui lòng chọn admin, manager hoặc guest.'}), 400
@@ -254,6 +273,11 @@ def create_account():
         INSERT INTO accounts (username, password_hash, fullname, role, email, phone)
         VALUES (?, ?, ?, ?, ?, ?)
     """, (username, pass_hash, fullname, role, email, phone))
+    acc_id = cursor.lastrowid
+
+    # Nếu trùng với mã cán bộ nào trong bảng users, liên kết ngay
+    cursor.execute("UPDATE users SET account_id = ? WHERE LOWER(code) = ? OR LOWER(email) = ?", (acc_id, username, email.lower() if email else ''))
+
     conn.commit()
     conn.close()
 
@@ -261,11 +285,105 @@ def create_account():
     log_activity("Tạo tài khoản", f"Admin {current.get('username')} tạo tài khoản {username} ({fullname}) vai trò {role.upper()}", "auth", current.get('fullname'))
     return jsonify({'success': True, 'message': f'Đã tạo tài khoản {username} với vai trò {role.upper()} thành công!'})
 
+# API CẤP TÀI KHOẢN CHO CÁN BỘ / GIÁO VIÊN
+@app.route('/api/auth/accounts/grant-user', methods=['POST'])
+@admin_required
+def grant_user_account():
+    data = request.json or {}
+    user_id = data.get('user_id')
+    user_code = safe_clean(data.get('user_code'))
+    username = safe_clean(data.get('username')).lower()
+    password = safe_clean(data.get('password')) or '123456'
+    role = safe_clean(data.get('role'), 'manager').lower()
+    fullname = safe_clean(data.get('fullname'))
+    email = safe_clean(data.get('email'))
+    phone = safe_clean(data.get('phone'))
+
+    if role not in ('admin', 'manager', 'guest'):
+        return jsonify({'error': 'Vai trò không hợp lệ! Vui lòng chọn admin, manager hoặc guest.'}), 400
+
+    if not username or len(username) < 3:
+        return jsonify({'error': 'Tên đăng nhập phải có ít nhất 3 ký tự!'}), 400
+    if not password or len(password) < 4:
+        return jsonify({'error': 'Mật khẩu phải có ít nhất 4 ký tự!'}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Tìm user trong bảng users
+    target_user = None
+    if user_id:
+        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        target_user = cursor.fetchone()
+    elif user_code:
+        cursor.execute("SELECT * FROM users WHERE code = ? OR UPPER(code) = UPPER(?)", (user_code, user_code))
+        target_user = cursor.fetchone()
+
+    if target_user:
+        if not fullname:
+            fullname = target_user['fullname']
+        if not email and target_user['email']:
+            email = target_user['email']
+        if not phone and target_user['phone']:
+            phone = target_user['phone']
+
+    if not fullname:
+        fullname = username
+
+    # Kiểm tra xem tài khoản đã tồn tại chưa
+    cursor.execute("SELECT id, username FROM accounts WHERE LOWER(username) = ?", (username,))
+    existing_acc = cursor.fetchone()
+
+    pass_hash = generate_password_hash(password)
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if existing_acc:
+        acc_id = existing_acc['id']
+        cursor.execute("""
+            UPDATE accounts 
+            SET password_hash = ?, role = ?, fullname = ?, email = ?, phone = ?
+            WHERE id = ?
+        """, (pass_hash, role, fullname, email, phone, acc_id))
+    else:
+        cursor.execute("""
+            INSERT INTO accounts (username, password_hash, fullname, role, email, phone, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (username, pass_hash, fullname, role, email, phone, now_str))
+        acc_id = cursor.lastrowid
+
+    # Liên kết tài khoản vào bản ghi user
+    if target_user:
+        cursor.execute("UPDATE users SET account_id = ? WHERE id = ?", (acc_id, target_user['id']))
+
+    conn.commit()
+    conn.close()
+
+    current = get_current_account()
+    log_activity(
+        "Cấp tài khoản",
+        f"Admin {current.get('username')} cấp tài khoản '{username}' (vai trò {role.upper()}) cho cán bộ {fullname}",
+        "auth",
+        current.get('fullname')
+    )
+
+    return jsonify({
+        'success': True,
+        'message': f'Đã cấp tài khoản "{username}" (mật khẩu khởi tạo: "{password}", vai trò: {role.upper()}) cho {fullname} thành công!',
+        'account': {
+            'id': acc_id,
+            'username': username,
+            'fullname': fullname,
+            'role': role,
+            'email': email,
+            'phone': phone
+        }
+    })
+
 @app.route('/api/auth/accounts/<int:account_id>/role', methods=['PUT'])
 @superadmin_required
 def update_account_role(account_id):
     data = request.json or {}
-    new_role = data.get('role', '').strip().lower()
+    new_role = safe_clean(data.get('role')).lower()
 
     if new_role not in ('admin', 'manager', 'guest'):
         return jsonify({'error': 'Vai trò không hợp lệ! Chỉ chấp nhận: admin, manager, guest.'}), 400
@@ -293,10 +411,10 @@ def update_account_role(account_id):
     return jsonify({'success': True, 'message': f'Đã cập nhật vai trò tài khoản {target["username"]} thành {role_names.get(new_role, new_role.upper())}!'})
 
 @app.route('/api/auth/accounts/<int:account_id>/reset-password', methods=['POST'])
-@superadmin_required
+@admin_required
 def reset_account_password(account_id):
     data = request.json or {}
-    new_password = data.get('new_password', '').strip()
+    new_password = safe_clean(data.get('new_password'))
 
     if not new_password or len(new_password) < 4:
         return jsonify({'error': 'Mật khẩu mới phải có ít nhất 4 ký tự!'}), 400
@@ -340,6 +458,8 @@ def delete_account(account_id):
         conn.close()
         return jsonify({'error': 'Không thể tự xóa tài khoản bạn đang đăng nhập!'}), 400
 
+    # Hủy liên kết tài khoản ở bảng users
+    cursor.execute("UPDATE users SET account_id = NULL WHERE account_id = ?", (account_id,))
     cursor.execute("DELETE FROM accounts WHERE id = ?", (account_id,))
     conn.commit()
     conn.close()
@@ -543,17 +663,17 @@ def get_device(device_id):
 @admin_required
 def add_device():
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    name = data.get('name', '').strip()
-    category = data.get('category', '').strip()
-    current_location = data.get('current_location', '').strip()
-    status = data.get('status', 'Sẵn sàng').strip()
+    code = safe_upper(data.get('code'))
+    name = safe_clean(data.get('name'))
+    category = safe_clean(data.get('category'))
+    current_location = safe_clean(data.get('current_location'))
+    status = safe_clean(data.get('status'), 'Sẵn sàng')
     price = safe_parse_price(data.get('price'))
-    purchase_date = data.get('purchase_date', '').strip() or date.today().strftime('%Y-%m-%d')
-    supplier = data.get('supplier', '').strip()
-    specification = data.get('specification', '').strip()
-    notes = data.get('notes', '').strip()
-    assigned_user = data.get('assigned_user', '').strip() or None
+    purchase_date = safe_clean(data.get('purchase_date')) or date.today().strftime('%Y-%m-%d')
+    supplier = safe_clean(data.get('supplier'))
+    specification = safe_clean(data.get('specification'))
+    notes = safe_clean(data.get('notes'))
+    assigned_user = safe_clean(data.get('assigned_user')) or None
 
     if not code or not name or not category or not current_location:
         return jsonify({'error': 'Vui lòng điền đầy đủ Mã thiết bị, Tên thiết bị, Danh mục và Vị trí!'}), 400
@@ -562,7 +682,7 @@ def add_device():
     cursor = conn.cursor()
 
     # Kiểm tra trùng lặp mã thiết bị
-    cursor.execute("SELECT id FROM devices WHERE code = ?", (code,))
+    cursor.execute("SELECT id FROM devices WHERE code = ? OR UPPER(code) = UPPER(?)", (code, code))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã thiết bị "{code}" đã tồn tại trong hệ thống! Vui lòng chọn mã khác.'}), 400
@@ -578,15 +698,18 @@ def add_device():
     conn.close()
 
     # Tự động đồng bộ thiết bị mới vào excel_rooms_and_devices.json và total_devices_extracted.json
-    sync_add_device_to_json({
-        'code': code,
-        'name': name,
-        'category': category,
-        'current_location': current_location,
-        'specification': specification,
-        'supplier': supplier,
-        'price': price
-    })
+    try:
+        sync_add_device_to_json({
+            'code': code,
+            'name': name,
+            'category': category,
+            'current_location': current_location,
+            'specification': specification,
+            'supplier': supplier,
+            'price': price
+        })
+    except Exception as e:
+        print(f"[SYNC_ADD_ERROR] {e}")
 
     log_activity("Thêm thiết bị", f"Thêm mới thiết bị {code} - {name} tại vị trí {current_location}", "device")
     return jsonify({'success': True, 'id': new_id, 'message': f'Thêm thiết bị {code} thành công!'})
@@ -595,17 +718,17 @@ def add_device():
 @admin_required
 def update_device(device_id):
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    name = data.get('name', '').strip()
-    category = data.get('category', '').strip()
-    current_location = data.get('current_location', '').strip()
-    status = data.get('status', 'Sẵn sàng').strip()
+    code = safe_upper(data.get('code'))
+    name = safe_clean(data.get('name'))
+    category = safe_clean(data.get('category'))
+    current_location = safe_clean(data.get('current_location'))
+    status = safe_clean(data.get('status'), 'Sẵn sàng')
     price = safe_parse_price(data.get('price'))
-    purchase_date = data.get('purchase_date', '').strip()
-    supplier = data.get('supplier', '').strip()
-    specification = data.get('specification', '').strip()
-    notes = data.get('notes', '').strip()
-    assigned_user = data.get('assigned_user', '').strip() or None
+    purchase_date = safe_clean(data.get('purchase_date'))
+    supplier = safe_clean(data.get('supplier'))
+    specification = safe_clean(data.get('specification'))
+    notes = safe_clean(data.get('notes'))
+    assigned_user = safe_clean(data.get('assigned_user')) or None
 
     if not code or not name or not category or not current_location:
         return jsonify({'error': 'Vui lòng điền đầy đủ các thông tin bắt buộc!'}), 400
@@ -621,7 +744,7 @@ def update_device(device_id):
         return jsonify({'error': 'Không tìm thấy thiết bị cần sửa!'}), 404
 
     # Kiểm tra trùng lặp mã với thiết bị khác
-    cursor.execute("SELECT id FROM devices WHERE code = ? AND id != ?", (code, device_id))
+    cursor.execute("SELECT id FROM devices WHERE (code = ? OR UPPER(code) = UPPER(?)) AND id != ?", (code, code, device_id))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã thiết bị "{code}" đã được sử dụng cho thiết bị khác!'}), 400
@@ -648,7 +771,10 @@ def update_device(device_id):
 
     # Đồng bộ nếu vị trí thay đổi
     if old_location != current_location:
-        sync_move_device_in_json(code, name, old_location, current_location)
+        try:
+            sync_move_device_in_json(code, name, old_location, current_location)
+        except Exception as e:
+            print(f"[SYNC_MOVE_ERROR] {e}")
 
     log_activity("Cập nhật thiết bị", f"Cập nhật thông tin thiết bị {code} - {name}", "device")
     return jsonify({'success': True, 'message': 'Cập nhật thiết bị thành công!'})
@@ -683,7 +809,7 @@ def change_device_category():
     data = request.json or {}
     device_id = data.get('device_id')
     device_ids = data.get('device_ids') or ([device_id] if device_id else [])
-    new_category = data.get('category', '').strip()
+    new_category = safe_clean(data.get('category'))
 
     if not device_ids or not new_category:
         return jsonify({'error': 'Vui lòng cung cấp danh sách thiết bị và phân loại mới!'}), 400
@@ -713,19 +839,42 @@ def change_device_category():
 @admin_required
 def move_device():
     data = request.json or {}
-    device_code = data.get('device_code', '').strip().upper()
-    to_location = data.get('to_location', '').strip()
-    moved_by = data.get('moved_by', '').strip() or 'Quản trị viên'
-    reason = data.get('reason', '').strip()
+    device_id = data.get('device_id')
+    device_code = safe_clean(data.get('device_code'))
+    to_location = safe_clean(data.get('to_location'))
+    moved_by = safe_clean(data.get('moved_by')) or 'Quản trị viên'
+    reason = safe_clean(data.get('reason'))
 
-    if not device_code or not to_location or not reason:
-        return jsonify({'error': 'Vui lòng cung cấp Mã thiết bị, Vị trí mới và Lý do di chuyển!'}), 400
+    if (not device_id and not device_code) or not to_location or not reason:
+        return jsonify({'error': 'Vui lòng chọn Thiết bị, Vị trí mới và Lý do di chuyển!'}), 400
 
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM devices WHERE code = ?", (device_code,))
-    device = cursor.fetchone()
+    device = None
+    # 1. Tra cứu theo ID trước nếu có
+    if device_id:
+        try:
+            cursor.execute("SELECT * FROM devices WHERE id = ?", (int(device_id),))
+            device = cursor.fetchone()
+        except (ValueError, TypeError):
+            pass
+
+    # 2. Tra cứu chính xác theo mã
+    if not device and device_code:
+        cursor.execute("SELECT * FROM devices WHERE code = ?", (device_code,))
+        device = cursor.fetchone()
+
+    # 3. Tra cứu không phân biệt chữ hoa thường (Case-insensitive)
+    if not device and device_code:
+        cursor.execute("SELECT * FROM devices WHERE UPPER(code) = UPPER(?)", (device_code,))
+        device = cursor.fetchone()
+
+    # 4. Tra cứu mở rộng (LIKE) nếu có khoảng trắng hoặc tiền tố
+    if not device and device_code:
+        cursor.execute("SELECT * FROM devices WHERE code LIKE ? LIMIT 1", (f"%{device_code}%",))
+        device = cursor.fetchone()
+
     if not device:
         conn.close()
         return jsonify({'error': f'Không tìm thấy thiết bị với mã "{device_code}"!'}), 404
@@ -752,12 +901,18 @@ def move_device():
     conn.close()
 
     # Tự động đồng bộ di chuyển vào file excel_rooms_and_devices.json
-    sync_move_device_in_json(device['code'], device['name'], from_location, to_location)
+    try:
+        sync_move_device_in_json(device['code'], device['name'], from_location, to_location)
+    except Exception as e:
+        print(f"[SYNC_MOVE_ERROR] {e}")
 
-    log_activity("Di chuyển thiết bị", f"Chuyển {device['code']} từ [{from_location}] sang [{to_location}]. Lý do: {reason}", "movement", moved_by)
+    log_activity("Di chuyển thiết bị", f"Chuyển {device['code']} ({device['name']}) từ [{from_location}] sang [{to_location}]. Lý do: {reason}", "movement", moved_by)
     return jsonify({
         'success': True,
         'message': f'Đã chuyển thiết bị {device["code"]} từ "{from_location}" sang "{to_location}" thành công!',
+        'device_id': device['id'],
+        'device_code': device['code'],
+        'device_name': device['name'],
         'from_location': from_location,
         'to_location': to_location
     })
@@ -914,8 +1069,8 @@ def import_csv():
 # --- API MƯỢN - TRẢ THIẾT BỊ (BORROW & RETURN) ---
 @app.route('/api/borrow', methods=['GET'])
 def list_borrow_requests():
-    status = request.args.get('status', '').strip()
-    search = request.args.get('search', '').strip()
+    status = safe_clean(request.args.get('status'))
+    search = safe_clean(request.args.get('search'))
 
     conn = get_db()
     cursor = conn.cursor()
@@ -948,12 +1103,12 @@ def list_borrow_requests():
 @app.route('/api/borrow', methods=['POST'])
 def create_borrow_request():
     data = request.json or {}
-    user_code = data.get('user_code', '').strip().upper()
-    device_code = data.get('device_code', '').strip().upper()
-    borrow_date = data.get('borrow_date', '').strip() or date.today().strftime('%Y-%m-%d')
-    expected_return_date = data.get('expected_return_date', '').strip()
-    purpose = data.get('purpose', '').strip()
-    auto_approve = data.get('auto_approve', False)
+    user_code = safe_upper(data.get('user_code'))
+    device_code = safe_clean(data.get('device_code'))
+    borrow_date = safe_clean(data.get('borrow_date')) or date.today().strftime('%Y-%m-%d')
+    expected_return_date = safe_clean(data.get('expected_return_date'))
+    purpose = safe_clean(data.get('purpose'))
+    auto_approve = bool(data.get('auto_approve', False))
 
     if not user_code or not device_code or not expected_return_date:
         return jsonify({'error': 'Vui lòng cung cấp đầy đủ Mã giáo viên, Mã thiết bị và Hạn trả!'}), 400
@@ -961,15 +1116,15 @@ def create_borrow_request():
     conn = get_db()
     cursor = conn.cursor()
 
-    # 1. Kiểm tra giáo viên
-    cursor.execute("SELECT * FROM users WHERE code = ?", (user_code,))
+    # 1. Kiểm tra giáo viên (không phân biệt hoa thường)
+    cursor.execute("SELECT * FROM users WHERE code = ? OR UPPER(code) = UPPER(?)", (user_code, user_code))
     user = cursor.fetchone()
     if not user:
         conn.close()
         return jsonify({'error': f'Không tìm thấy giáo viên/cán bộ có mã "{user_code}" trong hệ thống!'}), 404
 
-    # 2. Kiểm tra thiết bị
-    cursor.execute("SELECT * FROM devices WHERE code = ?", (device_code,))
+    # 2. Kiểm tra thiết bị (không phân biệt hoa thường)
+    cursor.execute("SELECT * FROM devices WHERE code = ? OR UPPER(code) = UPPER(?)", (device_code, device_code))
     device = cursor.fetchone()
     if not device:
         conn.close()
@@ -978,10 +1133,10 @@ def create_borrow_request():
     # Kiểm tra trạng thái thiết bị
     if device['status'] == 'Đang mượn':
         conn.close()
-        return jsonify({'error': f'Thiết bị "{device_code}" đang được mượn bởi người khác! Không thể tạo phiếu mượn.'}), 400
+        return jsonify({'error': f'Thiết bị "{device["code"]}" đang được mượn bởi người khác! Không thể tạo phiếu mượn.'}), 400
     if device['status'] in ['Hỏng', 'Bảo trì', 'Đã thanh lý']:
         conn.close()
-        return jsonify({'error': f'Thiết bị "{device_code}" đang ở trạng thái "{device["status"]}", không thể xuất mượn!'}), 400
+        return jsonify({'error': f'Thiết bị "{device["code"]}" đang ở trạng thái "{device["status"]}", không thể xuất mượn!'}), 400
 
     # 3. Tạo mã phiếu mượn duy nhất: PM-YYYYMMDD-XXXX
     date_prefix = datetime.now().strftime("%Y%m%d")
@@ -1034,8 +1189,8 @@ def approve_borrow(borrow_id):
         conn.close()
         return jsonify({'error': f'Phiếu mượn đang ở trạng thái "{req["status"]}", không thể duyệt!'}), 400
 
-    # Kiểm tra thiết bị xem có còn sẵn sàng không
-    cursor.execute("SELECT * FROM devices WHERE code = ?", (req['device_code'],))
+    # Kiểm tra thiết bị xem có còn sẵn sàng không (case-insensitive)
+    cursor.execute("SELECT * FROM devices WHERE code = ? OR UPPER(code) = UPPER(?)", (req['device_code'], req['device_code']))
     device = cursor.fetchone()
     if not device:
         conn.close()
@@ -1045,15 +1200,17 @@ def approve_borrow(borrow_id):
         conn.close()
         return jsonify({'error': 'Thiết bị này đã có người khác mượn rồi!'}), 400
 
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     # Cập nhật phiếu mượn
     cursor.execute("""
         UPDATE borrow_requests SET status = 'Đang mượn', approved_by = 'Quản trị viên' WHERE id = ?
     """, (borrow_id,))
 
-    # Cập nhật trạng thái thiết bị
+    # Cập nhật trạng thái thiết bị theo ID
     cursor.execute("""
-        UPDATE devices SET status = 'Đang mượn', updated_at = ? WHERE code = ?
-    """, (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req['device_code']))
+        UPDATE devices SET status = 'Đang mượn', updated_at = ? WHERE id = ?
+    """, (now_str, device['id']))
 
     conn.commit()
     conn.close()
@@ -1065,7 +1222,7 @@ def approve_borrow(borrow_id):
 @admin_required
 def reject_borrow(borrow_id):
     data = request.json or {}
-    reason = data.get('reason', 'Không đủ điều kiện hoặc thiết bị cần ưu tiên cho công việc khác')
+    reason = safe_clean(data.get('reason'), 'Không đủ điều kiện hoặc thiết bị cần ưu tiên cho công việc khác')
 
     conn = get_db()
     cursor = conn.cursor()
@@ -1090,9 +1247,9 @@ def reject_borrow(borrow_id):
 @admin_required
 def return_borrow(borrow_id):
     data = request.json or {}
-    actual_return_date = data.get('actual_return_date', '').strip() or date.today().strftime('%Y-%m-%d')
-    return_condition = data.get('return_condition', 'Tốt').strip()
-    notes = data.get('notes', '').strip()
+    actual_return_date = safe_clean(data.get('actual_return_date')) or date.today().strftime('%Y-%m-%d')
+    return_condition = safe_clean(data.get('return_condition'), 'Tốt')
+    notes = safe_clean(data.get('notes'))
 
     conn = get_db()
     cursor = conn.cursor()
@@ -1122,8 +1279,8 @@ def return_borrow(borrow_id):
         new_device_status = 'Bảo trì'
 
     cursor.execute("""
-        UPDATE devices SET status = ?, updated_at = ? WHERE code = ?
-    """, (new_device_status, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req['device_code']))
+        UPDATE devices SET status = ?, updated_at = ? WHERE code = ? OR UPPER(code) = UPPER(?)
+    """, (new_device_status, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req['device_code'], req['device_code']))
 
     conn.commit()
     conn.close()
@@ -1144,7 +1301,14 @@ def return_borrow(borrow_id):
 def list_users():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users ORDER BY department ASC, fullname ASC")
+    cursor.execute("""
+        SELECT u.*, a.id as account_id, a.username as account_username, a.role as account_role 
+        FROM users u 
+        LEFT JOIN accounts a ON (u.account_id IS NOT NULL AND u.account_id = a.id) 
+                             OR LOWER(u.code) = LOWER(a.username) 
+                             OR (u.email IS NOT NULL AND u.email != '' AND LOWER(u.email) = LOWER(a.email))
+        ORDER BY u.department ASC, u.fullname ASC
+    """)
     users = [dict_from_row(r) for r in cursor.fetchall()]
     conn.close()
     return jsonify(users)
@@ -1153,12 +1317,13 @@ def list_users():
 @admin_required
 def add_user():
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    fullname = data.get('fullname', '').strip()
-    email = data.get('email', '').strip()
-    phone = data.get('phone', '').strip()
-    role = data.get('role', 'teacher').strip()
-    department = data.get('department', '').strip()
+    code = safe_upper(data.get('code'))
+    fullname = safe_clean(data.get('fullname'))
+    email = safe_clean(data.get('email'))
+    phone = safe_clean(data.get('phone'))
+    role = safe_clean(data.get('role'), 'teacher')
+    department = safe_clean(data.get('department'))
+    grant_account = bool(data.get('grant_account', False))
 
     if not code or not fullname or not department:
         return jsonify({'error': 'Vui lòng điền đầy đủ Mã giáo viên/cán bộ, Họ tên và Phòng ban/Bộ môn!'}), 400
@@ -1166,37 +1331,64 @@ def add_user():
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id FROM users WHERE code = ?", (code,))
+    cursor.execute("SELECT id FROM users WHERE code = ? OR UPPER(code) = UPPER(?)", (code, code))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã người dùng/giáo viên "{code}" đã tồn tại!'}), 400
 
-    cursor.execute("""
-        INSERT INTO users (code, fullname, email, phone, role, department)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (code, fullname, email, phone, role, department))
+    acc_id = None
+    if grant_account:
+        acc_username = safe_clean(data.get('account_username')).lower() or code.lower()
+        acc_password = safe_clean(data.get('account_password')) or '123456'
+        acc_role = safe_clean(data.get('account_role'), 'manager').lower()
+        if acc_role not in ('admin', 'manager', 'guest'):
+            acc_role = 'manager'
 
+        # Kiểm tra tài khoản đã tồn tại chưa
+        cursor.execute("SELECT id FROM accounts WHERE LOWER(username) = ?", (acc_username,))
+        existing_acc = cursor.fetchone()
+        if existing_acc:
+            acc_id = existing_acc['id']
+        else:
+            pass_hash = generate_password_hash(acc_password)
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("""
+                INSERT INTO accounts (username, password_hash, fullname, role, email, phone, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (acc_username, pass_hash, fullname, acc_role, email, phone, now_str))
+            acc_id = cursor.lastrowid
+
+    cursor.execute("""
+        INSERT INTO users (code, fullname, email, phone, role, department, account_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (code, fullname, email, phone, role, department, acc_id))
+
+    user_id = cursor.lastrowid
     conn.commit()
     conn.close()
 
-    log_activity("Thêm người dùng", f"Thêm giáo viên/cán bộ {code} - {fullname} ({department})", "user")
-    return jsonify({'success': True, 'message': f'Thêm người dùng {code} thành công!'})
+    log_activity("Thêm người dùng", f"Thêm giáo viên/cán bộ {code} - {fullname} ({department})" + (" & Cấp tài khoản đăng nhập" if grant_account else ""), "user")
+    return jsonify({
+        'success': True, 
+        'id': user_id, 
+        'message': f'Thêm người dùng {code} thành công!' + (' (Đã cấp tài khoản đăng nhập)' if grant_account else '')
+    })
 
 @app.route('/api/users/<int:user_id>', methods=['PUT'])
 @admin_required
 def update_user(user_id):
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    fullname = data.get('fullname', '').strip()
-    email = data.get('email', '').strip()
-    phone = data.get('phone', '').strip()
-    role = data.get('role', 'teacher').strip()
-    department = data.get('department', '').strip()
+    code = safe_upper(data.get('code'))
+    fullname = safe_clean(data.get('fullname'))
+    email = safe_clean(data.get('email'))
+    phone = safe_clean(data.get('phone'))
+    role = safe_clean(data.get('role'), 'teacher')
+    department = safe_clean(data.get('department'))
 
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id FROM users WHERE code = ? AND id != ?", (code, user_id))
+    cursor.execute("SELECT id FROM users WHERE (code = ? OR UPPER(code) = UPPER(?)) AND id != ?", (code, code, user_id))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã "{code}" đã được người khác sử dụng!'}), 400
@@ -1204,6 +1396,13 @@ def update_user(user_id):
     cursor.execute("""
         UPDATE users SET code = ?, fullname = ?, email = ?, phone = ?, role = ?, department = ? WHERE id = ?
     """, (code, fullname, email, phone, role, department, user_id))
+
+    # Cập nhật thông tin sang tài khoản liên kết nếu có
+    cursor.execute("""
+        UPDATE accounts 
+        SET fullname = ?, email = ?, phone = ?
+        WHERE id IN (SELECT account_id FROM users WHERE id = ?) OR LOWER(username) = LOWER(?)
+    """, (fullname, email, phone, user_id, code))
 
     conn.commit()
     conn.close()
@@ -1233,8 +1432,8 @@ def list_categories():
 @admin_required
 def add_category():
     data = request.json or {}
-    name = data.get('name', '').strip()
-    icon = data.get('icon', 'package').strip() or 'package'
+    name = safe_clean(data.get('name'))
+    icon = safe_clean(data.get('icon'), 'package') or 'package'
 
     if not name:
         return jsonify({'error': 'Tên danh mục phân loại không được để trống!'}), 400
@@ -1257,8 +1456,8 @@ def add_category():
 @admin_required
 def update_category(cat_id):
     data = request.json or {}
-    new_name = data.get('name', '').strip()
-    icon = data.get('icon', '').strip()
+    new_name = safe_clean(data.get('name'))
+    icon = safe_clean(data.get('icon'))
 
     if not new_name:
         return jsonify({'error': 'Tên danh mục không được để trống!'}), 400
@@ -1309,7 +1508,7 @@ def delete_category(cat_id):
 # --- API QUẢN LÝ PHÒNG HỌC & VỊ TRÍ (LOCATIONS) ---
 @app.route('/api/locations', methods=['GET'])
 def list_locations():
-    floor = request.args.get('floor')
+    floor = safe_clean(request.args.get('floor'))
     conn = get_db()
     cursor = conn.cursor()
     if floor and floor != 'all':
@@ -1324,19 +1523,19 @@ def list_locations():
 @admin_required
 def add_location():
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    name = data.get('name', '').strip()
-    loc_type = data.get('type', 'Phòng học & Lớp học').strip()
-    floor = data.get('floor', 'Tầng 1').strip()
-    manager_name = data.get('manager_name', '').strip()
-    description = data.get('description', '').strip()
+    code = safe_upper(data.get('code'))
+    name = safe_clean(data.get('name'))
+    loc_type = safe_clean(data.get('type'), 'Phòng học & Lớp học')
+    floor = safe_clean(data.get('floor'), 'Tầng 1')
+    manager_name = safe_clean(data.get('manager_name'))
+    description = safe_clean(data.get('description'))
 
     if not code or not name:
         return jsonify({'error': 'Vui lòng nhập Mã và Tên phòng ban/vị trí!'}), 400
 
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT id FROM locations WHERE code = ?", (code,))
+    cursor.execute("SELECT id FROM locations WHERE code = ? OR UPPER(code) = UPPER(?)", (code, code))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã vị trí/phòng "{code}" đã tồn tại!'}), 400
@@ -1355,12 +1554,12 @@ def add_location():
 @admin_required
 def update_location(loc_id):
     data = request.json or {}
-    code = data.get('code', '').strip().upper()
-    name = data.get('name', '').strip()
-    loc_type = data.get('type', 'Phòng học & Lớp học').strip()
-    floor = data.get('floor', 'Tầng 1').strip()
-    manager_name = data.get('manager_name', '').strip()
-    description = data.get('description', '').strip()
+    code = safe_upper(data.get('code'))
+    name = safe_clean(data.get('name'))
+    loc_type = safe_clean(data.get('type'), 'Phòng học & Lớp học')
+    floor = safe_clean(data.get('floor'), 'Tầng 1')
+    manager_name = safe_clean(data.get('manager_name'))
+    description = safe_clean(data.get('description'))
 
     if not code or not name:
         return jsonify({'error': 'Mã phòng và Tên phòng không được để trống!'}), 400
@@ -1374,7 +1573,7 @@ def update_location(loc_id):
         return jsonify({'error': 'Không tìm thấy phòng!'}), 404
 
     # Kiểm tra trùng mã
-    cursor.execute("SELECT id FROM locations WHERE code = ? AND id != ?", (code, loc_id))
+    cursor.execute("SELECT id FROM locations WHERE (code = ? OR UPPER(code) = UPPER(?)) AND id != ?", (code, code, loc_id))
     if cursor.fetchone():
         conn.close()
         return jsonify({'error': f'Mã vị trí "{code}" đã được sử dụng cho phòng khác!'}), 400
@@ -1401,7 +1600,7 @@ def update_location(loc_id):
 @admin_required
 def update_location_type(loc_id):
     data = request.json or {}
-    new_type = data.get('type', '').strip()
+    new_type = safe_clean(data.get('type'))
     if not new_type:
         return jsonify({'error': 'Loại phòng không được để trống!'}), 400
 

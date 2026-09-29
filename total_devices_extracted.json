@@ -1018,5 +1018,25 @@
     "mfg": "",
     "qty_in": 1,
     "qty_real": 1
+  },
+  {
+    "stt": 103,
+    "category": "Âm thanh & Trợ giảng",
+    "name": "Thiet bi Test None",
+    "model": "TEST-DEV-NONE-01",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 104,
+    "category": "Thiết bị văn phòng",
+    "name": "Thiết bị test tự động",
+    "model": "TEST-DEV-001",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
   }
 ]

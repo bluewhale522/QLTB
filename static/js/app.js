@@ -404,6 +404,9 @@ document.addEventListener('click', (e) => {
     if (!e.target.closest('#borrowUserCodeSearch') && !e.target.closest('#borrowUserCodeDropdown')) {
         closeBorrowUserDropdown();
     }
+    if (!e.target.closest('#moveDeviceSearchInput') && !e.target.closest('#moveDeviceDropdown') && !e.target.closest('#moveDeviceSearchClear')) {
+        closeMoveDeviceDropdown();
+    }
 });
 
 // Khi người dùng đổi Tầng trong bộ lọc bảng thiết bị
@@ -1415,7 +1418,7 @@ async function loadDevices() {
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
                             ${canManage() ? `
-                                <button onclick="quickMoveDevice('${d.code}')" title="Di chuyển vị trí phòng" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
+                                <button onclick="quickMoveDevice('${d.code}', ${d.id})" title="Di chuyển vị trí phòng" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
                                     <i data-lucide="truck" class="w-4 h-4"></i>
                                 </button>
                                 <button onclick="openChangeCategoryModal(${d.id})" title="Di chuyển phân loại thiết bị" class="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition">
@@ -1736,12 +1739,27 @@ async function handleImportSubmit(event) {
 }
 
 // ==================== DI CHUYỂN VỊ TRÍ (MOVEMENTS) ====================
-function populateMovementDeviceSelect() {
-    const select = document.getElementById('moveDeviceSelect');
-    if (!select) return;
+let moveSearchDebounce = null;
 
-    select.innerHTML = '<option value="">-- Chọn thiết bị cần chuyển --</option>' +
-        state.devices.map(d => `<option value="${d.code}">[${d.code}] ${d.name} (${d.current_location})</option>`).join('');
+async function populateMovementDeviceSelect() {
+    // Nạp toàn bộ thiết bị vào bộ nhớ đệm nếu chưa có để tra cứu siêu tốc
+    if (!state.allDevices || state.allDevices.length === 0) {
+        try {
+            const res = await fetch('/api/devices');
+            if (res.ok) {
+                state.allDevices = await res.json();
+            }
+        } catch (e) {
+            console.warn('Lỗi nạp danh sách thiết bị cho điều chuyển:', e);
+            state.allDevices = state.devices || [];
+        }
+    }
+
+    const select = document.getElementById('moveDeviceSelect');
+    if (select && state.allDevices) {
+        select.innerHTML = '<option value="">-- Chọn thiết bị cần chuyển --</option>' +
+            state.allDevices.map(d => `<option value="${d.code}">[${d.code}] ${d.name} (${d.current_location})</option>`).join('');
+    }
 
     const moveToFloor = document.getElementById('moveToFloorSelect');
     if (moveToFloor) {
@@ -1749,53 +1767,286 @@ function populateMovementDeviceSelect() {
     }
 }
 
-function quickMoveDevice(code) {
-    switchTab('movements').then(() => {
-        const select = document.getElementById('moveDeviceSelect');
-        if (select) {
-            select.value = code;
-            handleMoveDeviceSelect(code);
+function openMoveDeviceDropdown() {
+    const dropdown = document.getElementById('moveDeviceDropdown');
+    if (!dropdown) return;
+    dropdown.classList.remove('hidden');
+    const q = document.getElementById('moveDeviceSearchInput')?.value || '';
+    searchMoveDevices(q);
+}
+
+function closeMoveDeviceDropdown() {
+    const dropdown = document.getElementById('moveDeviceDropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+}
+
+function clearMoveDeviceSearch() {
+    const input = document.getElementById('moveDeviceSearchInput');
+    if (input) {
+        input.value = '';
+        input.focus();
+    }
+    document.getElementById('moveDeviceSearchClear')?.classList.add('hidden');
+    clearMoveDeviceSelection();
+    searchMoveDevices('');
+}
+
+function clearMoveDeviceSelection() {
+    const idInput = document.getElementById('moveSelectedDeviceId');
+    if (idInput) idInput.value = '';
+    const codeInput = document.getElementById('moveSelectedDeviceCode');
+    if (codeInput) codeInput.value = '';
+    const select = document.getElementById('moveDeviceSelect');
+    if (select) select.value = '';
+
+    const title = document.getElementById('moveSelectedDeviceTitle');
+    if (title) title.innerText = 'Chưa chọn thiết bị';
+    const cat = document.getElementById('moveSelectedDeviceCategory');
+    if (cat) cat.innerText = 'Vui lòng gõ mã/tên ở ô tìm kiếm trên để chọn';
+    const badge = document.getElementById('moveSelectedDeviceStatusBadge');
+    if (badge) badge.classList.add('hidden');
+    const fromLocText = document.getElementById('moveFromLocationText');
+    if (fromLocText) fromLocText.innerText = 'Chưa chọn';
+    const fromLocInput = document.getElementById('moveFromLocationInput');
+    if (fromLocInput) fromLocInput.value = '';
+}
+
+function searchMoveDevices(query) {
+    const q = (query || '').trim();
+    const clearBtn = document.getElementById('moveDeviceSearchClear');
+    if (clearBtn) clearBtn.classList.toggle('hidden', !q);
+
+    const floorFilter = document.getElementById('moveFilterCurrentFloor')?.value || 'all';
+    const dropdown = document.getElementById('moveDeviceDropdown');
+    if (!dropdown) return;
+
+    const devPool = (state.allDevices && state.allDevices.length > 0) ? state.allDevices : (state.devices || []);
+
+    let matched = devPool.filter(d => {
+        if (floorFilter !== 'all') {
+            const floorPrefix = floorFilter.replace('Tầng ', '').trim() + 'F';
+            const matchFloor = d.floor === floorFilter || (d.current_location && d.current_location.startsWith(floorPrefix));
+            if (!matchFloor) return false;
         }
+        if (!q) return true;
+        const qLower = q.toLowerCase();
+        return (d.code && d.code.toLowerCase().includes(qLower)) ||
+               (d.name && d.name.toLowerCase().includes(qLower)) ||
+               (d.current_location && d.current_location.toLowerCase().includes(qLower)) ||
+               (d.category && d.category.toLowerCase().includes(qLower));
+    });
+
+    const countBadge = document.getElementById('moveSearchCountBadge');
+    if (countBadge) {
+        countBadge.innerText = `${matched.length} thiết bị`;
+        countBadge.classList.remove('hidden');
+    }
+
+    renderMoveDeviceDropdownItems(matched.slice(0, 40));
+    dropdown.classList.remove('hidden');
+
+    // Nếu không tìm thấy trong bộ nhớ và từ khóa >= 2 ký tự, tra cứu máy chủ ngay
+    if (matched.length === 0 && q.length >= 2) {
+        clearTimeout(moveSearchDebounce);
+        moveSearchDebounce = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/devices?search=${encodeURIComponent(q)}`);
+                if (res.ok) {
+                    const apiMatched = await res.json();
+                    if (apiMatched.length > 0) {
+                        if (!state.allDevices) state.allDevices = [];
+                        apiMatched.forEach(item => {
+                            if (!state.allDevices.some(x => x.id === item.id)) {
+                                state.allDevices.push(item);
+                            }
+                        });
+                        renderMoveDeviceDropdownItems(apiMatched.slice(0, 40));
+                        if (countBadge) countBadge.innerText = `${apiMatched.length} thiết bị (từ máy chủ)`;
+                    }
+                }
+            } catch (e) {
+                console.warn('Lỗi tìm kiếm thiết bị qua API:', e);
+            }
+        }, 250);
+    }
+}
+
+function renderMoveDeviceDropdownItems(items) {
+    const dropdown = document.getElementById('moveDeviceDropdown');
+    if (!dropdown) return;
+    if (!items || items.length === 0) {
+        dropdown.innerHTML = `
+            <div class="p-4 text-center text-xs text-slate-400">
+                <i data-lucide="search-x" class="w-5 h-5 mx-auto mb-1 text-slate-300"></i>
+                Không tìm thấy thiết bị nào khớp.<br>Hãy thử gõ mã khác (ví dụ: AT-114, TV, LAP...).
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
+    dropdown.innerHTML = items.map(d => {
+        const safeCode = (d.code || '').replace(/'/g, "\\'");
+        const statusClass = d.status === 'Đang sử dụng'
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+            : (d.status === 'Hỏng' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200');
+        return `
+            <div onclick="selectMoveDevice('${safeCode}', ${d.id})" class="p-2.5 hover:bg-blue-50 cursor-pointer border-b border-slate-100 flex items-center justify-between transition group">
+                <div class="min-w-0 pr-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold text-xs text-blue-600 font-mono group-hover:text-blue-700">${d.code}</span>
+                        <span class="text-xs font-semibold text-slate-800 truncate">${d.name}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-500 flex items-center space-x-2 mt-0.5">
+                        <span>📍 Hiện tại: <strong class="text-slate-700 font-semibold">${d.current_location || 'Chưa gán'}</strong></span>
+                        <span>•</span>
+                        <span class="truncate">${d.category || ''}</span>
+                    </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${statusClass}">
+                    ${d.status || 'Bình thường'}
+                </span>
+            </div>
+        `;
+    }).join('');
+    lucide.createIcons();
+}
+
+function filterMoveDevicesByFloor(floor) {
+    const q = document.getElementById('moveDeviceSearchInput')?.value || '';
+    searchMoveDevices(q);
+}
+
+async function selectMoveDevice(code, id) {
+    let dev = null;
+    const pool = (state.allDevices && state.allDevices.length > 0) ? state.allDevices : (state.devices || []);
+
+    if (id) {
+        dev = pool.find(d => d.id === id);
+    }
+    if (!dev && code) {
+        const codeClean = code.trim().toUpperCase();
+        dev = pool.find(d => (d.code || '').trim().toUpperCase() === codeClean);
+    }
+
+    // Nếu chưa thấy trong cache, gọi API lấy ngay
+    if (!dev && code) {
+        try {
+            const res = await fetch(`/api/devices?search=${encodeURIComponent(code)}`);
+            if (res.ok) {
+                const resData = await res.json();
+                if (resData.length > 0) {
+                    dev = resData.find(d => (d.code || '').trim().toUpperCase() === code.trim().toUpperCase()) || resData[0];
+                    if (!state.allDevices) state.allDevices = [];
+                    if (!state.allDevices.some(x => x.id === dev.id)) state.allDevices.push(dev);
+                }
+            }
+        } catch (e) {
+            console.warn('Lỗi nạp thiết bị:', e);
+        }
+    }
+
+    if (!dev) {
+        Swal.fire({ icon: 'warning', title: 'Không tìm thấy', text: `Không tìm thấy thiết bị có mã "${code}"!` });
+        return;
+    }
+
+    const idInput = document.getElementById('moveSelectedDeviceId');
+    if (idInput) idInput.value = dev.id;
+    const codeInput = document.getElementById('moveSelectedDeviceCode');
+    if (codeInput) codeInput.value = dev.code;
+    const selectComp = document.getElementById('moveDeviceSelect');
+    if (selectComp) selectComp.value = dev.code;
+
+    const searchInput = document.getElementById('moveDeviceSearchInput');
+    if (searchInput) searchInput.value = `[${dev.code}] ${dev.name}`;
+    document.getElementById('moveDeviceSearchClear')?.classList.remove('hidden');
+
+    const title = document.getElementById('moveSelectedDeviceTitle');
+    if (title) title.innerText = `[${dev.code}] ${dev.name}`;
+
+    const cat = document.getElementById('moveSelectedDeviceCategory');
+    if (cat) cat.innerText = `Danh mục: ${dev.category || '---'} | Tầng: ${dev.floor || 'Chưa rõ'}`;
+
+    const fromLocText = document.getElementById('moveFromLocationText');
+    if (fromLocText) fromLocText.innerText = dev.current_location || 'Chưa gán vị trí';
+    const fromLocInput = document.getElementById('moveFromLocationInput');
+    if (fromLocInput) fromLocInput.value = dev.current_location || '';
+
+    const badge = document.getElementById('moveSelectedDeviceStatusBadge');
+    if (badge) {
+        const badgeClass = dev.status === 'Đang sử dụng'
+            ? 'bg-emerald-100 text-emerald-800'
+            : (dev.status === 'Hỏng' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800');
+        badge.className = `px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeClass}`;
+        badge.innerText = dev.status || 'Bình thường';
+        badge.classList.remove('hidden');
+    }
+
+    closeMoveDeviceDropdown();
+}
+
+function handleMoveDeviceSelect(code) {
+    selectMoveDevice(code);
+}
+
+function quickMoveDevice(code, id) {
+    switchTab('movements').then(() => {
+        selectMoveDevice(code, id);
         const moveToFloor = document.getElementById('moveToFloorSelect');
         if (moveToFloor) {
-            moveToFloor.value = 'Tầng 1';
-            onModalFloorChange('Tầng 1', 'moveToLocationSelect');
+            onModalFloorChange(moveToFloor.value || 'Tầng 1', 'moveToLocationSelect');
         }
     });
 }
 
-function handleMoveDeviceSelect(code) {
-    const dev = state.devices.find(d => d.code === code);
-    const fromText = document.getElementById('moveFromLocationText');
-    const fromInput = document.getElementById('moveFromLocationInput');
-
-    if (dev) {
-        fromText.innerText = dev.current_location;
-        fromInput.value = dev.current_location;
-    } else {
-        fromText.innerText = 'Chưa chọn thiết bị';
-        fromInput.value = '';
-    }
-}
-
 async function handleMoveDeviceSubmit(event) {
     event.preventDefault();
-    const payload = {
-        device_code: document.getElementById('moveDeviceSelect').value,
-        to_location: document.getElementById('moveToLocationSelect').value,
-        moved_by: document.getElementById('movedByInput').value.trim() || state.currentUser.name,
-        reason: document.getElementById('moveReasonInput').value.trim()
-    };
+    const deviceId = document.getElementById('moveSelectedDeviceId')?.value;
+    const deviceCode = document.getElementById('moveSelectedDeviceCode')?.value ||
+                       document.getElementById('moveDeviceSelect')?.value ||
+                       document.getElementById('moveDeviceSearchInput')?.value.trim();
+    const toLocation = document.getElementById('moveToLocationSelect')?.value;
+    const movedBy = document.getElementById('movedByInput')?.value.trim() || state.currentUser.fullname || 'Quản trị viên';
+    const reason = document.getElementById('moveReasonInput')?.value.trim();
 
-    if (!payload.device_code || !payload.to_location || !payload.reason) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng chọn thiết bị, vị trí mới và lý do di chuyển!' });
+    if ((!deviceId && !deviceCode) || !toLocation || !reason) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Thiếu thông tin',
+            text: 'Vui lòng chọn thiết bị, vị trí mới và nhập lý do di chuyển!'
+        });
         return;
     }
+
+    const fromLoc = document.getElementById('moveFromLocationInput')?.value || '';
+    if (fromLoc && toLocation && fromLoc.trim().toLowerCase() === toLocation.trim().toLowerCase()) {
+        const confirmSame = await Swal.fire({
+            icon: 'question',
+            title: 'Trùng vị trí hiện tại',
+            text: `Thiết bị này hiện tại đã ở vị trí "${toLocation}". Bạn có muốn tiếp tục ghi nhận di chuyển?`,
+            showCancelButton: true,
+            confirmButtonText: 'Vẫn ghi nhận',
+            cancelButtonText: 'Chọn lại vị trí'
+        });
+        if (!confirmSame.isConfirmed) return;
+    }
+
+    const payload = {
+        device_id: deviceId ? parseInt(deviceId) : undefined,
+        device_code: deviceCode,
+        to_location: toLocation,
+        moved_by: movedBy,
+        reason: reason
+    };
 
     try {
         const res = await fetch('/api/devices/move', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser.role
+            },
             body: JSON.stringify(payload)
         });
         const data = await res.json();
@@ -1814,6 +2065,18 @@ async function handleMoveDeviceSubmit(event) {
         });
 
         document.getElementById('moveReasonInput').value = '';
+        clearMoveDeviceSelection();
+        const searchInp = document.getElementById('moveDeviceSearchInput');
+        if (searchInp) searchInp.value = '';
+
+        // Cập nhật lại trong cache
+        if (state.allDevices) {
+            const idx = state.allDevices.findIndex(d => (deviceId && d.id === parseInt(deviceId)) || (d.code && d.code.toUpperCase() === (deviceCode || '').toUpperCase()));
+            if (idx !== -1) {
+                state.allDevices[idx].current_location = toLocation;
+            }
+        }
+
         await loadMovements();
         await loadDevices();
         populateMovementDeviceSelect();
@@ -2153,13 +2416,32 @@ function renderUsers() {
     if (!tbody) return;
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">Không tìm thấy cán bộ nào khớp với bộ lọc tìm kiếm.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">Không tìm thấy cán bộ nào khớp với bộ lọc tìm kiếm.</td></tr>`;
         return;
     }
 
     tbody.innerHTML = filtered.map(u => {
+        const accountBadge = u.account_username ? `
+            <div class="flex items-center space-x-1.5">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <i data-lucide="shield-check" class="w-3 h-3 mr-1 text-indigo-600"></i>${u.account_username}
+                </span>
+                <span class="text-[10px] text-slate-500 font-mono">(${u.account_role === 'admin' ? 'Admin' : (u.account_role === 'manager' ? 'Quản lý' : 'Khách')})</span>
+            </div>
+        ` : `
+            <div class="flex items-center space-x-1.5">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                    <i data-lucide="user-x" class="w-3 h-3 mr-1 text-slate-400"></i>Chưa cấp
+                </span>
+                ${isAdmin ? `<button onclick="openGrantAccountModal(${u.id})" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 hover:underline">Cấp ngay</button>` : ''}
+            </div>
+        `;
+
         const actionButtons = isAdmin ? `
             <div class="flex items-center justify-center space-x-1">
+                <button onclick="openGrantAccountModal(${u.id})" title="${u.account_username ? 'Đổi mật khẩu / vai trò tài khoản' : 'Cấp tài khoản đăng nhập'}" class="p-1 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition">
+                    <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="openEditUserModal(${u.id})" title="Chỉnh sửa thông tin" class="p-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded transition">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                 </button>
@@ -2184,7 +2466,8 @@ function renderUsers() {
                     <div>${u.fullname}</div>
                     ${u.phone ? `<span class="block text-[11px] text-slate-400">📞 ${u.phone}</span>` : ''}
                 </td>
-                <td class="px-3 py-2.5 text-slate-600 font-medium whitespace-nowrap">${u.department}</td>
+                <td class="px-3 py-2.5 text-slate-600 font-medium whitespace-nowrap">${u.department || '---'}</td>
+                <td class="px-3 py-2.5 whitespace-nowrap">${accountBadge}</td>
                 <td class="px-3 py-2.5 whitespace-nowrap">
                     ${roleBadge}
                 </td>
@@ -2685,7 +2968,17 @@ async function handleDeleteCategory(catId, catName) {
 
 function openAddUserModal() {
     document.getElementById('userForm').reset();
+    const grantCheck = document.getElementById('userGrantAccountCheck');
+    if (grantCheck) grantCheck.checked = false;
+    toggleUserGrantAccountFields(false);
     openModal('userModal');
+}
+
+function toggleUserGrantAccountFields(checked) {
+    const fields = document.getElementById('userGrantAccountFields');
+    if (fields) {
+        fields.classList.toggle('hidden', !checked);
+    }
 }
 
 async function handleUserSubmit(event) {
@@ -2698,6 +2991,14 @@ async function handleUserSubmit(event) {
         email: document.getElementById('userEmailInput').value.trim(),
         phone: document.getElementById('userPhoneInput').value.trim()
     };
+
+    const grantAccount = document.getElementById('userGrantAccountCheck')?.checked || false;
+    if (grantAccount) {
+        payload.grant_account = true;
+        payload.account_username = (document.getElementById('userAccUsername')?.value || '').trim() || payload.code.toLowerCase();
+        payload.account_password = (document.getElementById('userAccPassword')?.value || '').trim() || '123456';
+        payload.account_role = document.getElementById('userAccRole')?.value || 'manager';
+    }
 
     try {
         const res = await fetch('/api/users', {
@@ -2715,6 +3016,86 @@ async function handleUserSubmit(event) {
         }
         closeModal('userModal');
         Swal.fire({ icon: 'success', title: 'Thành công', text: data.message, timer: 1500, showConfirmButton: false });
+        await loadUsers();
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+    }
+}
+
+function openGrantAccountModal(userId) {
+    const user = (state.users || []).find(u => u.id === userId);
+    if (!user) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không tìm thấy thông tin cán bộ!' });
+        return;
+    }
+
+    document.getElementById('grantUserId').value = user.id;
+    document.getElementById('grantUserCode').value = user.code;
+    document.getElementById('grantTeacherName').innerText = user.fullname;
+    document.getElementById('grantTeacherCodeBadge').innerText = user.code;
+    document.getElementById('grantTeacherDept').innerText = `Tổ chuyên môn: ${user.department || 'Chưa phân tổ'}`;
+
+    // Tự động gợi ý username
+    const suggested = user.account_username || user.code.toLowerCase().replace(/[^a-z0-9]/g, '');
+    document.getElementById('grantUsername').value = suggested;
+    document.getElementById('grantPassword').value = '123456';
+    document.getElementById('grantRole').value = user.account_role || 'manager';
+    document.getElementById('grantEmail').value = user.email || '';
+    document.getElementById('grantPhone').value = user.phone || '';
+
+    openModal('grantAccountModal');
+    lucide.createIcons();
+}
+
+async function handleGrantAccountSubmit(event) {
+    event.preventDefault();
+    const userId = document.getElementById('grantUserId')?.value;
+    const userCode = document.getElementById('grantUserCode')?.value;
+    const username = (document.getElementById('grantUsername')?.value || '').trim();
+    const password = (document.getElementById('grantPassword')?.value || '').trim();
+    const role = document.getElementById('grantRole')?.value || 'manager';
+    const email = (document.getElementById('grantEmail')?.value || '').trim();
+    const phone = (document.getElementById('grantPhone')?.value || '').trim();
+
+    if (!username || !password) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên đăng nhập và mật khẩu!' });
+        return;
+    }
+
+    const payload = {
+        user_id: userId ? parseInt(userId) : undefined,
+        user_code: userCode,
+        username: username,
+        password: password,
+        role: role,
+        email: email,
+        phone: phone
+    };
+
+    try {
+        const res = await fetch('/api/auth/accounts/grant-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser.role
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Lỗi cấp tài khoản', text: data.error });
+            return;
+        }
+
+        closeModal('grantAccountModal');
+        Swal.fire({
+            icon: 'success',
+            title: 'Cấp tài khoản thành công',
+            html: `Cán bộ: <strong>${document.getElementById('grantTeacherName')?.innerText}</strong><br>Tên đăng nhập: <strong class="text-indigo-600 font-mono">${data.username}</strong><br>Mật khẩu: <strong class="text-slate-800 font-mono">${password}</strong><br><span class="text-xs text-slate-500">Cán bộ có thể sử dụng tài khoản này để đăng nhập ngay.</span>`,
+            timer: 4000,
+            showConfirmButton: true
+        });
+
         await loadUsers();
     } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
