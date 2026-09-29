@@ -23,6 +23,31 @@ let state = {
     }
 };
 
+// Chống lỗi "Unexpected token '<', '<!doctype'": Kiểm tra nếu API trả về trang HTML thay vì JSON
+(function () {
+    const originalJson = Response.prototype.json;
+    Response.prototype.json = async function () {
+        const clone = this.clone();
+        try {
+            return await originalJson.call(this);
+        } catch (err) {
+            try {
+                const text = await clone.text();
+                if (text.trim().startsWith('<') || text.toLowerCase().includes('<!doctype') || text.toLowerCase().includes('<html')) {
+                    throw new Error(
+                        'Máy chủ trả về trang web HTML thay vì phản hồi API JSON.\n\n' +
+                        '• Nguyên nhân: Backend Python Flask (app.py) chưa chạy, hoặc bạn đang mở bản tĩnh trên Netlify mà chưa kết nối API.\n' +
+                        '• Cách khắc phục: Khởi chạy "python app.py" trên máy chủ và truy cập qua cổng của Flask (ví dụ: http://127.0.0.1:5000).'
+                    );
+                }
+            } catch (cloneErr) {
+                if (cloneErr.message.includes('Máy chủ trả về')) throw cloneErr;
+            }
+            throw err;
+        }
+    };
+})();
+
 // Khởi chạy khi load trang
 document.addEventListener('DOMContentLoaded', async () => {
     lucide.createIcons();

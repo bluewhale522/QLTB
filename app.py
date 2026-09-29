@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, jsonify, send_file, Response,
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db, init_db, log_activity
 from seed_data import seed_database
+from sync_json import sync_add_device_to_json, sync_move_device_in_json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'qltb-school-equipment-secret-key-2026'
@@ -17,6 +18,20 @@ app.config['SECRET_KEY'] = 'qltb-school-equipment-secret-key-2026'
 # Khởi tạo database và dữ liệu mẫu nếu chưa có
 init_db()
 seed_database()
+
+# Helper xử lý giá an toàn, chống crash khi nhận chuỗi có dấu phẩy hoặc chấm
+def safe_parse_price(val):
+    if val is None or val == '':
+        return 0.0
+    if isinstance(val, (int, float)):
+        return float(val)
+    val_str = str(val).strip().replace(',', '').replace(' ', '')
+    if val_str.count('.') > 1:
+        val_str = val_str.replace('.', '')
+    try:
+        return float(val_str)
+    except (ValueError, TypeError):
+        return 0.0
 
 # Helper lấy thông tin người dùng hiện tại từ session
 def get_current_account():
@@ -533,7 +548,7 @@ def add_device():
     category = data.get('category', '').strip()
     current_location = data.get('current_location', '').strip()
     status = data.get('status', 'Sẵn sàng').strip()
-    price = float(data.get('price') or 0)
+    price = safe_parse_price(data.get('price'))
     purchase_date = data.get('purchase_date', '').strip() or date.today().strftime('%Y-%m-%d')
     supplier = data.get('supplier', '').strip()
     specification = data.get('specification', '').strip()
@@ -562,6 +577,17 @@ def add_device():
     conn.commit()
     conn.close()
 
+    # Tự động đồng bộ thiết bị mới vào excel_rooms_and_devices.json và total_devices_extracted.json
+    sync_add_device_to_json({
+        'code': code,
+        'name': name,
+        'category': category,
+        'current_location': current_location,
+        'specification': specification,
+        'supplier': supplier,
+        'price': price
+    })
+
     log_activity("Thêm thiết bị", f"Thêm mới thiết bị {code} - {name} tại vị trí {current_location}", "device")
     return jsonify({'success': True, 'id': new_id, 'message': f'Thêm thiết bị {code} thành công!'})
 
@@ -574,7 +600,7 @@ def update_device(device_id):
     category = data.get('category', '').strip()
     current_location = data.get('current_location', '').strip()
     status = data.get('status', 'Sẵn sàng').strip()
-    price = float(data.get('price') or 0)
+    price = safe_parse_price(data.get('price'))
     purchase_date = data.get('purchase_date', '').strip()
     supplier = data.get('supplier', '').strip()
     specification = data.get('specification', '').strip()
@@ -619,6 +645,10 @@ def update_device(device_id):
 
     conn.commit()
     conn.close()
+
+    # Đồng bộ nếu vị trí thay đổi
+    if old_location != current_location:
+        sync_move_device_in_json(code, name, old_location, current_location)
 
     log_activity("Cập nhật thiết bị", f"Cập nhật thông tin thiết bị {code} - {name}", "device")
     return jsonify({'success': True, 'message': 'Cập nhật thiết bị thành công!'})
@@ -720,6 +750,9 @@ def move_device():
 
     conn.commit()
     conn.close()
+
+    # Tự động đồng bộ di chuyển vào file excel_rooms_and_devices.json
+    sync_move_device_in_json(device['code'], device['name'], from_location, to_location)
 
     log_activity("Di chuyển thiết bị", f"Chuyển {device['code']} từ [{from_location}] sang [{to_location}]. Lý do: {reason}", "movement", moved_by)
     return jsonify({
@@ -1533,6 +1566,33 @@ def reset_demo():
         return jsonify({'success': True, 'message': 'Đã nạp lại toàn bộ dữ liệu thiết bị và phòng học chuẩn 2022 thành công!'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# --- GLOBAL ERROR HANDLERS ĐẢM BẢO API LUÔN TRẢ VỀ JSON THAY VÌ HTML ---
+@app.errorhandler(404)
+def handle_404(e):
+    if request.path.startswith('/api/') or request.is_json:
+        return jsonify({'error': f'Không tìm thấy API: {request.path}'}), 404
+    return render_template('index.html'), 404
+
+@app.errorhandler(500)
+def handle_500(e):
+    if request.path.startswith('/api/') or request.is_json:
+        return jsonify({'error': 'Lỗi máy chủ nội bộ (500). Vui lòng thử lại hoặc kiểm tra log backend!'}), 500
+    return "<h1>500 - Lỗi máy chủ nội bộ</h1>", 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    from werkzeug.exceptions import HTTPException
+    if isinstance(e, HTTPException):
+        if request.path.startswith('/api/') or request.is_json:
+            return jsonify({'error': e.description}), e.code
+        return e
+
+    import traceback
+    traceback.print_exc()
+    if request.path.startswith('/api/') or request.is_json:
+        return jsonify({'error': f'Lỗi hệ thống: {str(e)}'}), 500
+    return f"<h1>Lỗi hệ thống: {str(e)}</h1>", 500
 
 if __name__ == '__main__':
     print("=" * 60)
