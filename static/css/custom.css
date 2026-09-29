@@ -111,6 +111,16 @@ body {
     color: #6b21a8 !important;
     border: 1px solid #d8b4fe !important;
 }
+.role-badge-manager {
+    background-color: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+.role-badge-guest {
+    background-color: #fffbeb !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
+}
 .role-badge-teacher {
     background-color: #eff6ff !important;
     color: #1d4ed8 !important;
@@ -121,3 +131,47 @@ body {
     color: #92400e !important;
     border: 1px solid #fde68a !important;
 }
+
+/* ==========================================================================
+   iPad & Tablet Responsive Optimizations (iOS Safari / iPadOS)
+   ========================================================================== */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ngăn iOS Safari tự động zoom màn hình khi chạm vào ô input (font < 16px) */
+@media (max-width: 1024px) {
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="number"],
+    input[type="search"],
+    input[type="date"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    button, a, input[type="submit"] {
+        touch-action: manipulation;
+    }
+}
+
+/* Thanh tab cuộn mượt mà trên iPad */
+#mainNav {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+/* Cuộn mượt cho tất cả các bảng dữ liệu trên thiết bị cảm ứng */
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Khi mở bàn phím ảo iPad, đảm bảo modal có thể cuộn tự do */
+.modal-scrollable {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+

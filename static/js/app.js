@@ -620,28 +620,49 @@ async function switchTab(tabName) {
         await loadLocations();
     }
     else if (tabName === 'reports') await loadReports();
-    else if (tabName === 'settings') await loadLogs();
+    else if (tabName === 'settings') {
+        await loadLogs();
+        if (isSuperAdmin()) await loadAccountsList();
+    }
 
     lucide.createIcons();
 }
 
-// Cập nhật giao diện theo trạng thái người dùng (Admin vs Guest)
+// Kiểm tra quyền thao tác: Admin hoặc Manager được phép chỉnh sửa dữ liệu
+function canManage() {
+    return state.currentUser && (state.currentUser.role === 'admin' || state.currentUser.role === 'manager');
+}
+
+// Kiểm tra quyền Quản trị viên tối cao: Chỉ duy nhất Admin được phân quyền tài khoản & cài đặt hệ thống
+function isSuperAdmin() {
+    return state.currentUser && state.currentUser.role === 'admin';
+}
+
+// Cập nhật giao diện theo trạng thái người dùng (Admin vs Manager vs Guest)
 function updateAuthUI() {
-    const isGuest = state.currentUser.role === 'guest';
-    const isAdmin = state.currentUser.role === 'admin';
+    const isGuest = !canManage();
+    const isAdmin = isSuperAdmin();
+    const isManager = state.currentUser && state.currentUser.role === 'manager';
 
     // Cập nhật thông tin Header
     const nameEl = document.getElementById('currentUserName');
     if (nameEl) nameEl.innerText = state.currentUser.fullname || state.currentUser.username;
 
     const descEl = document.getElementById('currentUserRoleDesc');
-    if (descEl) descEl.innerText = isAdmin ? 'Toàn quyền hệ thống' : 'Khách vãng lai (Chỉ xem)';
+    if (descEl) {
+        if (isAdmin) descEl.innerText = 'Toàn quyền & Phân quyền';
+        else if (isManager) descEl.innerText = 'Quản lý & Sửa dữ liệu';
+        else descEl.innerText = 'Khách vãng lai (Chỉ xem)';
+    }
 
     const badgeEl = document.getElementById('currentUserBadge');
     if (badgeEl) {
         if (isAdmin) {
             badgeEl.innerText = 'ADMIN';
             badgeEl.className = 'text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-800 border border-indigo-200';
+        } else if (isManager) {
+            badgeEl.innerText = 'QUẢN LÝ';
+            badgeEl.className = 'text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200';
         } else {
             badgeEl.innerText = 'GUEST';
             badgeEl.className = 'text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200';
@@ -653,6 +674,9 @@ function updateAuthUI() {
         if (isAdmin) {
             avatarEl.innerText = 'AD';
             avatarEl.className = 'w-8 h-8 rounded-full bg-indigo-700 text-white flex items-center justify-center font-bold text-xs shadow-sm';
+        } else if (isManager) {
+            avatarEl.innerText = 'QL';
+            avatarEl.className = 'w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-sm';
         } else {
             avatarEl.innerText = 'GS';
             avatarEl.className = 'w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shadow-sm';
@@ -661,23 +685,23 @@ function updateAuthUI() {
 
     const btnAuthText = document.getElementById('btnAuthText');
     if (btnAuthText) {
-        btnAuthText.innerText = isAdmin ? 'Đổi TK' : 'Đăng nhập';
+        btnAuthText.innerText = canManage() ? 'Đổi TK' : 'Đăng nhập';
     }
 
     const btnAuthSwitch = document.getElementById('btnAuthSwitch');
     if (btnAuthSwitch) {
-        if (isAdmin) {
-            btnAuthSwitch.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center';
+        if (canManage()) {
+            btnAuthSwitch.className = 'px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center min-h-[38px] shadow-sm';
             btnAuthSwitch.title = 'Đổi tài khoản đăng nhập';
         } else {
-            btnAuthSwitch.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition flex items-center';
-            btnAuthSwitch.title = 'Đăng nhập với tư cách Quản trị viên';
+            btnAuthSwitch.className = 'px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/20 transition flex items-center min-h-[38px]';
+            btnAuthSwitch.title = 'Đăng nhập với tư cách Quản trị viên / Quản lý';
         }
     }
 
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
-        if (isAdmin) {
+        if (canManage()) {
             btnLogout.classList.remove('hidden');
         } else {
             btnLogout.classList.add('hidden');
@@ -694,7 +718,7 @@ function updateAuthUI() {
         }
     }
 
-    // Ẩn / hiện các nút thao tác Admin
+    // Ẩn / hiện các nút thao tác chỉnh sửa
     document.querySelectorAll('.admin-action, .admin-only').forEach(el => {
         if (isGuest) {
             el.classList.add('hidden');
@@ -703,13 +727,24 @@ function updateAuthUI() {
         }
     });
 
+    // Phần quản lý tài khoản & phân quyền (Chỉ SuperAdmin mới thấy)
+    const accountSection = document.getElementById('accountManagementSection');
+    if (accountSection) {
+        if (isAdmin) {
+            accountSection.classList.remove('hidden');
+            loadAccountsList();
+        } else {
+            accountSection.classList.add('hidden');
+        }
+    }
+
     // Disable nút di chuyển thiết bị nếu là guest
     const moveSubmitBtn = document.querySelector('#moveDeviceForm button[type="submit"]');
     if (moveSubmitBtn) {
         if (isGuest) {
             moveSubmitBtn.disabled = true;
             moveSubmitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            moveSubmitBtn.title = 'Chỉ Admin mới có quyền điều chuyển thiết bị';
+            moveSubmitBtn.title = 'Chỉ Quản trị viên/Quản lý mới có quyền điều chuyển thiết bị';
         } else {
             moveSubmitBtn.disabled = false;
             moveSubmitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -725,6 +760,239 @@ function updateAuthUI() {
 
     lucide.createIcons();
 }
+
+// ============================================================================
+// QUẢN LÝ TÀI KHOẢN & PHÂN QUYỀN (ACCOUNT MANAGEMENT)
+// ============================================================================
+async function loadAccountsList() {
+    const tbody = document.getElementById('accountsTableBody');
+    if (!tbody || !isSuperAdmin()) return;
+
+    try {
+        const res = await fetch('/api/auth/accounts');
+        if (!res.ok) {
+            tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Không có quyền truy cập danh sách tài khoản.</td></tr>`;
+            return;
+        }
+        const accounts = await res.json();
+        state.accounts = accounts;
+
+        if (accounts.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Chưa có tài khoản nào.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = accounts.map(acc => {
+            const isRootAdmin = acc.username === 'admin';
+            const isSelf = acc.id === state.currentUser.id;
+
+            let roleBadge = '';
+            if (acc.role === 'admin') {
+                roleBadge = `<span class="role-badge role-badge-admin"><i data-lucide="shield" class="w-3 h-3 mr-1"></i> Quản trị viên (Admin)</span>`;
+            } else if (acc.role === 'manager') {
+                roleBadge = `<span class="role-badge role-badge-manager"><i data-lucide="edit-3" class="w-3 h-3 mr-1"></i> Quản lý sửa đổi</span>`;
+            } else {
+                roleBadge = `<span class="role-badge role-badge-guest"><i data-lucide="eye" class="w-3 h-3 mr-1"></i> Khách (Chỉ xem)</span>`;
+            }
+
+            return `
+                <tr class="hover:bg-slate-50/80 transition">
+                    <td class="px-4 py-3 font-semibold text-slate-800 whitespace-nowrap">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-7 h-7 rounded-lg ${acc.role === 'admin' ? 'bg-indigo-600 text-white' : (acc.role === 'manager' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700')} flex items-center justify-center font-bold text-xs shrink-0">
+                                ${(acc.fullname || acc.username).charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-900">${escapeHtml(acc.username)}</span>
+                                ${isRootAdmin ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">Gốc</span>' : ''}
+                                ${isSelf ? '<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">Bạn</span>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-slate-700 font-medium whitespace-nowrap">
+                        ${escapeHtml(acc.fullname || '---')}
+                    </td>
+                    <td class="px-4 py-3 text-slate-500 whitespace-nowrap">
+                        <div>${escapeHtml(acc.email || 'Chưa có email')}</div>
+                        <div class="text-[11px] text-slate-400">${escapeHtml(acc.phone || '')}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        ${isRootAdmin ? `
+                            <div class="flex items-center space-x-1.5">
+                                ${roleBadge}
+                            </div>
+                        ` : `
+                            <select onchange="handleChangeAccountRole(${acc.id}, this.value)" class="text-xs border border-slate-200 rounded-lg px-2 py-1 bg-white font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="admin" ${acc.role === 'admin' ? 'selected' : ''}>🛡️ Quản trị viên (Admin)</option>
+                                <option value="manager" ${acc.role === 'manager' ? 'selected' : ''}>✏️ Quản lý sửa đổi (Manager)</option>
+                                <option value="guest" ${acc.role === 'guest' ? 'selected' : ''}>👁️ Khách vãng lai (Guest)</option>
+                            </select>
+                        `}
+                    </td>
+                    <td class="px-4 py-3 text-slate-400 whitespace-nowrap text-[11px]">
+                        ${formatDate(acc.created_at || '')}
+                    </td>
+                    <td class="px-4 py-3 text-center whitespace-nowrap">
+                        <div class="flex items-center justify-center space-x-1">
+                            <button onclick="openResetPasswordModal(${acc.id}, '${escapeHtml(acc.username)}')" title="Đặt lại mật khẩu" class="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition">
+                                <i data-lucide="key-round" class="w-4 h-4"></i>
+                            </button>
+                            ${(!isRootAdmin && !isSelf) ? `
+                                <button onclick="handleDeleteAccount(${acc.id}, '${escapeHtml(acc.username)}')" title="Xóa tài khoản" class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        lucide.createIcons();
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-red-500">Lỗi nạp danh sách tài khoản: ${err.message}</td></tr>`;
+    }
+}
+
+async function handleChangeAccountRole(accountId, newRole) {
+    try {
+        const res = await fetch(`/api/auth/accounts/${accountId}/role`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: newRole })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Lỗi phân quyền', text: data.error });
+            await loadAccountsList();
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: data.message,
+            timer: 1800,
+            showConfirmButton: false
+        });
+        await loadAccountsList();
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: err.message });
+    }
+}
+
+function openCreateAccountModal() {
+    document.getElementById('createAccountForm').reset();
+    openModal('createAccountModal');
+}
+
+async function handleCreateAccount(event) {
+    event.preventDefault();
+    const username = document.getElementById('newAccUsername').value.trim();
+    const fullname = document.getElementById('newAccFullname').value.trim();
+    const password = document.getElementById('newAccPassword').value;
+    const role = document.getElementById('newAccRole').value;
+    const email = document.getElementById('newAccEmail').value.trim();
+    const phone = document.getElementById('newAccPhone').value.trim();
+
+    try {
+        const res = await fetch('/api/auth/accounts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, fullname, password, role, email, phone })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Tạo tài khoản thất bại', text: data.error });
+            return;
+        }
+
+        closeModal('createAccountModal');
+        Swal.fire({
+            icon: 'success',
+            title: 'Tạo thành công!',
+            text: data.message,
+            timer: 2000,
+            showConfirmButton: false
+        });
+        await loadAccountsList();
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: err.message });
+    }
+}
+
+function openResetPasswordModal(accountId, username) {
+    document.getElementById('resetAccId').value = accountId;
+    document.getElementById('resetAccUsernameDisplay').innerText = username;
+    document.getElementById('resetAccNewPassword').value = '';
+    openModal('resetPasswordModal');
+}
+
+async function handleResetPassword(event) {
+    event.preventDefault();
+    const accountId = document.getElementById('resetAccId').value;
+    const new_password = document.getElementById('resetAccNewPassword').value;
+
+    try {
+        const res = await fetch(`/api/auth/accounts/${accountId}/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ new_password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Đặt lại mật khẩu thất bại', text: data.error });
+            return;
+        }
+
+        closeModal('resetPasswordModal');
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: data.message,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: err.message });
+    }
+}
+
+async function handleDeleteAccount(accountId, username) {
+    const result = await Swal.fire({
+        title: `Xác nhận xóa tài khoản "${username}"?`,
+        text: 'Tài khoản này sẽ không thể đăng nhập vào hệ thống nữa.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Đồng ý xóa',
+        cancelButtonText: 'Hủy'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const res = await fetch(`/api/auth/accounts/${accountId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Xóa thất bại', text: data.error });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Đã xóa!',
+            text: data.message,
+            timer: 1800,
+            showConfirmButton: false
+        });
+        await loadAccountsList();
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: err.message });
+    }
+}
+
 
 function openAuthModal(tab = 'login') {
     switchAuthTab(tab);
@@ -1121,7 +1389,7 @@ async function loadDevices() {
                             <button onclick="viewDeviceDetail(${d.id})" title="Xem chi tiết & lịch sử" class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
-                            ${state.currentUser.role === 'admin' ? `
+                            ${canManage() ? `
                                 <button onclick="quickMoveDevice('${d.code}')" title="Di chuyển vị trí phòng" class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition">
                                     <i data-lucide="truck" class="w-4 h-4"></i>
                                 </button>
@@ -1596,7 +1864,7 @@ async function loadBorrowRequests() {
             }
 
             let actions = '';
-            if (state.currentUser.role === 'admin') {
+            if (canManage()) {
                 if (b.status === 'Chờ duyệt') {
                     actions = `
                         <button onclick="handleApproveBorrow(${b.id})" class="px-2.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm transition whitespace-nowrap">Duyệt mượn</button>
@@ -1855,7 +2123,7 @@ function renderUsers() {
         countBadge.innerText = `Hiển thị ${filtered.length} / ${(state.users || []).length} cán bộ`;
     }
 
-    const isAdmin = state.currentUser.role === 'admin';
+    const isAdmin = canManage();
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
 
@@ -1967,7 +2235,7 @@ function renderLocations() {
         countBadge.innerText = `Hiển thị ${filtered.length} / ${(state.locations || []).length} phòng`;
     }
 
-    const isAdmin = state.currentUser.role === 'admin';
+    const isAdmin = canManage();
     const tbody = document.getElementById('locationsTableBody');
     if (!tbody) return;
 
@@ -2034,8 +2302,8 @@ function clearLocationSearch() {
 
 // Chỉnh sửa nhanh Loại phòng trực tiếp trên bảng
 async function handleInlineRoomTypeChange(locId, newType) {
-    if (state.currentUser.role !== 'admin') {
-        Swal.fire({ icon: 'warning', title: 'Từ chối quyền', text: 'Chỉ Quản trị viên (Admin) mới có quyền chỉnh sửa loại phòng!' });
+    if (!canManage()) {
+        Swal.fire({ icon: 'warning', title: 'Từ chối quyền', text: 'Chỉ Quản trị viên hoặc Quản lý mới có quyền chỉnh sửa loại phòng!' });
         await loadLocations();
         return;
     }

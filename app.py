@@ -33,12 +33,12 @@ def get_current_account():
         'is_authenticated': False
     }
 
-# Decorator kiểm tra quyền Admin
+# Decorator kiểm tra quyền Quản trị / Chỉnh sửa dữ liệu (Admin hoặc Manager)
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         acc = get_current_account()
-        if acc.get('role') != 'admin':
+        if acc.get('role') not in ('admin', 'manager'):
             return jsonify({
                 'error': 'Quyền truy cập bị từ chối! Bạn đang truy cập với vai trò Khách (Guest) - chỉ có quyền xem, không được phép thêm mới, chỉnh sửa hoặc xóa dữ liệu.',
                 'require_admin': True,
@@ -46,6 +46,21 @@ def admin_required(f):
             }), 403
         return f(*args, **kwargs)
     return decorated_function
+
+# Decorator kiểm tra quyền Quản trị viên Tối cao (Chỉ dành cho Admin để phân quyền tài khoản & hệ thống)
+def superadmin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        acc = get_current_account()
+        if acc.get('role') != 'admin':
+            return jsonify({
+                'error': 'Quyền truy cập bị từ chối! Chỉ có Quản trị viên cấp cao (Admin) mới có quyền phân quyền tài khoản và cấu hình hệ thống.',
+                'require_superadmin': True,
+                'current_role': acc.get('role')
+            }), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 # Helper dict conversion
 def dict_from_row(row):
@@ -183,7 +198,7 @@ def auth_logout():
     return jsonify({'success': True, 'message': 'Đã đăng xuất thành công!'})
 
 @app.route('/api/auth/accounts', methods=['GET'])
-@admin_required
+@superadmin_required
 def list_accounts():
     conn = get_db()
     cursor = conn.cursor()
@@ -191,6 +206,132 @@ def list_accounts():
     accs = [dict_from_row(r) for r in cursor.fetchall()]
     conn.close()
     return jsonify(accs)
+
+@app.route('/api/auth/accounts', methods=['POST'])
+@superadmin_required
+def create_account():
+    data = request.json or {}
+    username = data.get('username', '').strip().lower()
+    password = data.get('password', '').strip()
+    fullname = data.get('fullname', '').strip()
+    role = data.get('role', 'guest').strip().lower()
+    email = data.get('email', '').strip()
+    phone = data.get('phone', '').strip()
+
+    if role not in ('admin', 'manager', 'guest'):
+        return jsonify({'error': 'Vai trò không hợp lệ! Vui lòng chọn admin, manager hoặc guest.'}), 400
+    if not username or len(username) < 3:
+        return jsonify({'error': 'Tên đăng nhập phải có ít nhất 3 ký tự!'}), 400
+    if not password or len(password) < 4:
+        return jsonify({'error': 'Mật khẩu phải có ít nhất 4 ký tự!'}), 400
+    if not fullname:
+        return jsonify({'error': 'Vui lòng nhập họ và tên!'}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM accounts WHERE LOWER(username) = ?", (username,))
+    if cursor.fetchone():
+        conn.close()
+        return jsonify({'error': f'Tên tài khoản "{username}" đã tồn tại. Vui lòng chọn tên khác!'}), 400
+
+    pass_hash = generate_password_hash(password)
+    cursor.execute("""
+        INSERT INTO accounts (username, password_hash, fullname, role, email, phone)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (username, pass_hash, fullname, role, email, phone))
+    conn.commit()
+    conn.close()
+
+    current = get_current_account()
+    log_activity("Tạo tài khoản", f"Admin {current.get('username')} tạo tài khoản {username} ({fullname}) vai trò {role.upper()}", "auth", current.get('fullname'))
+    return jsonify({'success': True, 'message': f'Đã tạo tài khoản {username} với vai trò {role.upper()} thành công!'})
+
+@app.route('/api/auth/accounts/<int:account_id>/role', methods=['PUT'])
+@superadmin_required
+def update_account_role(account_id):
+    data = request.json or {}
+    new_role = data.get('role', '').strip().lower()
+
+    if new_role not in ('admin', 'manager', 'guest'):
+        return jsonify({'error': 'Vai trò không hợp lệ! Chỉ chấp nhận: admin, manager, guest.'}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM accounts WHERE id = ?", (account_id,))
+    target = cursor.fetchone()
+
+    if not target:
+        conn.close()
+        return jsonify({'error': 'Tài khoản không tồn tại!'}), 404
+
+    if target['username'] == 'admin' and new_role != 'admin':
+        conn.close()
+        return jsonify({'error': 'Không thể hạ quyền tài khoản Quản trị viên (admin) mặc định của hệ thống!'}), 400
+
+    cursor.execute("UPDATE accounts SET role = ? WHERE id = ?", (new_role, account_id))
+    conn.commit()
+    conn.close()
+
+    current = get_current_account()
+    role_names = {'admin': 'QUẢN TRỊ VIÊN (ADMIN)', 'manager': 'QUẢN LÝ SỬA ĐỔI (MANAGER)', 'guest': 'KHÁCH (GUEST)'}
+    log_activity("Phân quyền tài khoản", f"Admin {current.get('username')} đã phân quyền tài khoản {target['username']} thành {role_names.get(new_role, new_role.upper())}", "auth", current.get('fullname'))
+    return jsonify({'success': True, 'message': f'Đã cập nhật vai trò tài khoản {target["username"]} thành {role_names.get(new_role, new_role.upper())}!'})
+
+@app.route('/api/auth/accounts/<int:account_id>/reset-password', methods=['POST'])
+@superadmin_required
+def reset_account_password(account_id):
+    data = request.json or {}
+    new_password = data.get('new_password', '').strip()
+
+    if not new_password or len(new_password) < 4:
+        return jsonify({'error': 'Mật khẩu mới phải có ít nhất 4 ký tự!'}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM accounts WHERE id = ?", (account_id,))
+    target = cursor.fetchone()
+
+    if not target:
+        conn.close()
+        return jsonify({'error': 'Tài khoản không tồn tại!'}), 404
+
+    pass_hash = generate_password_hash(new_password)
+    cursor.execute("UPDATE accounts SET password_hash = ? WHERE id = ?", (pass_hash, account_id))
+    conn.commit()
+    conn.close()
+
+    current = get_current_account()
+    log_activity("Đặt lại mật khẩu", f"Admin {current.get('username')} đặt lại mật khẩu cho tài khoản {target['username']}", "auth", current.get('fullname'))
+    return jsonify({'success': True, 'message': f'Đã đặt lại mật khẩu cho tài khoản {target["username"]} thành công!'})
+
+@app.route('/api/auth/accounts/<int:account_id>', methods=['DELETE'])
+@superadmin_required
+def delete_account(account_id):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM accounts WHERE id = ?", (account_id,))
+    target = cursor.fetchone()
+
+    if not target:
+        conn.close()
+        return jsonify({'error': 'Tài khoản không tồn tại!'}), 404
+
+    if target['username'] == 'admin':
+        conn.close()
+        return jsonify({'error': 'Không thể xóa tài khoản Quản trị viên gốc (admin)!'}), 400
+
+    current = get_current_account()
+    if target['id'] == current.get('id'):
+        conn.close()
+        return jsonify({'error': 'Không thể tự xóa tài khoản bạn đang đăng nhập!'}), 400
+
+    cursor.execute("DELETE FROM accounts WHERE id = ?", (account_id,))
+    conn.commit()
+    conn.close()
+
+    log_activity("Xóa tài khoản", f"Admin {current.get('username')} đã xóa tài khoản {target['username']} ({target['fullname']})", "auth", current.get('fullname'))
+    return jsonify({'success': True, 'message': f'Đã xóa tài khoản {target["username"]} thành công!'})
+
 
 # --- API STATS / DASHBOARD ---
 @app.route('/api/stats', methods=['GET'])
@@ -1325,7 +1466,7 @@ def backup_data():
     return response
 
 @app.route('/api/restore', methods=['POST'])
-@admin_required
+@superadmin_required
 def restore_data():
     if 'file' not in request.files:
         return jsonify({'error': 'Chưa chọn tệp sao lưu JSON!'}), 400
@@ -1384,7 +1525,7 @@ def restore_data():
     return jsonify({'success': True, 'message': 'Đã phục hồi dữ liệu thành công!'})
 
 @app.route('/api/reset-demo', methods=['POST'])
-@admin_required
+@superadmin_required
 def reset_demo():
     try:
         from import_all_2022_data import run_import

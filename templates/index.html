@@ -40,33 +40,34 @@
     <!-- TOP NAVBAR -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Brand / Logo -->
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                        <i data-lucide="layers" class="w-6 h-6"></i>
+            <div class="flex justify-between items-center h-16 gap-2">
+                <!-- Brand / Logo (Co giãn thông minh: Mobile hiển thị QLTB, Tablet & Desktop hiển thị đầy đủ) -->
+                <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer shrink-0" onclick="switchTab('dashboard')">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+                        <i data-lucide="layers" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
                     <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold text-lg text-slate-900 tracking-tight">QLTB SCHOOL</span>
-                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">v2.0 Pro</span>
+                        <div class="flex items-center space-x-1.5 sm:space-x-2">
+                            <span class="font-bold text-base sm:text-lg text-slate-900 tracking-tight whitespace-nowrap">QLTB</span>
+                            <span class="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold whitespace-nowrap">v2.0 Pro</span>
                         </div>
-                        <p class="text-xs text-slate-500 font-medium">Hệ thống Quản lý Thiết bị Trường học</p>
+                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium hidden md:block">Hệ thống Quản lý Thiết bị Trường học</p>
                     </div>
                 </div>
 
-                <!-- Quick Actions & User Switcher -->
-                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
-                    <button onclick="openBorrowModal()" class="inline-flex items-center px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition shrink-0">
-                        <i data-lucide="arrow-left-right" class="w-4 h-4 mr-1.5"></i> Mượn thiết bị
+                <!-- Quick Actions & User Switcher (Luôn hiển thị đầy đủ, không tràn màn hình mobile) -->
+                <div class="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
+                    <button onclick="openBorrowModal()" title="Mượn thiết bị" class="inline-flex items-center px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition shrink-0 min-h-[36px]">
+                        <i data-lucide="arrow-left-right" class="w-4 h-4 sm:mr-1.5"></i>
+                        <span class="hidden sm:inline">Mượn thiết bị</span>
                     </button>
 
-                    <!-- Active User / Role & Authentication Profile (Mặc định khi vào là Khách) -->
-                    <div class="relative pl-2 sm:pl-3 border-l border-slate-200 flex items-center space-x-2 shrink-0">
+                    <!-- Active User / Role Profile -->
+                    <div class="relative pl-1.5 sm:pl-2.5 border-l border-slate-200 flex items-center space-x-1.5 sm:space-x-2 shrink-0">
                         <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0" id="userAvatar">
                             GS
                         </div>
-                        <div class="hidden sm:block text-left text-xs">
+                        <div class="hidden lg:block text-left text-xs">
                             <div class="flex items-center space-x-1.5">
                                 <p class="font-bold text-slate-800 truncate max-w-[120px]" id="currentUserName">Khách vãng lai</p>
                                 <span id="currentUserBadge" class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">
@@ -76,13 +77,13 @@
                             <p class="text-[11px] text-slate-500 truncate max-w-[120px]" id="currentUserRoleDesc">Chỉ có quyền xem</p>
                         </div>
 
-                        <!-- Auth Action Buttons -->
+                        <!-- Auth Action Buttons (Không bao giờ bị tràn khỏi mép màn hình trên điện thoại) -->
                         <div class="flex items-center space-x-1 shrink-0">
-                            <button onclick="openAuthModal('login')" id="btnAuthSwitch" title="Đăng nhập tài khoản" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition flex items-center">
-                                <i data-lucide="log-in" class="w-3.5 h-3.5 mr-1"></i>
-                                <span class="hidden md:inline" id="btnAuthText">Đăng nhập</span>
+                            <button onclick="openAuthModal('login')" id="btnAuthSwitch" title="Đăng nhập tài khoản" class="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/20 transition flex items-center min-h-[36px] shrink-0">
+                                <i data-lucide="log-in" class="w-4 h-4 mr-1 shrink-0"></i>
+                                <span id="btnAuthText">Đăng nhập</span>
                             </button>
-                            <button onclick="handleLogout()" id="btnLogout" title="Đăng xuất" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition hidden">
+                            <button onclick="handleLogout()" id="btnLogout" title="Đăng xuất" class="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition hidden min-h-[36px] min-w-[36px] flex items-center justify-center">
                                 <i data-lucide="log-out" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -90,14 +91,14 @@
                 </div>
             </div>
 
-            <!-- Guest Mode Notice Banner (Hiển thị khi role guest) -->
-            <div id="guestRoleBanner" class="hidden bg-amber-50 border-t border-amber-200 py-2 px-3 sm:px-4 text-xs text-amber-800 flex items-center justify-between">
+            <!-- Guest Mode Notice Banner (Hiển thị khi role guest, responsive cho iPad) -->
+            <div id="guestRoleBanner" class="hidden bg-amber-50 border-t border-amber-200 py-2.5 px-3 sm:px-4 text-xs text-amber-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div class="flex items-center space-x-2">
-                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-900 font-bold text-[10px]">!</span>
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-900 font-bold text-[10px] shrink-0">!</span>
                     <span>Bạn đang duyệt hệ thống với vai trò <strong>Khách (Guest) - Chế độ chỉ xem</strong>. Bạn không có quyền thêm mới, chỉnh sửa hoặc xóa dữ liệu.</span>
                 </div>
-                <button onclick="openAuthModal('login')" class="underline font-bold text-amber-900 hover:text-amber-700 ml-3 whitespace-nowrap">
-                    Đăng nhập Admin để chỉnh sửa &rarr;
+                <button onclick="openAuthModal('login')" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-200/80 hover:bg-amber-200 font-bold text-amber-950 transition whitespace-nowrap text-xs shadow-sm">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 mr-1.5"></i> Đăng nhập Quản trị để chỉnh sửa &rarr;
                 </button>
             </div>
 
@@ -797,6 +798,48 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- ================= QUẢN LÝ TÀI KHOẢN & PHÂN QUYỀN (CHỈ SUPERADMIN THẤY) ================= -->
+                <div id="accountManagementSection" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-3 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-100 gap-3">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                                    <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-indigo-600"></i> Quản lý Tài khoản & Phân quyền Hệ thống
+                                </h3>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">Dành riêng Admin</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Cấp quyền Quản trị viên (Admin - toàn quyền), Người chỉnh sửa (Manager - sửa thiết bị/mượn trả) hoặc Khách (Guest - chỉ xem) cho tài khoản.</p>
+                        </div>
+                        <div class="flex items-center space-x-2 shrink-0">
+                            <button onclick="loadAccountsList()" class="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition" title="Làm mới danh sách">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="openCreateAccountModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-sm shadow-indigo-600/20 transition flex items-center">
+                                <i data-lucide="user-plus" class="w-4 h-4 mr-1.5"></i> Thêm tài khoản mới
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bảng danh sách tài khoản (Responsive iPad & Desktop) -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-500 uppercase font-semibold">
+                                <tr>
+                                    <th class="px-4 py-3">Tài khoản</th>
+                                    <th class="px-4 py-3">Họ và tên</th>
+                                    <th class="px-4 py-3">Email / Số ĐT</th>
+                                    <th class="px-4 py-3">Phân quyền (Vai trò)</th>
+                                    <th class="px-4 py-3">Ngày tạo</th>
+                                    <th class="px-4 py-3 text-center">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="6" class="py-4 text-center text-slate-400">Đang tải danh sách tài khoản...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1337,123 +1380,210 @@
         </div>
     </div>
 
-    <!-- 8. MODAL ĐĂNG NHẬP / ĐĂNG KÝ (AUTHENTICATION) -->
-    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+    <!-- 8. MODAL ĐĂNG NHẬP / ĐĂNG KÝ (TỐI ƯU CHO IPAD VÀ THIẾT BỊ DI ĐỘNG) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
             <!-- Modal Header with Tabs -->
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <div class="flex space-x-1.5 bg-slate-200/70 p-1 rounded-xl">
-                    <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm transition">
+                    <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" class="px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg bg-blue-600 text-white shadow-sm transition">
                         Đăng nhập
                     </button>
-                    <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">
+                    <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" class="px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">
                         Đăng ký tài khoản
                     </button>
                 </div>
-                <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition min-w-[38px] min-h-[38px] flex items-center justify-center">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Form Đăng nhập -->
-            <form id="loginForm" onsubmit="handleAuthLogin(event)" class="p-5 space-y-4">
-                <div class="text-center pb-1">
-                    <h4 class="font-bold text-slate-900 text-lg">Đăng nhập hệ thống QLTB</h4>
-                    <p class="text-xs text-slate-500 mt-0.5">Truy cập để quản lý và kiểm kê thiết bị trường học</p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-                        <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhập tên tài khoản..."
-                               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <div class="overflow-y-auto flex-1">
+                <!-- Form Đăng nhập -->
+                <form id="loginForm" onsubmit="handleAuthLogin(event)" class="p-5 space-y-4">
+                    <div class="text-center pb-1">
+                        <h4 class="font-bold text-slate-900 text-lg">Đăng nhập hệ thống QLTB</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Truy cập để quản lý và kiểm kê thiết bị trường học</p>
                     </div>
-                </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
-                    <div class="relative">
-                        <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-                        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhập mật khẩu..."
-                               class="w-full pl-9 pr-10 py-2 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i data-lucide="eye" id="loginEyeIcon" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/20 transition flex items-center justify-center">
-                    <i data-lucide="log-in" class="w-4 h-4 mr-2"></i> Đăng nhập
-                </button>
-            </form>
-
-            <!-- Form Đăng ký -->
-            <form id="registerForm" onsubmit="handleAuthRegister(event)" class="p-5 space-y-3.5 hidden">
-                <div class="text-center pb-1">
-                    <h4 class="font-bold text-slate-900 text-lg">Đăng ký tài khoản mới</h4>
-                    <p class="text-xs text-slate-500 mt-0.5">Tạo tài khoản truy cập hệ thống</p>
-                </div>
-
-                <!-- Thông báo bảo mật phân quyền -->
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start space-x-2">
-                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
                     <div>
-                        <p class="font-bold">Lưu ý phân quyền bảo mật:</p>
-                        <p class="text-[11px] text-amber-700 mt-0.5">Tài khoản đăng ký mới mặc định có vai trò <strong>Khách (Guest - Chỉ xem)</strong>. Quyền Quản trị viên (Admin) chỉ do Ban Quản trị cấp sau khi duyệt.</p>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                            <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhập tên tài khoản..."
+                                   class="w-full pl-9 pr-3 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
                     </div>
-                </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
-                    <input type="text" id="regFullname" required placeholder="Ví dụ: Nguyễn Văn An"
-                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên tài khoản (Username) <span class="text-red-500">*</span></label>
-                    <input type="text" id="regUsername" required placeholder="Tối thiểu 3 ký tự (chữ, số)"
-                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input type="password" id="regPassword" required placeholder="Ít nhất 4 ký tự"
-                                   class="w-full text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEyeIcon1')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
-                                <i data-lucide="eye" id="regEyeIcon1" class="w-3.5 h-3.5"></i>
+                            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                            <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhập mật khẩu..."
+                                   class="w-full pl-9 pr-10 py-2.5 text-base sm:text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 p-1">
+                                <i data-lucide="eye" id="loginEyeIcon" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Xác nhận MK <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <input type="password" id="regPasswordConfirm" required placeholder="Nhập lại mật khẩu"
-                                   class="w-full text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <button type="button" onclick="togglePasswordVisibility('regPasswordConfirm', 'regEyeIcon2')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
-                                <i data-lucide="eye" id="regEyeIcon2" class="w-3.5 h-3.5"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
+                    <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/20 transition flex items-center justify-center min-h-[44px]">
+                        <i data-lucide="log-in" class="w-4 h-4 mr-2"></i> Đăng nhập
+                    </button>
+                </form>
+
+                <!-- Form Đăng ký -->
+                <form id="registerForm" onsubmit="handleAuthRegister(event)" class="p-5 space-y-3.5 hidden">
+                    <div class="text-center pb-1">
+                        <h4 class="font-bold text-slate-900 text-lg">Đăng ký tài khoản mới</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">Tạo tài khoản truy cập hệ thống</p>
+                    </div>
+
+                    <!-- Thông báo bảo mật phân quyền -->
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start space-x-2">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                        <div>
+                            <p class="font-bold">Lưu ý phân quyền bảo mật:</p>
+                            <p class="text-[11px] text-amber-700 mt-0.5">Tài khoản đăng ký mới mặc định có vai trò <strong>Khách (Guest - Chỉ xem)</strong>. Quyền Quản trị viên (Admin) hoặc Quản lý (Manager) do Ban Quản trị cấp sau khi duyệt.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                        <input type="text" id="regFullname" required placeholder="Ví dụ: Nguyễn Văn An"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tên tài khoản (Username) <span class="text-red-500">*</span></label>
+                        <input type="text" id="regUsername" required placeholder="Tối thiểu 3 ký tự (chữ, số)"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="regPassword" required placeholder="Ít nhất 4 ký tự"
+                                       class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEyeIcon1')" class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600">
+                                    <i data-lucide="eye" id="regEyeIcon1" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Xác nhận MK <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="regPasswordConfirm" required placeholder="Nhập lại mật khẩu"
+                                       class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <button type="button" onclick="togglePasswordVisibility('regPasswordConfirm', 'regEyeIcon2')" class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600">
+                                    <i data-lucide="eye" id="regEyeIcon2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                            <input type="email" id="regEmail" placeholder="email@truong.edu.vn"
+                                   class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                            <input type="text" id="regPhone" placeholder="0901234567"
+                                   class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition flex items-center justify-center min-h-[44px]">
+                        <i data-lucide="user-check" class="w-4 h-4 mr-2"></i> Hoàn tất đăng ký & Đăng nhập
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8.1. MODAL ADMIN THÊM TÀI KHOẢN MỚI & PHÂN QUYỀN -->
+    <div id="createAccountModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="user-plus" class="w-5 h-5 mr-2 text-indigo-600"></i> Thêm tài khoản người dùng
+                </h3>
+                <button onclick="closeModal('createAccountModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="createAccountForm" onsubmit="handleCreateAccount(event)" class="p-5 space-y-3.5 overflow-y-auto">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên tài khoản (Username) <span class="text-red-500">*</span></label>
+                    <input type="text" id="newAccUsername" required placeholder="Ví dụ: thinhnv, qltb_gv1..."
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="newAccFullname" required placeholder="Ví dụ: Nguyễn Văn Thịnh"
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu ban đầu <span class="text-red-500">*</span></label>
+                    <input type="password" id="newAccPassword" required placeholder="Tối thiểu 4 ký tự..."
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">🛡️ Phân quyền hệ thống (Vai trò) <span class="text-red-500">*</span></label>
+                    <select id="newAccRole" required class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-slate-800">
+                        <option value="admin">Quản trị viên (Admin) - Toàn quyền & Phân quyền</option>
+                        <option value="manager" selected>Quản lý sửa đổi (Manager) - Sửa thiết bị, mượn trả</option>
+                        <option value="guest">Khách vãng lai (Guest) - Chỉ xem dữ liệu</option>
+                    </select>
+                </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
-                        <input type="email" id="regEmail" placeholder="email@truong.edu.vn"
-                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="email" id="newAccEmail" placeholder="email@truong.edu.vn"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
-                        <input type="text" id="regPhone" placeholder="0901234567"
-                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="newAccPhone" placeholder="0901234567"
+                               class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                 </div>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition flex items-center justify-center min-h-[44px]">
+                        <i data-lucide="check" class="w-4 h-4 mr-2"></i> Lưu & Tạo tài khoản
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition flex items-center justify-center">
-                    <i data-lucide="user-check" class="w-4 h-4 mr-2"></i> Hoàn tất đăng ký & Đăng nhập
+    <!-- 8.2. MODAL ĐẶT LẠI MẬT KHẨU TÀI KHOẢN -->
+    <div id="resetPasswordModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center">
+                    <i data-lucide="key-round" class="w-4 h-4 mr-2 text-amber-600"></i> Đặt lại mật khẩu
+                </h3>
+                <button onclick="closeModal('resetPasswordModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <form id="resetPasswordForm" onsubmit="handleResetPassword(event)" class="p-5 space-y-4">
+                <input type="hidden" id="resetAccId">
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Tài khoản được đặt lại</label>
+                    <p class="font-bold text-slate-800 text-sm bg-slate-100 p-2 rounded-xl" id="resetAccUsernameDisplay">admin</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu mới <span class="text-red-500">*</span></label>
+                    <input type="password" id="resetAccNewPassword" required placeholder="Tối thiểu 4 ký tự..."
+                           class="w-full text-base sm:text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm transition flex items-center justify-center min-h-[44px]">
+                    <i data-lucide="check" class="w-4 h-4 mr-1.5"></i> Cập nhật mật khẩu mới
                 </button>
             </form>
         </div>
