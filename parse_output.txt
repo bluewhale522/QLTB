@@ -1,0 +1,307 @@
+Total PDF pages: 6
+
+================ PAGE 1 ================
+PHÒNG 
+TUYỂN SINH
+PHÒNG VIP
+PHÒNG HCTH
+PHÒNG HỌP
+VĂN PHÒNG
+ TRƯỜNG
+MOON
+GYMKIDS
+1F61F8
+PHÒNG 
+TCKT
+PHÒNG Y TẾ
+1F11
+PHÒNG HT MẦM NON
+================ PAGE 2 ================
+STAR 2LỚP RAINBOW
+PHÒNG
+PHÓ HT
+PHÒNG
+KHẢO THÍ & 
+KIỂM ĐỊNH CHẤT LƯỢNG
+PHÒNG PT
+PHÒNG PT
+PHÒNG HỘI ĐỒNG
+PHÒNG 
+GIÁO VIÊN CẤP TIỂU HỌC
+PHÒNG NHẠC
+THƯ VIỆN
+================ PAGE 3 ================
+PHÒNG
+THƯ KÝ
+CT HĐQT
+PHÒNG 
+CHỦ TỊCH HĐQT
+PHÒNG 
+BAN ĐẦU TƯPHÒNG ROBOTICS
+LỚP 5A2
+LỚP 4A3
+PHÒNG 
+ĐÀN PIANO
+PHÒNG NHẠC
+PHÒNG MỸ THUẬT
+================ PAGE 4 ================
+LỚP 9A3
+KHTN
+LỚP 9A2LỚP 9A1
+PHÒNG VIPLỚP 8A1LỚP 8A2LỚP 6A1LỚP 6A2
+LỚP 7A2LỚP 7A1
+================ PAGE 5 ================
+PHÒNG
+GIÁM ĐỐC
+HỌC THUẬT
+PHÒNG
+ TỔNG GIÁM ĐỐC
+PHÒNG
+ PHÓ HIỆU TRƯỞNG
+PHÒNG
+ HIỆU TRƯỞNG
+LỚP 11A1
+TỔ XÃ HỘI
+LỚP 10A2
+LỚP 10A1LỚP 12A1
+ThƯ VIỆN
+================ PAGE 6 ================
+[EMPTY TEXT / SCANNED]
+
+================ SHEET: TOTAL (max_row=107, max_col=9) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Số lượng', None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', 'Đầu vào', 'Thực tế', 'Chênh lệch']
+R5: [1, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, 1, 1, 0]
+R6: [2, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, 1, 1, 0]
+R7: [3, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, 45, 45, 0]
+R8: [4, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, 153, 153, 0]
+R9: [5, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, 22, 22, 0]
+R10: [6, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, 2, 2, 0]
+R11: [7, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, 6, 6, 0]
+R12: [8, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, 7, 7, 0]
+R13: [9, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, 7, 6, -1]
+R14: [10, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, 1, 1, 0]
+R15: [11, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, 5, 5, 0]
+R16: [12, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, 5, 5, 0]
+R17: [13, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, 4, 4, 0]
+R18: [14, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, 2, 2, 0]
+R19: [15, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, 28, 28, 0]
+R20: [16, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, 7, 7, 0]
+R21: [17, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, 6, 6, 0]
+R22: [18, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, 1, 1, 0]
+R23: [19, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, 1, 1, 0]
+R24: [20, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, 1, 1, 0]
+R25: [21, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, 1, 1, 0]
+R26: [22, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, 1, 1, 0]
+R27: [23, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, 48, 48, 0]
+R28: [24, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, 3, 3, 0]
+R29: [25, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, 4, 4, 0]
+R30: [26, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, 144, 144, 0]
+R31: [27, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, 149, 146, -3]
+R32: [28, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, 13, 13, 0]
+R33: [29, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, 3, 3, 0]
+R34: [30, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, 47, 47, 0]
+
+================ SHEET: Tầng 1 (max_row=351, max_col=49) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', '1F1', '1F2 (Bảo vệ)', '1F3', '1F4', '1F5', '1F6', '1F7', '1F8', '1F9', '1F10', '1F11', '1F12', '1F13', '1F14', '1F15', '1F16', '1F17', '1F18']
+R5: [1, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R6: [2, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R7: [3, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R8: [4, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, 1, 1, 9, 1, 1, 1, None, None, 1, 1, 1, None, 1, 1, 1, 1, 1, 1]
+R9: [5, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R10: [6, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R11: [7, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R12: [8, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R13: [9, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R14: [10, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R15: [11, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R16: [12, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R17: [13, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R18: [14, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R19: [15, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R20: [16, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, 3, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R21: [17, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, 3, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R22: [18, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R23: [19, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R24: [20, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R25: [21, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R26: [22, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R27: [23, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, None, None, None, None, None, None, 1, None, None, None, None, None, 1, 1, 1, None, None]
+R28: [24, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, None, None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None]
+R29: [25, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R30: [26, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R31: [27, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, None, 6, None, None, None, 6, 4, None, None, None, None, None, 2, 2, 2, 2, 2]
+R32: [28, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, None, None, 2, None, None, None, None, None, None, None, None, None, None, None]
+R33: [29, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R34: [30, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, None, None, None, None, None, 1, None, None, None, None, None, None, None, 1, 1, 1, None]
+
+================ SHEET: Tầng 2 (max_row=363, max_col=40) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', '2F1', '2F2', '2F3', '2F4', '2F5', '2F6', '2F7', '2F8', '2F9', '2F10', '2F11', '2F12', '2F13', '2F14', '2F15', '2F16', '2F17', '2F18']
+R5: [None, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R6: [None, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R7: [None, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R8: [1, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, None, 1, None, 1, 7, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+R9: [2, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R10: [3, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R11: [4, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R12: [5, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R13: [6, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R14: [7, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R15: [8, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R16: [9, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R17: [10, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R18: [11, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R19: [12, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R20: [13, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R21: [14, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R22: [15, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R23: [16, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R24: [17, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R25: [18, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R26: [19, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R27: [20, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, 1, None, 1, None, 1, 1, None, 1, 1, 1, 1, 1, 1, 1, None, 1, 1]
+R28: [21, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R29: [22, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 1]
+R30: [23, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R31: [24, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, 2, None, 2, 9, 2, 2, None, 2, 2, 2, 2, 2, 2, 2, None, 2, 2]
+R32: [25, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R33: [26, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R34: [27, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, 1, None, 1, None, 1, None, None, None, 1, None, 1, 1, 1, 1, None, None, None]
+
+================ SHEET: Tầng 3 (max_row=503, max_col=49) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', '3F1', '3F2', '3F3', '3F4', '3F5', '3F6', '3F7', '3F8', '3F9', '3F10', '3F11', '3F12', '3F13', '3F14', '3F15', '3F16', '3F17', '3F18']
+R5: [1, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R6: [2, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R7: [3, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, 1, None, None, None, 1, 1, 1, None, None, None, None, None, 1, None, 1, None]
+R8: [4, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, None, 1, None, 1, 1, 1, None, None, None, 1, 1, 1, 1, None, None, None, None, None]
+R9: [5, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R10: [6, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R11: [7, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R12: [8, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R13: [9, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R14: [10, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R15: [11, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R16: [12, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R17: [13, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R18: [14, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R19: [15, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R20: [16, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R21: [17, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R22: [18, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R23: [19, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R24: [20, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R25: [21, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R26: [22, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R27: [23, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, 1, None, 1, 1, 1, 1, None, None, 1, 1, 1, None, None, None, 1, 1, 1]
+R28: [24, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R29: [25, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R30: [26, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, None, None, None, 2, None, None, None, None, None, None, None, None, None, None, None]
+R31: [27, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, 2, None, 2, 2, 2, 1, None, None, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+R32: [28, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, 1, None, 1, None, None, None, None, None, None, None, None, None, None, None]
+R33: [29, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R34: [30, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, None, None, None, 1, None, 1, None, None, None, None, None, None, None, None, None, None, None]
+
+================ SHEET: Tầng 4 (max_row=366, max_col=43) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', '4F1', '4F2', '4F3', '4F4', '4F5', '4F6', '4F7', '4F8', '4F9', '4F10', '4F11', '4F12', '4F13', '4F14', '4F15', '4F16', '4F17', '4F18']
+R5: [1, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R6: [2, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R7: [3, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, None, None, None, None, 1, 1, 1, None, 1, 1, 1, 1, 1, 1, 1, 1]
+R8: [4, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, None, 1, None, 1, None, 1, None, None, None, None, None, None, None, None, None, None, None, None]
+R9: [5, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R10: [6, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R11: [7, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R12: [8, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R13: [9, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R14: [10, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R15: [11, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R16: [12, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R17: [13, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R18: [14, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R19: [15, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R20: [16, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R21: [17, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R22: [18, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R23: [19, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R24: [20, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R25: [21, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R26: [22, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R27: [23, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, 1, None, 1, None, 1, None, None, None, 1, 1, 1, 1, 1, 1, None, None, None]
+R28: [24, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R29: [25, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R30: [26, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, 4, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R31: [27, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, 2, None, None, None, 2, None, None, 2, None, 2, 2, 2, 2, 2, 2, None, None]
+R32: [28, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R33: [29, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R34: [30, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+================ SHEET: Tầng 5 (max_row=599, max_col=38) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', '5F1', '5F2', '5F3', '5F4', '5F5', '5F6', '5F7', '5F8', '5F9', '5F10', '5F11', '5F12', '5F13', '5F14', '5F15', '5F16', '5F17', '5F18']
+R5: [None, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R6: [None, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R7: [None, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, None, None, None, None, None, None, None, None, 1, None, 1, None, 1, None, None, None]
+R8: [1, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R9: [2, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R10: [3, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R11: [4, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R12: [5, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R13: [6, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R14: [7, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R15: [8, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R16: [9, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R17: [10, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R18: [11, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R19: [12, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R20: [13, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R21: [14, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R22: [15, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R23: [16, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R24: [17, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R25: [18, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R26: [19, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R27: [20, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R28: [21, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R29: [22, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R30: [23, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R31: [24, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, None, None, None, 2, None, 2, None, None, None, 2, None, 2, None, 2, None, None, None]
+R32: [25, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R33: [26, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+R34: [27, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, 5, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+================ SHEET: Tầng 6 (max_row=356, max_col=22) ================
+R3: ['STT', 'Phân loại', 'Tên thiết bị', None, None, None, 'Vị trí lắp đặt - Người sử dụng (Số lượng)', None, None, None, None, None, None, None, None, None, None, None, None, None, None, 'Tổng']
+R4: [None, None, None, 'Mã thiết bị', 'Cấu hình thiết bị', 'Hãng sản xuất', 'TUM', 'Thang máy', 'Tủ kỹ thuật điện', 'HÀNH LANG', '6F1', '6F3', '6F5', '6F7', '6F9', '6F11', '6F13', '6F15', '6F17', '6F19', '6F21', None]
+R5: [1, 'Camera', 'Đầu lưu trữ hình ảnh ', 'DS-7732NI-K4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R6: [2, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R7: [3, 'Camera', ' Camera IP Dome hồng ngoại 2.0 Megapixel', 'DS-2CD1123G0E-I(L)', None, None, None, None, None, 3, None, None, None, None, 1, 1, 1, 1, 1, 5, 1, 14]
+R8: [4, 'Camera', 'Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)', 'MS-C2975-PB', None, None, None, 2, None, None, None, None, None, None, None, None, None, None, None, None, None, 2]
+R9: [5, 'Camera', 'Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)', 'MS-C2962-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R10: [6, 'Camera', 'Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)', 'MS-C2862-FPB', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R11: [7, 'Camera', 'Camera IP quay quét (PTZ) -quan sát toàn cảnh', 'MS-C2941-X30R(P)B ', None, None, 3, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 3]
+R12: [8, 'Camera', 'Đầu lưu trữ hình ảnh ', 'MS-N8032-UH', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R13: [9, 'Camera', 'Switch 08 cổng PoE + 2 SFP', 'GS-4210-8P2S', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 1, None, 1]
+R14: [10, 'Camera', 'Switch 24 cổng LAN trung tâm', 'GS-5220-20T4C4X', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R15: [11, 'Camera', 'Module quang', 'MGB series MGB-LX', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R16: [12, 'Camera', 'Bộ chuyển đổi quang điện', 'GT-802S', None, None, None, 2, None, None, None, None, None, None, None, None, None, None, None, None, None, 2]
+R17: [13, 'Camera', 'Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).', 'VC-201A-EU', None, None, None, 4, None, None, None, None, None, None, None, None, None, None, None, None, None, 4]
+R18: [14, 'Camera', 'Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE', 'FPI -100GA', None, None, None, 2, None, None, None, None, None, None, None, None, None, None, None, None, None, 2]
+R19: [15, 'Camera', 'Ổ cứng Seagate Skyhawk ST4000VX007', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R20: [16, 'Camera', 'Smart Tivi Samsung 49 inch Full HD ', '49J5250', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R21: [17, 'Camera', 'Dây HDMI 5m', 'Ugreen', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R22: [18, 'Camera', 'Máy chủ HP ', '4FU52AV HP Z2 Tower G4', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R23: [19, 'Camera', 'Màn hình máy tính HP ', '3AL28AA HP', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R24: [20, 'Camera', 'Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA', ' SRT6KXLI', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R25: [21, 'Camera', 'Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa', 'MS-K02', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R26: [22, 'Camera', 'Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen', 'VN-/-', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R27: [23, 'Âm thanh', 'ÂM ly 60w', 'PLE-1MA060-EU', None, None, None, None, None, None, None, None, None, None, 1, 1, 1, None, None, None, 1, 4]
+R28: [24, 'Âm thanh', 'ÂM ly 240w', 'PLE-1ME240-EU', None, None, None, None, 1, None, None, None, None, None, None, None, None, None, None, None, None, 1]
+R29: [25, 'Âm thanh', 'ÂM ly 120w', 'PLE-1MA120-EU', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R30: [26, 'Âm thanh', 'Loa 6w', 'LHM0606/10', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R31: [27, 'Âm thanh', 'Loa 24w', 'LBC3099/41', None, None, None, None, None, None, None, None, None, None, 2, 2, 2, None, None, None, 4, 10]
+R32: [28, 'Âm thanh', 'Mic không dây ', 'MW1-HTX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 1, 1]
+R33: [29, 'Âm thanh', 'ÂM ly 480w', 'LBB1938/20', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 0]
+R34: [30, 'Âm thanh', 'Bộ thu', 'MW1-RX-F5', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 1, 1]

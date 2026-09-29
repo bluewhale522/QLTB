@@ -1,0 +1,135 @@
+
+================ NHÓM: Camera (Số loại: 22) ================
+- Đầu lưu trữ hình ảnh | Model: DS-7732NI-K4 | Số lượng: 1
+- Ổ cứng Seagate Skyhawk ST4000VX007 | Model:  | Số lượng: 1
+- Camera IP Dome hồng ngoại 2.0 Megapixel | Model: DS-2CD1123G0E-I(L) | Số lượng: 45
+- Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…) | Model: MS-C2975-PB | Số lượng: 153
+- Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…) | Model: MS-C2962-FPB | Số lượng: 22
+- Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2) | Model: MS-C2862-FPB | Số lượng: 2
+- Camera IP quay quét (PTZ) -quan sát toàn cảnh | Model: MS-C2941-X30R(P)B | Số lượng: 6
+- Đầu lưu trữ hình ảnh | Model: MS-N8032-UH | Số lượng: 7
+- Switch 08 cổng PoE + 2 SFP | Model: GS-4210-8P2S | Số lượng: 6
+- Switch 24 cổng LAN trung tâm | Model: GS-5220-20T4C4X | Số lượng: 1
+- Module quang | Model: MGB series MGB-LX | Số lượng: 5
+- Bộ chuyển đổi quang điện | Model: GT-802S | Số lượng: 5
+- Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy). | Model: VC-201A-EU | Số lượng: 4
+- Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE | Model: FPI -100GA | Số lượng: 2
+- Ổ cứng Seagate Skyhawk ST4000VX007 | Model:  | Số lượng: 28
+- Smart Tivi Samsung 49 inch Full HD | Model: 49J5250 | Số lượng: 7
+- Dây HDMI 5m | Model: Ugreen | Số lượng: 6
+- Máy chủ HP | Model: 4FU52AV HP Z2 Tower G4 | Số lượng: 1
+- Màn hình máy tính HP | Model: 3AL28AA HP | Số lượng: 1
+- Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA | Model: SRT6KXLI | Số lượng: 1
+- Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa | Model: MS-K02 | Số lượng: 1
+- Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen | Model: VN-/- | Số lượng: 1
+
+================ NHÓM: Âm thanh (Số loại: 28) ================
+- ÂM ly 60w | Model: PLE-1MA060-EU | Số lượng: 48
+- ÂM ly 240w | Model: PLE-1ME240-EU | Số lượng: 3
+- ÂM ly 120w | Model: PLE-1MA120-EU | Số lượng: 4
+- Loa 6w | Model: LHM0606/10 | Số lượng: 144
+- Loa 24w | Model: LBC3099/41 | Số lượng: 146
+- Mic không dây | Model: MW1-HTX-F5 | Số lượng: 13
+- ÂM ly 480w | Model: LBB1938/20 | Số lượng: 3
+- Bộ thu | Model: MW1-RX-F5 | Số lượng: 47
+- ÂM ly 480w | Model: FV-248PA | Số lượng: 2
+- Bàn trộn (Mixer) | Model: MG10XU | Số lượng: 2
+- Mic đại biểu | Model: CCS-DL | Số lượng: 27
+- Mic chủ tịch | Model: CCS-CML | Số lượng: 1
+- Bộ điều khiển trung tâm | Model: CCS-CUD | Số lượng: 1
+- cáp nối dài 10M | Model: LBB3316/10 | Số lượng: 2
+- Loa hộp 30w | Model: LB2/UC30-D1 | Số lượng: 4
+- Mic cài ve | Model: MW1-LTX-F5 | Số lượng: 34
+- Âm ly 30w | Model: PLE-1MA030-EU | Số lượng: 1
+- Loa hộp 90w | Model: EVID-S5.2XW | Số lượng: 8
+- Network | Model: IP-1000CI | Số lượng: 1
+- Phần mềm | Model: IP-1000S | Số lượng: 1
+- Khối giao diện audio | Model: IP-1000AF | Số lượng: 8
+- Module mạng | Model: IP-100XI | Số lượng: 2
+- Âm ly 120w | Model: AX-0120 | Số lượng: 1
+- Âm ly 240w | Model: AX-0240 | Số lượng: 1
+- Micro chọn 10 vùng IP | Model: IP-100RM | Số lượng: 3
+- Tủ 12 U có khay để mixer | Model:  | Số lượng: 3
+- Tủ 32U | Model: D600 | Số lượng: 1
+- Loa phóng | Model:  | Số lượng: 3
+
+================ NHÓM: Máy tính bàn (Số loại: 13) ================
+- Máy tính bàn DELL | Model: Dell 3470ST | Số lượng: 34
+- Máy tính bàn DELL | Model: Dell 3470ST | Số lượng: 24
+- Máy tính bàn DELL | Model: Dell 3470ST | Số lượng: 2
+- Máy tính bàn DELL | Model: Dell 3671 | Số lượng: 14
+- Máy tính bàn | Model:  | Số lượng: 1
+- Máy tính bàn DELL | Model: Dell Vostro 3681 | Số lượng: 21
+- Máy tính bàn DELL | Model: Dell Vostro 3681 | Số lượng: 33
+- Màn hình máy tính để bàn Dell | Model: Dell E1920H | Số lượng: 54
+- Case máy tính ĐNA ( I5 12400, mainboard gigabyte B760, SSD kingmax 250Gb, DDR4 8Gb. Bàn phím chuột Fuhlen) | Model:  | Số lượng: 23
+- Màn hình máy tính để bàn Dell | Model: Dell 2225H | Số lượng: 23
+- Bộ lưu điện APC 700VA | Model: BVX700LUI-MS | Số lượng: 26
+- Case máy tính ĐNA ( I3 10105, mainboard gigabyte H510, SSD  250Gb, DDR4 8Gb. Bàn phím chuột Fuhlen) | Model:  | Số lượng: 10
+- Màn hình máy tính để bàn Dell | Model: D2020H | Số lượng: 5
+
+================ NHÓM: Màn hình máy tính (Số loại: 3) ================
+- Màn hình máy tính để bàn Dell | Model: Man hinh LCD Dell E2016HV 19.5" | Số lượng: 58
+- Màn hình máy tính để bàn Dell | Model: Màn hình máy tính Dell SE2417HG | Số lượng: 4
+- Màn hình máy tính để bàn Dell | Model: Dell E2016HV | Số lượng: 14
+
+================ NHÓM: Laptop Dell (Số loại: 1) ================
+- Laptop Dell | Model: Dell Latitude 3400 | Số lượng: 16
+
+================ NHÓM: Máy in, photo (Số loại: 6) ================
+- Máy in, photo | Model: Canon 251DW | Số lượng: 9
+- Máy in, photo | Model: Canon 252DW | Số lượng: 1
+- Máy in, photo | Model: Canon 1 mặt P Truyền thông | Số lượng: 1
+- Máy in, photo | Model: Ricoh 7502 | Số lượng: 1
+- Máy in, photo | Model: Toshiba 5560C | Số lượng: 1
+- Máy in, photo | Model: LBP 226 | Số lượng: 2
+
+================ NHÓM: Máy chiếu (Số loại: 6) ================
+- Máy chiếu | Model: Epson EB-W05 | Số lượng: 18
+- Máy chiếu | Model: Sony VPL-EX430 | Số lượng: 4
+- Máy chiếu | Model: Sony VPL-EX435,EX575 | Số lượng: 20
+- Máy chiếu Epson | Model: EB–E10 | Số lượng: 14
+- Phông chiếu cơ | Model:  | Số lượng: 26
+- Máy chiếu Epson | Model: EB–w06 | Số lượng: 1
+
+================ NHÓM: Unifi (Số loại: 1) ================
+- Bộ phát sóng không dây | Model: UBIQUITI UniFi AP AC Pro | Số lượng: 22
+
+================ NHÓM: Máy chấm công (Số loại: 1) ================
+- Máy chấm công cho cán bộ,nhân viên | Model: Ronald Jack UA300 | Số lượng: 6
+
+================ NHÓM: Máy quẹt thẻ (Số loại: 1) ================
+- Máy quẹt thẻ cho học sinh | Model: Zkteco TA939 | Số lượng: 8
+
+================ NHÓM: Server (Số loại: 6) ================
+- Máy chủ DELL EMC R540 | Model: 9KGZ8X2
+9LJZ8X2
+9LRT8X2
+2JDYVV2 | Số lượng: 4
+- Máy chủ DELL EMC R540 | Model: 9LMV8X2 | Số lượng: 1
+- Máy chủ DELL EMC R540 | Model: 9LPV8X2 | Số lượng: 1
+- Workstation ( Boot room ) | Model:  | Số lượng: 3
+- Intel® Ethernet Server Adapter I350-T4 | Model: 8A0380
+8A0738
+87E510
+87B0B8
+87E2EC | Số lượng: 5
+- Tủ server HRN 20U | Model: D1000 | Số lượng: 1
+
+================ NHÓM: Thiết bị mạng (Số loại: 12) ================
+- Thiết bị Firewall, dùng để bảo vệ, thiết lập các chính sách bảo mật giữa các mạng LAN với nhau và bảo vệ người dùng từ các cuộc tấn công từ Internet | Model: SRX1500-AC | Số lượng: 2
+- Phần mềm cho thiết bị tường lửa | Model: SRX1500-JSE | Số lượng: 2
+- Kết nối lên Core switch. Mỗi FW 2 kết nối | Model: SFPP-AT-LP-85-03 | Số lượng: 112
+- Thiết bị chuyển mạch trung tâm, cung cấp các kết nội quang 10G đến switch access, Firewall. Là thiết bị chuyển mạch có năng lực lớn, độ trễ thấp, đảm bảo năng lực chuyển mạch cho toàn bộ hệ thống | Model: EX4600-40F-AFO | Số lượng: 2
+- Slot mở rộng 8 cổng 10G | Model: EX4600-EM-8F | Số lượng: 2
+- Cáp stack 80G giữa 2 thiết bị core | Model: QFX-QSFP-DAC-1M | Số lượng: 2
+- Module đồng, kết nối lên cân bằng tải, mỗi mỗi thiết bị Core có 1 kết nối lên cân bằng tải | Model: EX-SFP-1GE-T | Số lượng: 2
+- Switch access tầng, cung cấp giao diện kết nối đến các thiết bị đầu cuối từng tầng và core switch | Model: EX2300-24T | Số lượng: 9
+- Switch access tầng, cung cấp giao diện kết nối đến các thiết bị đầu cuối từng tầng và core switch | Model: EX2300-48T | Số lượng: 14
+- Switch server, gom các kết nối vào hệ thống server chuyên dụng | Model: EX2300-24T | Số lượng: 3
+- Thiết bị cân bằng tải | Model: Draytek Vigor 2926 Plus | Số lượng: 1
+- Thiết bị mạng switch | Model: TP Link SG1024 | Số lượng: 1
+
+================ NHÓM: Máy đặt suất ăn (Số loại: 2) ================
+- Máy tính bàn DELL | Model: Dell Vostro 3470ST (HXKWJ2) | Số lượng: 6
+- Màn hình máy tính để bàn Dell | Model: Dell P2418HT | Số lượng: 6

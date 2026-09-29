@@ -1,0 +1,217 @@
+
+=== Tầng 1 ===
+Room: 1F1 -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: 1F2 (Bảo vệ) -> none
+Room: 1F3 -> none
+Room: 1F4 -> none
+Room: 1F5 -> none
+Room: 1F6 -> none
+Room: 1F7 -> none
+Room: 1F8 -> none
+Room: 1F9 -> none
+Room: 1F10 -> none
+Room: 1F11 -> none
+Room: 1F12 -> none
+Room: 1F13 -> none
+Room: 1F14 -> none
+Room: 1F15 -> none
+Room: 1F16 -> none
+Room: 1F17 -> none
+Room: 1F18 -> none
+Room: 1F19 -> none
+Room: 1F20 (Hành lang khu mầm non) -> none
+Room: 1F21 -> none
+Room: WC Y4-Y5 -> none
+Room: CT bộ Y4-Y5 -> none
+Room: HL Y4-Y12 -> none
+Room: Sảnh Y7-Y9 -> none
+Room: WC nhà ăn -> none
+Room: QL bếp ăn -> none
+Room: HL X1-X9 -> none
+Room: Sân bóng rổ -> none
+Room: Sân bóng đá -> none
+Room: Bể bơi -> none
+Room: Sảnh thang máy -> none
+Room: Thang bộ Y13-Y14 -> none
+Room: Sảnh bảo vệ -> none
+Room: Sân Y4-Y13 -> none
+Room: Cổng số 1 -> none
+Room: Cổng số 2 -> none
+Room: Lái xe 1 -> none
+Room: Lái xe 2 -> none
+Room: Trạm Bơm -> none
+Room: Lao công -> none
+Room: Hàng rào quanh trường -> none
+Room:  -> r3:Tổng
+
+=== Tầng 2 ===
+Room: 2F1 -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: 2F2 -> none
+Room: 2F3 -> none
+Room: 2F4 -> none
+Room: 2F5 -> none
+Room: 2F6 -> none
+Room: 2F7 -> none
+Room: 2F8 -> none
+Room: 2F9 -> none
+Room: 2F10 -> none
+Room: 2F11 -> none
+Room: 2F12 -> none
+Room: 2F13 -> none
+Room: 2F14 -> none
+Room: 2F15 -> none
+Room: 2F16 -> none
+Room: 2F17 -> none
+Room: 2F18 -> none
+Room: 2F19 -> none
+Room: 2F20 -> none
+Room: 2F21 -> none
+Room: 2F22 -> none
+Room: 2F23 -> none
+Room: WC Y4-Y5 -> none
+Room: WC Y15-Y16 -> none
+Room: CT bộ Y4-Y5 -> none
+Room: HL Y1-Y16 -> none
+Room: Sảnh Y7-Y9 -> none
+Room: WC Y10-Y11 -> none
+Room: HL X1-X7 -> none
+Room: HL thư viện -> none
+Room: Sảnh thang máy -> none
+Room: Thang bộ Y13-Y14 -> none
+Room:  -> r3:Tổng
+
+=== Tầng 3 ===
+Room: 3F1 -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: 3F2 -> none
+Room: 3F3 -> none
+Room: 3F4 -> none
+Room: 3F5 -> none
+Room: 3F6 -> none
+Room: 3F7 -> none
+Room: 3F8 -> none
+Room: 3F9 -> none
+Room: 3F10 -> none
+Room: 3F11 -> none
+Room: 3F12 -> none
+Room: 3F13 -> none
+Room: 3F14 -> none
+Room: 3F15 -> none
+Room: 3F16 -> none
+Room: 3F17 -> none
+Room: 3F18 -> none
+Room: 3F19 -> none
+Room: 3F20 -> none
+Room: 3F21 -> none
+Room: 3F22 -> none
+Room: 3F23 -> none
+Room: 3F24 -> none
+Room: 3F25 -> none
+Room: 3F26 -> none
+Room: 3F27 -> none
+Room: 3F28 -> none
+Room: WC Y4-Y5 -> none
+Room: WC Y15-Y16 -> none
+Room: WC Y11-Y12 -> none
+Room: WC đối diện nhà đa năng -> none
+Room: Kho IT -> none
+Room: CT bộ Y4-Y5 -> none
+Room: HL Y1-Y16 -> none
+Room: Nhà đa năng -> none
+Room: Sảnh Y7-Y9 -> none
+Room: HL Phòng võ -> none
+Room: HL X1-X7 -> none
+Room: Thang bộ Y9-Y10 -> none
+Room: Sảnh thang máy -> none
+Room: Thang bộ Y13-Y14 -> none
+Room:  -> r3:Tổng
+
+=== Tầng 4 ===
+Room: 4F1 -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: 4F2 -> none
+Room: 4F3 -> none
+Room: 4F4 -> none
+Room: 4F5 -> none
+Room: 4F6 -> none
+Room: 4F7 -> none
+Room: 4F8 -> none
+Room: 4F9 -> none
+Room: 4F10 -> none
+Room: 4F11 -> none
+Room: 4F12 -> none
+Room: 4F13 -> none
+Room: 4F14 -> none
+Room: 4F15 -> none
+Room: 4F16 -> none
+Room: 4F17 -> none
+Room: 4F18 -> none
+Room: 4F19 -> none
+Room: 4F20 -> none
+Room: 4F21 -> none
+Room: 4F22 -> none
+Room: 4F23 -> none
+Room: WC Y4-Y5 -> none
+Room: WC Y15-Y16 -> none
+Room: WC Y11-Y12 -> none
+Room: Sân khấu -> none
+Room: WC sân khấu -> none
+Room: CT bộ Y4-Y5 -> none
+Room: HL Y1-Y16 -> none
+Room: Sảnh cầu thang gỗ -> none
+Room: Sảnh Y7-Y9 -> none
+Room: HL X1-X7 -> none
+Room: Thang bộ Y9-Y10 -> none
+Room: Sảnh thang máy -> none
+Room: Thang bộ Y13-Y14 -> none
+Room:  -> r3:Tổng
+
+=== Tầng 5 ===
+Room: 5F1 -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: 5F2 -> none
+Room: 5F3 -> none
+Room: 5F4 -> none
+Room: 5F5 -> none
+Room: 5F6 -> none
+Room: 5F7 -> none
+Room: 5F8 -> none
+Room: 5F9 -> none
+Room: 5F10 -> none
+Room: 5F11 -> none
+Room: 5F12 -> none
+Room: 5F13 -> none
+Room: 5F14 -> none
+Room: 5F15 -> none
+Room: 5F16 -> none
+Room: 5F17 -> none
+Room: 5F18 -> none
+Room: 5F19 -> none
+Room: WC Y4-Y5 -> none
+Room: WC Y15-Y16 -> none
+Room: WC Y11-Y12 -> none
+Room: HL Y4-Y16 -> none
+Room: HL Y1-Y16 -> none
+Room: Sảnh Y7-Y9 -> none
+Room: CT bộ Y4-Y5 -> none
+Room: HL X1-X7 -> none
+Room: Thang bộ Y9-Y10 -> none
+Room: Sảnh thang máy -> none
+Room: Thư viện -> none
+Room: Thang bộ Y13-Y14 -> none
+Room:  -> r3:Tổng
+
+=== Tầng 6 ===
+Room: TUM -> r3:Vị trí lắp đặt - Người sử dụng (Số lượng)
+Room: Thang máy -> none
+Room: Tủ kỹ thuật điện -> none
+Room: HÀNH LANG -> none
+Room: 6F1 -> none
+Room: 6F3 -> none
+Room: 6F5 -> none
+Room: 6F7 -> none
+Room: 6F9 -> none
+Room: 6F11 -> none
+Room: 6F13 -> none
+Room: 6F15 -> none
+Room: 6F17 -> none
+Room: 6F19 -> none
+Room: 6F21 -> none
+Room:  -> r3:Tổng

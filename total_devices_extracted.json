@@ -1,0 +1,1022 @@
+[
+  {
+    "stt": 1,
+    "category": "Camera",
+    "name": "Đầu lưu trữ hình ảnh",
+    "model": "DS-7732NI-K4",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 2,
+    "category": "Camera",
+    "name": "Ổ cứng Seagate Skyhawk ST4000VX007",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 3,
+    "category": "Camera",
+    "name": "Camera IP Dome hồng ngoại 2.0 Megapixel",
+    "model": "DS-2CD1123G0E-I(L)",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 45,
+    "qty_real": 45
+  },
+  {
+    "stt": 4,
+    "category": "Camera",
+    "name": "Camera IP dome hồng ngoại trong nhà POE (Hành lang, lớp học,thang máy…)",
+    "model": "MS-C2975-PB",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 153,
+    "qty_real": 153
+  },
+  {
+    "stt": 5,
+    "category": "Camera",
+    "name": "Camera hồng ngoại IP bullet 1080p IP66 (Sân chơi, bể bơi, sân bóng rổ, sân khấu…)",
+    "model": "MS-C2962-FPB",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 22,
+    "qty_real": 22
+  },
+  {
+    "stt": 6,
+    "category": "Camera",
+    "name": "Camera bullet cho ứng dụng nhận diện khuôn mặt với P -Iris (Cổng ra vào 1,2)",
+    "model": "MS-C2862-FPB",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 7,
+    "category": "Camera",
+    "name": "Camera IP quay quét (PTZ) -quan sát toàn cảnh",
+    "model": "MS-C2941-X30R(P)B",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 6,
+    "qty_real": 6
+  },
+  {
+    "stt": 8,
+    "category": "Camera",
+    "name": "Đầu lưu trữ hình ảnh",
+    "model": "MS-N8032-UH",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 7,
+    "qty_real": 7
+  },
+  {
+    "stt": 9,
+    "category": "Camera",
+    "name": "Switch 08 cổng PoE + 2 SFP",
+    "model": "GS-4210-8P2S",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 7,
+    "qty_real": 6
+  },
+  {
+    "stt": 10,
+    "category": "Camera",
+    "name": "Switch 24 cổng LAN trung tâm",
+    "model": "GS-5220-20T4C4X",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 11,
+    "category": "Camera",
+    "name": "Module quang",
+    "model": "MGB series MGB-LX",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 5,
+    "qty_real": 5
+  },
+  {
+    "stt": 12,
+    "category": "Camera",
+    "name": "Bộ chuyển đổi quang điện",
+    "model": "GT-802S",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 5,
+    "qty_real": 5
+  },
+  {
+    "stt": 13,
+    "category": "Camera",
+    "name": "Bộ chuyển đổi (Dùng cho Camera lắp trong thang máy).",
+    "model": "VC-201A-EU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 4,
+    "qty_real": 4
+  },
+  {
+    "stt": 14,
+    "category": "Camera",
+    "name": "Bộ thiết bị mạng kéo dài nguồn tích hợp công nghệ POE",
+    "model": "FPI -100GA",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 15,
+    "category": "Camera",
+    "name": "Ổ cứng Seagate Skyhawk ST4000VX007",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 28,
+    "qty_real": 28
+  },
+  {
+    "stt": 16,
+    "category": "Camera",
+    "name": "Smart Tivi Samsung 49 inch Full HD",
+    "model": "49J5250",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 7,
+    "qty_real": 7
+  },
+  {
+    "stt": 17,
+    "category": "Camera",
+    "name": "Dây HDMI 5m",
+    "model": "Ugreen",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 6,
+    "qty_real": 6
+  },
+  {
+    "stt": 18,
+    "category": "Camera",
+    "name": "Máy chủ HP",
+    "model": "4FU52AV HP Z2 Tower G4",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 19,
+    "category": "Camera",
+    "name": "Màn hình máy tính HP",
+    "model": "3AL28AA HP",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 20,
+    "category": "Camera",
+    "name": "Bộ lưu điện APC Smart-UPS On-Line, 6000 Watts /6000 VA",
+    "model": "SRT6KXLI",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 21,
+    "category": "Camera",
+    "name": "Cần điều khiển chuyên dụng cho các loại Camera Bullet, Dome, PTZ ở góc view xa",
+    "model": "MS-K02",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 22,
+    "category": "Camera",
+    "name": "Tủ trung tâm đựng thiết bị 27U -kèm SPU -Cánh cửa lưới - màu đen",
+    "model": "VN-/-",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 23,
+    "category": "Âm thanh",
+    "name": "ÂM ly 60w",
+    "model": "PLE-1MA060-EU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 48,
+    "qty_real": 48
+  },
+  {
+    "stt": 24,
+    "category": "Âm thanh",
+    "name": "ÂM ly 240w",
+    "model": "PLE-1ME240-EU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 25,
+    "category": "Âm thanh",
+    "name": "ÂM ly 120w",
+    "model": "PLE-1MA120-EU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 4,
+    "qty_real": 4
+  },
+  {
+    "stt": 26,
+    "category": "Âm thanh",
+    "name": "Loa 6w",
+    "model": "LHM0606/10",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 144,
+    "qty_real": 144
+  },
+  {
+    "stt": 27,
+    "category": "Âm thanh",
+    "name": "Loa 24w",
+    "model": "LBC3099/41",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 149,
+    "qty_real": 146
+  },
+  {
+    "stt": 28,
+    "category": "Âm thanh",
+    "name": "Mic không dây",
+    "model": "MW1-HTX-F5",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 13,
+    "qty_real": 13
+  },
+  {
+    "stt": 29,
+    "category": "Âm thanh",
+    "name": "ÂM ly 480w",
+    "model": "LBB1938/20",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 30,
+    "category": "Âm thanh",
+    "name": "Bộ thu",
+    "model": "MW1-RX-F5",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 47,
+    "qty_real": 47
+  },
+  {
+    "stt": 31,
+    "category": "Âm thanh",
+    "name": "ÂM ly 480w",
+    "model": "FV-248PA",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 32,
+    "category": "Âm thanh",
+    "name": "Bàn trộn (Mixer)",
+    "model": "MG10XU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 33,
+    "category": "Âm thanh",
+    "name": "Mic đại biểu",
+    "model": "CCS-DL",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 27,
+    "qty_real": 27
+  },
+  {
+    "stt": 34,
+    "category": "Âm thanh",
+    "name": "Mic chủ tịch",
+    "model": "CCS-CML",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 35,
+    "category": "Âm thanh",
+    "name": "Bộ điều khiển trung tâm",
+    "model": "CCS-CUD",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 36,
+    "category": "Âm thanh",
+    "name": "cáp nối dài 10M",
+    "model": "LBB3316/10",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 37,
+    "category": "Âm thanh",
+    "name": "Loa hộp 30w",
+    "model": "LB2/UC30-D1",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 4,
+    "qty_real": 4
+  },
+  {
+    "stt": 38,
+    "category": "Âm thanh",
+    "name": "Mic cài ve",
+    "model": "MW1-LTX-F5",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 34,
+    "qty_real": 34
+  },
+  {
+    "stt": 39,
+    "category": "Âm thanh",
+    "name": "Âm ly 30w",
+    "model": "PLE-1MA030-EU",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 40,
+    "category": "Âm thanh",
+    "name": "Loa hộp 90w",
+    "model": "EVID-S5.2XW",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 8,
+    "qty_real": 8
+  },
+  {
+    "stt": 41,
+    "category": "Âm thanh",
+    "name": "Network",
+    "model": "IP-1000CI",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 42,
+    "category": "Âm thanh",
+    "name": "Phần mềm",
+    "model": "IP-1000S",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 43,
+    "category": "Âm thanh",
+    "name": "Khối giao diện audio",
+    "model": "IP-1000AF",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 8,
+    "qty_real": 8
+  },
+  {
+    "stt": 44,
+    "category": "Âm thanh",
+    "name": "Module mạng",
+    "model": "IP-100XI",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 45,
+    "category": "Âm thanh",
+    "name": "Âm ly 120w",
+    "model": "AX-0120",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 46,
+    "category": "Âm thanh",
+    "name": "Âm ly 240w",
+    "model": "AX-0240",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 47,
+    "category": "Âm thanh",
+    "name": "Micro chọn 10 vùng IP",
+    "model": "IP-100RM",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 48,
+    "category": "Âm thanh",
+    "name": "Tủ 12 U có khay để mixer",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 49,
+    "category": "Âm thanh",
+    "name": "Tủ 32U",
+    "model": "D600",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 50,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell 3470ST",
+    "spec": "Hệ điều hành: Free Dos CPU: Intel Pentium Gold G5400 3.70 GHz, 4MB RAM: 1x4GB DDR4 Ổ đĩa cứng: 1TB 7200 rpm VGA: Intel HD Graphics Wifi: Có tích hợp wifi,DVD",
+    "mfg": "DELL",
+    "qty_in": 34,
+    "qty_real": 34
+  },
+  {
+    "stt": 51,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell 3470ST",
+    "spec": "Hệ điều hành: Free Dos CPU: Intel Pentium Gold G5400 3.70 GHz, 4MB RAM: 2x4GB DDR4  VGA: Intel HD Graphics Wifi: Có tích hợp wifi,DVD",
+    "mfg": "DELL",
+    "qty_in": 24,
+    "qty_real": 24
+  },
+  {
+    "stt": 52,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell 3470ST",
+    "spec": "Hệ điều hành: Free Dos CPU: Intel Pentium Gold G5400 3.70 GHz, 4MB RAM: 2x4GB DDR4 Ổ đĩa cứng: 1TB 7200 rpm VGA: Intel HD Graphics Wifi: Có tích hợp wifi,DVD",
+    "mfg": "DELL",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 53,
+    "category": "Màn hình máy tính",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Man hinh LCD Dell E2016HV 19.5\"",
+    "spec": "19.5\" TN, HD+ 1600x900, WLed Backlight, độ tương phản 600:1, độ sáng: 200 cd/m2, độ trễ: 5ms, kếtt nối: 1 x VGA.",
+    "mfg": "DELL",
+    "qty_in": 58,
+    "qty_real": 58
+  },
+  {
+    "stt": 54,
+    "category": "Màn hình máy tính",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Màn hình máy tính Dell SE2417HG",
+    "spec": "23.6\" IPS, Full HD 1920x1080, Led Backlight, độ tương phản 1000:1, độ sáng: 3000 cd/m2, độ trễ: 5ms, kết nối: 1 x HDMI, 1 x VGA.",
+    "mfg": "DELL",
+    "qty_in": 4,
+    "qty_real": 4
+  },
+  {
+    "stt": 55,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell 3671",
+    "spec": "Máy tính để bàn Dell Vostro 3671 - MT71 G5420W-4G-1T: Intel Pentium G5420 (4MB Cache, up to 3.8GHz); 4GB (lx 4GB) 2400MHz DDR4; 1TB 7200RPM Hard Drive; 6 cling SSD 120GB; DVDRW; Intelgrated Graphics; Chuột; Bàn phím; Windows 10 home",
+    "mfg": "DELL",
+    "qty_in": 14,
+    "qty_real": 14
+  },
+  {
+    "stt": 56,
+    "category": "Màn hình máy tính",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Dell E2016HV",
+    "spec": "Man hinh may tinh DELL LCD E2016Hv - 19.5\"",
+    "mfg": "Dell",
+    "qty_in": 14,
+    "qty_real": 14
+  },
+  {
+    "stt": 57,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn",
+    "model": "",
+    "spec": "Cpu E5 2689 2.6Ghz*2/TN CM T400i*2/ Main SPM X9DRL/ RAM 16G*4/HĐ 1TB/ASUS RX570 4Gb /K/M/ Case + Nguồn 600W CM/ LCD E2417H",
+    "mfg": "Cây lắp ráp ĐNA",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 58,
+    "category": "Laptop Dell",
+    "name": "Laptop Dell",
+    "model": "Dell Latitude 3400",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 16,
+    "qty_real": 16
+  },
+  {
+    "stt": 59,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "Canon 251DW",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 9,
+    "qty_real": 9
+  },
+  {
+    "stt": 60,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "Canon 252DW",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 61,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "Canon 1 mặt P Truyền thông",
+    "spec": "",
+    "mfg": "",
+    "qty_in": null,
+    "qty_real": 1
+  },
+  {
+    "stt": 62,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "Ricoh 7502",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 63,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "Toshiba 5560C",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 64,
+    "category": "Máy chiếu",
+    "name": "Máy chiếu",
+    "model": "Epson EB-W05",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 18,
+    "qty_real": 18
+  },
+  {
+    "stt": 65,
+    "category": "Máy chiếu",
+    "name": "Máy chiếu",
+    "model": "Sony VPL-EX430",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 5,
+    "qty_real": 4
+  },
+  {
+    "stt": 66,
+    "category": "Máy chiếu",
+    "name": "Máy chiếu",
+    "model": "Sony VPL-EX435,EX575",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 20,
+    "qty_real": 20
+  },
+  {
+    "stt": 67,
+    "category": "Unifi",
+    "name": "Bộ phát sóng không dây",
+    "model": "UBIQUITI UniFi AP AC Pro",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 22,
+    "qty_real": 22
+  },
+  {
+    "stt": 68,
+    "category": "Máy chấm công",
+    "name": "Máy chấm công cho cán bộ,nhân viên",
+    "model": "Ronald Jack UA300",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 6,
+    "qty_real": 6
+  },
+  {
+    "stt": 69,
+    "category": "Máy quẹt thẻ",
+    "name": "Máy quẹt thẻ cho học sinh",
+    "model": "Zkteco TA939",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 8,
+    "qty_real": 8
+  },
+  {
+    "stt": 70,
+    "category": "Server",
+    "name": "Máy chủ DELL EMC R540",
+    "model": "9KGZ8X2\n9LJZ8X2\n9LRT8X2\n2JDYVV2",
+    "spec": "Processor: 2 x Intel® Xeon® Silver 4114 Processor 13.75M Cache, 2.20 GHz\nMemory: 4 x 32GB PC4-21300 ECC 2666 MHz Registered DIMMs\nNetwork Controller: 2 x 1GE LOM (optional) OCP 2 x 10GE SFP+ or BaseT or 2 x 1GE\nRaid Controller: PERC H730P RAID Controller Mini Mono, 2GB NV Cache\nHard Drive: 2 x 2TB Dell Enterprise 7200 RPM SATA 3.5\"\nOptical Drive: Slim 8X DVD+/-RW 9.5mm Internal Drive\nPCI-Express Slots: 1 x FH/FL + 1 x HH/HL (2U Right riser) slots + 3HH/HL slots\nPower Supply: 1x 750w Options 2x 750w \nManagement: iDRAC9 with Lifecycle Controller \nForm Factor: 2U\nDELL 750 WATT POWER SUPPLY2 x Dell EMC R540 Heat Sink2 x TRAY DELL 3.5\" 14G CADDY X7K8W",
+    "mfg": "Dell",
+    "qty_in": 4,
+    "qty_real": 4
+  },
+  {
+    "stt": 71,
+    "category": "Server",
+    "name": "Máy chủ DELL EMC R540",
+    "model": "9LMV8X2",
+    "spec": "Processor: 2 x Intel® Xeon® Silver 4114 Processor 13.75M Cache, 2.20 GHz\nMemory: 4 x 32GB PC4-21300 ECC 2666 MHz Registered DIMMs\nNetwork Controller: 2 x 1GE LOM (optional) OCP 2 x 10GE SFP+ or BaseT or 2 x 1GE\nRaid Controller: PERC H730P RAID Controller Mini Mono, 2GB NV Cache\nHard Drive: 2 x SSD INTEL 240GB 2.5\" S4510\n2 x 2TB Dell Enterprise 7200 RPM SATA 3.5\"\nOptical Drive: Slim 8X DVD+/-RW 9.5mm Internal Drive\nPCI-Express Slots: 1 x FH/FL + 1 x HH/HL (2U Right riser) slots + 3HH/HL slots\nPower Supply: 1x 750w Options 2x 750w \nManagement: iDRAC9 with Lifecycle Controller \nForm Factor: 2U\nDELL 750 WATT POWER SUPPLY2 x Dell EMC R540 Heat Sink4 x TRAY DELL 3.5\" 14G CADDY X7K8W\n2 x DELL converter bracket 3.5\" to 2.5\"",
+    "mfg": "Dell",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 72,
+    "category": "Server",
+    "name": "Máy chủ DELL EMC R540",
+    "model": "9LPV8X2",
+    "spec": "Processor: Intel® Xeon® Silver 4114 Processor 13.75M Cache, 2.20 GHz\nMemory: 3 x 32GB PC4-21300 ECC 2666 MHz Registered DIMMs\nNetwork Controller: 2 x 1GE LOM (optional) OCP 2 x 10GE SFP+ or BaseT or 2 x 1GE\nRaid Controller: PERC H730P RAID Controller Mini Mono, 2GB NV Cache\nHard Drive: 2 x 2TB Dell Enterprise 7200 RPM SATA 3.5\"\nOptical Drive: Slim 8X DVD+/-RW 9.5mm Internal Drive\nPCI-Express Slots: 1 x FH/FL + 1 x HH/HL (2U Right riser) slots + 3HH/HL slots\nPower Supply: 1x 750w Options 2x 750w \nManagement: iDRAC9 with Lifecycle Controller \nForm Factor: 2U\nDELL 750 WATT POWER SUPPLYDell EMC R540 Heat Sink2 x TRAY DELL 3.5\" 14G CADDY X7K8W",
+    "mfg": "Dell",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 73,
+    "category": "Server",
+    "name": "Workstation ( Boot room )",
+    "model": "",
+    "spec": "Mainboard Intel S1200 SPSR \nCPU Intel Xeon E3-1230 v6 (8M Cache, 3.5GHz)\nRam Kingston 8GB ECC DDR4/2400 (KSM24ES8/8ME)\nSSD Samsung 860 EVO 250GB M.2 Sata (Mz-N6E250BW) \nHDD WD Black 2TB Sata3(WD2003FZEX)  \nPower Cooler Master 500W Elite V3 \nCase Erosi X9 (No power)\nCard Gigabyte 2GB N1030OC-2GI",
+    "mfg": "Lắp ráp ĐNA",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 74,
+    "category": "Server",
+    "name": "Intel® Ethernet Server Adapter I350-T4",
+    "model": "8A0380\n8A0738\n87E510\n87B0B8\n87E2EC",
+    "spec": "Intel Ethernet Server Adapter I350-T4 PCI Express Genx2.1 INTEL I350T4 Quad-Port Network Lan Card\nModel No: Intel Ethernet I350-T4\nBus Type：PCI Express 2.1(5GT/s)\nChipset：Intel® NHI350AM4",
+    "mfg": "",
+    "qty_in": 5,
+    "qty_real": 5
+  },
+  {
+    "stt": 75,
+    "category": "Server",
+    "name": "Tủ server HRN 20U",
+    "model": "D1000",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 76,
+    "category": "Thiết bị mạng",
+    "name": "Thiết bị Firewall, dùng để bảo vệ, thiết lập các chính sách bảo mật giữa các mạng LAN với nhau và bảo vệ người dùng từ các cuộc tấn công từ Internet",
+    "model": "SRX1500-AC",
+    "spec": "SRX1500 with 16x1G, 4x10G (SFP+) on-board ports, 1x AC PSU and 100GB SSD",
+    "mfg": "Juniper",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 77,
+    "category": "Thiết bị mạng",
+    "name": "Phần mềm cho thiết bị tường lửa",
+    "model": "SRX1500-JSE",
+    "spec": "SRX1500 Juniper Secure Edge software with Firewall, NAT, IPSec, Routing, Switching, MPLS and Application Security services (requireSRX1500-AC or SRX1500-DC to complete the system)",
+    "mfg": "Juniper",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 78,
+    "category": "Thiết bị mạng",
+    "name": "Kết nối lên Core switch. Mỗi FW 2 kết nối",
+    "model": "SFPP-AT-LP-85-03",
+    "spec": "SFP+ Plug-in, 10Gbps, 300m, TX/RX 850nm, on two multimode fiber",
+    "mfg": "Ascent Comtech",
+    "qty_in": 112,
+    "qty_real": 112
+  },
+  {
+    "stt": 79,
+    "category": "Thiết bị mạng",
+    "name": "Thiết bị chuyển mạch trung tâm, cung cấp các kết nội quang 10G đến switch access, Firewall. Là thiết bị chuyển mạch có năng lực lớn, độ trễ thấp, đảm bảo năng lực chuyển mạch cho toàn bộ hệ thống",
+    "model": "EX4600-40F-AFO",
+    "spec": "EX4600, 24 SFP+/SFP ports, 4 QSFP+ ports, 2 expansion slots, redundant fans, 2 AC power supplies, front to back airflow",
+    "mfg": "Juniper",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 80,
+    "category": "Thiết bị mạng",
+    "name": "Slot mở rộng 8 cổng 10G",
+    "model": "EX4600-EM-8F",
+    "spec": "EX4600 8 port SFP+/SFP expansion module",
+    "mfg": "Juniper",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 81,
+    "category": "Thiết bị mạng",
+    "name": "Cáp stack 80G giữa 2 thiết bị core",
+    "model": "QFX-QSFP-DAC-1M",
+    "spec": "QSFP+ Cable Assy, 1m, 30AWG, Passive, Programmable ID",
+    "mfg": "Juniper",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 82,
+    "category": "Thiết bị mạng",
+    "name": "Module đồng, kết nối lên cân bằng tải, mỗi mỗi thiết bị Core có 1 kết nối lên cân bằng tải",
+    "model": "EX-SFP-1GE-T",
+    "spec": "Small Form Factor Pluggable 10/100/1000 Copper Transceiver Module",
+    "mfg": "Ascent Comtech",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 83,
+    "category": "Thiết bị mạng",
+    "name": "Switch access tầng, cung cấp giao diện kết nối đến các thiết bị đầu cuối từng tầng và core switch",
+    "model": "EX2300-24T",
+    "spec": "EX2300 24-port 10/100/1000BaseT, 4 x 1/10G SFP/SFP+ (optics sold separately)",
+    "mfg": "Juniper",
+    "qty_in": 9,
+    "qty_real": 9
+  },
+  {
+    "stt": 84,
+    "category": "Thiết bị mạng",
+    "name": "Switch access tầng, cung cấp giao diện kết nối đến các thiết bị đầu cuối từng tầng và core switch",
+    "model": "EX2300-48T",
+    "spec": "EX2300 48-port 10/100/1000BaseT, 4 x 1/10G SFP/SFP+ (optics sold separately)",
+    "mfg": "Juniper",
+    "qty_in": 14,
+    "qty_real": 14
+  },
+  {
+    "stt": 85,
+    "category": "Thiết bị mạng",
+    "name": "Switch server, gom các kết nối vào hệ thống server chuyên dụng",
+    "model": "EX2300-24T",
+    "spec": "EX2300 24-port 10/100/1000BaseT, 4 x 1/10G SFP/SFP+ (optics sold separately)",
+    "mfg": "Juniper",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 86,
+    "category": "Máy đặt suất ăn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell Vostro 3470ST (HXKWJ2)",
+    "spec": "CPU: Intel Pentium® Gold G5420 (3.80 GHz, 2 Cores 4 Threads, 4MB Cache)\nRAM: 4GB DDR4\nỔ cứng: 1TB HDD 7200rpm\nVGA: Intel® UHD Graphics 610\nKết nối mạng: Wlan + Bluetooth",
+    "mfg": "Dell",
+    "qty_in": 6,
+    "qty_real": 6
+  },
+  {
+    "stt": 87,
+    "category": "Máy đặt suất ăn",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Dell P2418HT",
+    "spec": "23.8'' FHD (1920x1080) Anti-Glare, IPS, @ 60Hz.\nĐộ tương phản 1000:1, thời gian đáp ứng 6ms\nĐộ sáng: 250 cd/m2, góc nhìn: 178 độ (V) x 178 độ (H)\nPorts : VGA, HDMI, Audio, Display Port, 4x USB",
+    "mfg": "Dell",
+    "qty_in": 6,
+    "qty_real": 6
+  },
+  {
+    "stt": 88,
+    "category": "Máy chiếu",
+    "name": "Máy chiếu Epson",
+    "model": "EB–E10",
+    "spec": "",
+    "mfg": "Epson",
+    "qty_in": 14,
+    "qty_real": 14
+  },
+  {
+    "stt": 89,
+    "category": "Máy in, photo",
+    "name": "Máy in, photo",
+    "model": "LBP 226",
+    "spec": "",
+    "mfg": "Canon",
+    "qty_in": 2,
+    "qty_real": 2
+  },
+  {
+    "stt": 90,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell Vostro 3681",
+    "spec": "120Gb SSD + 1Tb HDD, DDr 4 4gb",
+    "mfg": "Dell",
+    "qty_in": 21,
+    "qty_real": 21
+  },
+  {
+    "stt": 91,
+    "category": "Máy tính bàn",
+    "name": "Máy tính bàn DELL",
+    "model": "Dell Vostro 3681",
+    "spec": "256Gb SSD, DDr 4 8gb",
+    "mfg": "Dell",
+    "qty_in": 33,
+    "qty_real": 33
+  },
+  {
+    "stt": 92,
+    "category": "Máy tính bàn",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Dell E1920H",
+    "spec": "",
+    "mfg": "DELL",
+    "qty_in": 54,
+    "qty_real": 54
+  },
+  {
+    "stt": 93,
+    "category": "Máy chiếu",
+    "name": "Phông chiếu cơ",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 26,
+    "qty_real": 26
+  },
+  {
+    "stt": 94,
+    "category": "Âm thanh",
+    "name": "Loa phóng",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 3,
+    "qty_real": 3
+  },
+  {
+    "stt": 95,
+    "category": "Máy tính bàn",
+    "name": "Case máy tính ĐNA ( I5 12400, mainboard gigabyte B760, SSD kingmax 250Gb, DDR4 8Gb. Bàn phím chuột Fuhlen)",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 23,
+    "qty_real": 23
+  },
+  {
+    "stt": 96,
+    "category": "Máy tính bàn",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "Dell 2225H",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 23,
+    "qty_real": 23
+  },
+  {
+    "stt": 97,
+    "category": "Máy tính bàn",
+    "name": "Bộ lưu điện APC 700VA",
+    "model": "BVX700LUI-MS",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 26,
+    "qty_real": 26
+  },
+  {
+    "stt": 98,
+    "category": "Thiết bị mạng",
+    "name": "Thiết bị cân bằng tải",
+    "model": "Draytek Vigor 2926 Plus",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 99,
+    "category": "Thiết bị mạng",
+    "name": "Thiết bị mạng switch",
+    "model": "TP Link SG1024",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  },
+  {
+    "stt": 100,
+    "category": "Máy tính bàn",
+    "name": "Case máy tính ĐNA ( I3 10105, mainboard gigabyte H510, SSD  250Gb, DDR4 8Gb. Bàn phím chuột Fuhlen)",
+    "model": "",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 10,
+    "qty_real": 10
+  },
+  {
+    "stt": 101,
+    "category": "Máy tính bàn",
+    "name": "Màn hình máy tính để bàn Dell",
+    "model": "D2020H",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 5,
+    "qty_real": 5
+  },
+  {
+    "stt": 102,
+    "category": "Máy chiếu",
+    "name": "Máy chiếu Epson",
+    "model": "EB–w06",
+    "spec": "",
+    "mfg": "",
+    "qty_in": 1,
+    "qty_real": 1
+  }
+]

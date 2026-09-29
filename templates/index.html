@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Thiết Bị Trường Học - QLTB</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx export/import) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- TOP NAVBAR -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Brand / Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                        <i data-lucide="layers" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-lg text-slate-900 tracking-tight">QLTB SCHOOL</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">v2.0 Pro</span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">Hệ thống Quản lý Thiết bị Trường học</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & User Switcher -->
+                <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+                    <button onclick="openBorrowModal()" class="inline-flex items-center px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition shrink-0">
+                        <i data-lucide="arrow-left-right" class="w-4 h-4 mr-1.5"></i> Mượn thiết bị
+                    </button>
+
+                    <!-- Active User / Role & Authentication Profile (Mặc định khi vào là Khách) -->
+                    <div class="relative pl-2 sm:pl-3 border-l border-slate-200 flex items-center space-x-2 shrink-0">
+                        <div class="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0" id="userAvatar">
+                            GS
+                        </div>
+                        <div class="hidden sm:block text-left text-xs">
+                            <div class="flex items-center space-x-1.5">
+                                <p class="font-bold text-slate-800 truncate max-w-[120px]" id="currentUserName">Khách vãng lai</p>
+                                <span id="currentUserBadge" class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                    GUEST
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 truncate max-w-[120px]" id="currentUserRoleDesc">Chỉ có quyền xem</p>
+                        </div>
+
+                        <!-- Auth Action Buttons -->
+                        <div class="flex items-center space-x-1 shrink-0">
+                            <button onclick="openAuthModal('login')" id="btnAuthSwitch" title="Đăng nhập tài khoản" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition flex items-center">
+                                <i data-lucide="log-in" class="w-3.5 h-3.5 mr-1"></i>
+                                <span class="hidden md:inline" id="btnAuthText">Đăng nhập</span>
+                            </button>
+                            <button onclick="handleLogout()" id="btnLogout" title="Đăng xuất" class="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition hidden">
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest Mode Notice Banner (Hiển thị khi role guest) -->
+            <div id="guestRoleBanner" class="hidden bg-amber-50 border-t border-amber-200 py-2 px-3 sm:px-4 text-xs text-amber-800 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-900 font-bold text-[10px]">!</span>
+                    <span>Bạn đang duyệt hệ thống với vai trò <strong>Khách (Guest) - Chế độ chỉ xem</strong>. Bạn không có quyền thêm mới, chỉnh sửa hoặc xóa dữ liệu.</span>
+                </div>
+                <button onclick="openAuthModal('login')" class="underline font-bold text-amber-900 hover:text-amber-700 ml-3 whitespace-nowrap">
+                    Đăng nhập Admin để chỉnh sửa &rarr;
+                </button>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-1 sm:space-x-4 overflow-x-auto py-2 border-t border-slate-100 text-sm font-medium scrollbar-none" id="mainNav">
+                <button onclick="switchTab('dashboard')" class="tab-btn active px-3 py-2 rounded-lg flex items-center space-x-2 text-blue-600 bg-blue-50/80 transition whitespace-nowrap" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Tổng quan</span>
+                </button>
+                <button onclick="switchTab('devices')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="devices">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                    <span>Quản lý thiết bị</span>
+                </button>
+                <button onclick="switchTab('movements')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="movements">
+                    <i data-lucide="truck" class="w-4 h-4"></i>
+                    <span>Di chuyển vị trí</span>
+                </button>
+                <button onclick="switchTab('borrow')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="borrow">
+                    <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                    <span>Mượn - Trả thiết bị</span>
+                    <span id="borrowBadge" class="hidden text-xs px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">0</span>
+                </button>
+                <button onclick="switchTab('users_rooms')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="users_rooms">
+                    <i data-lucide="users" class="w-4 h-4"></i>
+                    <span>Người dùng & Phòng ban</span>
+                </button>
+                <button onclick="switchTab('reports')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="reports">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                    <span>Báo cáo & Thống kê</span>
+                </button>
+                <button onclick="switchTab('settings')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="settings">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Hệ thống & Nhật ký</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= TAB 1: TỔNG QUAN (DASHBOARD) ================= -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Overdue Warning Banner (if any) -->
+            <div id="overdueAlertBanner" class="hidden bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-sm">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 text-red-500">
+                        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <p class="text-sm font-bold text-red-800" id="overdueAlertText">Có thiết bị đang mượn quá hạn chưa trả!</p>
+                        <p class="text-xs text-red-700 mt-1">Vui lòng kiểm tra danh sách bên dưới và liên hệ giáo viên phụ trách để hoàn trả thiết bị.</p>
+                    </div>
+                    <button onclick="switchTab('borrow')" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+                        Xem chi tiết
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="kpi-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i data-lucide="box" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase">Tổng số thiết bị</p>
+                        <h3 class="text-2xl font-bold text-slate-900" id="statTotalDevices">0</h3>
+                        <p class="text-xs text-slate-500 mt-0.5" id="statTotalValue">Tổng giá trị: 0 đ</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase">Sẵn sàng / Trong kho</p>
+                        <h3 class="text-2xl font-bold text-emerald-600" id="statReadyDevices">0</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Sẵn sàng xuất mượn</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase">Đang cho mượn</p>
+                        <h3 class="text-2xl font-bold text-amber-600" id="statBorrowedDevices">0</h3>
+                        <p class="text-xs text-amber-600 mt-0.5 font-medium" id="statOverdueCount">0 phiếu quá hạn</p>
+                    </div>
+                </div>
+
+                <div class="kpi-card bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                        <i data-lucide="wrench" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 uppercase">Hỏng / Cần bảo trì</p>
+                        <h3 class="text-2xl font-bold text-rose-600" id="statBrokenDevices">0</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Cần sửa chữa & khắc phục</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Chart 1: Trạng thái & Danh mục -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1">
+                    <h4 class="font-bold text-slate-800 text-sm mb-4 flex items-center">
+                        <i data-lucide="pie-chart" class="w-4 h-4 mr-2 text-blue-600"></i> Phân loại thiết bị theo nhóm
+                    </h4>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Phân bổ theo Phòng ban / Vị trí -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+                    <h4 class="font-bold text-slate-800 text-sm mb-4 flex items-center justify-between">
+                        <span class="flex items-center">
+                            <i data-lucide="building-2" class="w-4 h-4 mr-2 text-indigo-600"></i> Số lượng thiết bị theo phòng học / kho
+                        </span>
+                        <span class="text-xs text-slate-400 font-normal">Cập nhật thời gian thực</span>
+                    </h4>
+                    <div class="h-64">
+                        <canvas id="locationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Row: Top Mượn & Phiếu gần đây -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Top mượn -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center justify-between">
+                        <span class="flex items-center">
+                            <i data-lucide="flame" class="w-4 h-4 mr-2 text-orange-500"></i> Thiết bị được mượn nhiều nhất
+                        </span>
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-100">
+                                <tr>
+                                    <th class="py-2">Mã TB</th>
+                                    <th class="py-2">Tên thiết bị</th>
+                                    <th class="py-2 text-right">Lượt mượn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topDevicesTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="3" class="py-4 text-center text-slate-400">Đang tải...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cảnh báo mượn quá hạn hoặc cần duyệt -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center justify-between">
+                        <span class="flex items-center text-red-600">
+                            <i data-lucide="alarm-clock" class="w-4 h-4 mr-2"></i> Phiếu mượn quá hạn cần thu hồi
+                        </span>
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-100">
+                                <tr>
+                                    <th class="py-2">Giáo viên</th>
+                                    <th class="py-2">Thiết bị</th>
+                                    <th class="py-2">Hạn trả</th>
+                                    <th class="py-2 text-right">Quá hạn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overdueSummaryTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="py-4 text-center text-slate-400">Không có thiết bị quá hạn 🎉</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: QUẢN LÝ THIẾT BỊ ================= -->
+        <section id="tab-devices" class="tab-content hidden space-y-4">
+            <!-- Action & Filter Bar (2-Tier Layout, No Edge Overflow) -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <!-- Tier 1: Search & Primary Action Buttons -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                    <!-- Search input -->
+                    <div class="relative flex-1 max-w-xl">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                        <input type="text" id="deviceSearchInput" placeholder="Tìm theo Mã, Tên, Cấu hình, Nhà cung cấp..." 
+                               class="w-full pl-10 pr-9 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 transition">
+                        <button type="button" id="deviceSearchClear" onclick="clearDeviceSearch()" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Action Buttons Toolbar (Always wrapped, no clipping) -->
+                    <div class="flex items-center flex-wrap gap-2 shrink-0">
+                        <button onclick="openAddDeviceModal()" class="admin-action px-3.5 py-2 text-sm font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 shadow-sm shadow-blue-500/20 transition flex items-center shrink-0">
+                            <i data-lucide="plus" class="w-4 h-4 mr-1.5"></i> Thêm thiết bị
+                        </button>
+                        <button onclick="openImportModal()" class="admin-action px-3 py-2 text-sm font-medium rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition flex items-center shrink-0">
+                            <i data-lucide="upload" class="w-4 h-4 mr-1.5 text-slate-600"></i> Nhập CSV
+                        </button>
+                        <button onclick="exportDevicesExcel()" class="px-3 py-2 text-sm font-medium rounded-xl text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition flex items-center shrink-0">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1.5 text-emerald-600"></i> Xuất Excel
+                        </button>
+                        <button onclick="openCategoryManageModal()" class="admin-action px-3 py-2 text-sm font-medium rounded-xl text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition flex items-center shrink-0" title="Quản lý & di chuyển phân loại thiết bị">
+                            <i data-lucide="tag" class="w-4 h-4 mr-1.5 text-purple-600"></i> Phân loại
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tier 2: Refined Filters -->
+                <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-500 flex items-center mr-1">
+                        <i data-lucide="filter" class="w-3.5 h-3.5 mr-1 text-slate-400"></i> Bộ lọc:
+                    </span>
+                    <!-- Category filter -->
+                    <select id="deviceCategoryFilter" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Tất cả danh mục</option>
+                    </select>
+                    <!-- Status filter -->
+                    <select id="deviceStatusFilter" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="Sẵn sàng">Sẵn sàng (Kho)</option>
+                        <option value="Đang sử dụng">Đang sử dụng</option>
+                        <option value="Đang mượn">Đang mượn</option>
+                        <option value="Hỏng">Hỏng</option>
+                        <option value="Bảo trì">Bảo trì</option>
+                        <option value="Đã thanh lý">Đã thanh lý</option>
+                    </select>
+                    <!-- Floor filter -->
+                    <select id="deviceFloorFilter" onchange="onFloorFilterChange(this.value)" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-blue-700 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">🏢 Tất cả các tầng</option>
+                        <option value="Tầng 1">Tầng 1 (1F...)</option>
+                        <option value="Tầng 2">Tầng 2 (2F...)</option>
+                        <option value="Tầng 3">Tầng 3 (3F...)</option>
+                        <option value="Tầng 4">Tầng 4 (4F...)</option>
+                        <option value="Tầng 5">Tầng 5 (5F...)</option>
+                        <option value="Tầng 6">Tầng 6 (6F...)</option>
+                    </select>
+                    <!-- Location filter -->
+                    <select id="deviceLocationFilter" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-xs">
+                        <option value="all">Tất cả vị trí / phòng</option>
+                    </select>
+
+                    <button type="button" onclick="resetDeviceFilters()" class="text-xs text-blue-600 hover:underline ml-auto">
+                        Đặt lại bộ lọc
+                    </button>
+                    <span id="deviceCountSummary" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                        0 thiết bị
+                    </span>
+                </div>
+            </div>
+
+            <!-- Devices Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm min-w-[1100px]">
+                        <thead class="bg-slate-50 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 whitespace-nowrap w-28">Mã TB</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[220px]">Tên thiết bị</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[150px]">Danh mục</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[190px]">Vị trí hiện tại</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[140px]">Người sử dụng</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[160px]">Tình trạng sử dụng</th>
+                                <th class="px-4 py-3 text-right whitespace-nowrap w-28">Nguyên giá</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[130px]">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="devicesTableBody" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="8" class="py-8 text-center text-slate-400">Đang tải danh sách thiết bị...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-500 flex justify-between items-center" id="deviceTableFooter">
+                    <span>Tổng số: <strong id="devicesCountText">0</strong> thiết bị</span>
+                    <span>Hiển thị thông tin kiểm kê mới nhất</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: DI CHUYỂN VỊ TRÍ (MOVEMENT TRACKING) ================= -->
+        <section id="tab-movements" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form di chuyển nhanh thiết bị -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1 space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-900 text-base flex items-center">
+                            <i data-lucide="navigation" class="w-5 h-5 mr-2 text-blue-600"></i> Điều chuyển vị trí thiết bị
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">Ghi nhận chính xác vị trí trước và sau khi di chuyển để theo dõi tài sản trường học.</p>
+                    </div>
+
+                    <form id="moveDeviceForm" onsubmit="handleMoveDeviceSubmit(event)" class="space-y-3.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Mã hoặc Chọn Thiết bị <span class="text-red-500">*</span></label>
+                            <select id="moveDeviceSelect" onchange="handleMoveDeviceSelect(this.value)" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option value="">-- Chọn thiết bị cần chuyển --</option>
+                            </select>
+                        </div>
+
+                        <!-- Current Location (Before) -->
+                        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs space-y-1">
+                            <span class="text-amber-700 font-semibold block">📍 Vị trí hiện tại (Trước khi chuyển):</span>
+                            <span id="moveFromLocationText" class="font-bold text-slate-800 text-sm">Chưa chọn thiết bị</span>
+                            <input type="hidden" id="moveFromLocationInput">
+                        </div>
+
+                        <!-- New Location (After) -->
+                        <div class="space-y-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">🏢 Tầng chuyển đến <span class="text-red-500">*</span></label>
+                                <select id="moveToFloorSelect" onchange="onModalFloorChange(this.value, 'moveToLocationSelect')" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-blue-700">
+                                    <option value="all">-- Tất cả các tầng --</option>
+                                    <option value="Tầng 1">Tầng 1 (1F...)</option>
+                                    <option value="Tầng 2">Tầng 2 (2F...)</option>
+                                    <option value="Tầng 3">Tầng 3 (3F...)</option>
+                                    <option value="Tầng 4">Tầng 4 (4F...)</option>
+                                    <option value="Tầng 5">Tầng 5 (5F...)</option>
+                                    <option value="Tầng 6">Tầng 6 (6F...)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">📍 Phòng học / Vị trí mới chuyển đến <span class="text-red-500">*</span></label>
+                                <select id="moveToLocationSelect" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                                    <option value="">-- Chọn phòng / kho mới --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Người thực hiện di chuyển</label>
+                            <input type="text" id="movedByInput" placeholder="Ví dụ: Thầy Tuấn (ADMIN01) hoặc KT001" value="Quản trị viên"
+                                   class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Lý do di chuyển <span class="text-red-500">*</span></label>
+                            <textarea id="moveReasonInput" rows="3" required placeholder="Ví dụ: Chuyển phục vụ kỳ thi học kỳ 2; Bàn giao lại cho phòng Tin học 2..."
+                                      class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm rounded-xl shadow-sm transition flex items-center justify-center">
+                            <i data-lucide="check" class="w-4 h-4 mr-2"></i> Xác nhận di chuyển thiết bị
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lịch sử di chuyển tất cả thiết bị -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base flex items-center">
+                                <i data-lucide="history" class="w-5 h-5 mr-2 text-indigo-600"></i> Lịch sử & Nhật ký Di chuyển Thiết bị
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Theo dõi luân chuyển thiết bị giữa các phòng ban, lớp học và kho bãi.</p>
+                        </div>
+                        <div class="relative w-full sm:w-64">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3"></i>
+                            <input type="text" id="movementSearchInput" placeholder="Tìm mã, vị trí, người chuyển..."
+                                   class="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs min-w-[800px]">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                                <tr>
+                                    <th class="px-3 py-2.5 whitespace-nowrap w-24">Thời gian</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[180px]">Mã & Tên Thiết bị</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Vị trí trước</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Vị trí sau</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[120px]">Người chuyển</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Lý do</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movementsTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="6" class="py-6 text-center text-slate-400">Đang tải lịch sử di chuyển...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: MƯỢN - TRẢ THIẾT BỊ ================= -->
+        <section id="tab-borrow" class="tab-content hidden space-y-4">
+            <!-- Filter Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="flex flex-1 w-full gap-2">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                        <input type="text" id="borrowSearchInput" placeholder="Tìm theo Mã phiếu, Mã GV, Tên GV, Mã TB..."
+                               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50">
+                    </div>
+                    <select id="borrowStatusFilter" class="text-sm border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="all">Tất cả phiếu mượn</option>
+                        <option value="Chờ duyệt">Chờ duyệt</option>
+                        <option value="Đang mượn">Đang mượn</option>
+                        <option value="Đã trả">Đã trả</option>
+                        <option value="Từ chối">Từ chối</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportBorrowExcel()" class="px-3 py-2 text-sm font-medium rounded-xl text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition flex items-center">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1.5"></i> Xuất Excel
+                    </button>
+                    <button onclick="openBorrowModal()" class="px-4 py-2 text-sm font-medium rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition flex items-center">
+                        <i data-lucide="plus-circle" class="w-4 h-4 mr-1.5"></i> Tạo phiếu mượn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Borrow Requests Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm min-w-[950px]">
+                        <thead class="bg-slate-50 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 whitespace-nowrap w-28">Mã phiếu</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[180px]">Giáo viên / Bộ môn</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[200px]">Thiết bị mượn</th>
+                                <th class="px-4 py-3 whitespace-nowrap w-28">Ngày mượn</th>
+                                <th class="px-4 py-3 whitespace-nowrap w-28">Hạn trả</th>
+                                <th class="px-4 py-3 whitespace-nowrap min-w-[140px]">Trạng thái</th>
+                                <th class="px-4 py-3 text-center whitespace-nowrap min-w-[120px]">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrowTableBody" class="divide-y divide-slate-100">
+                            <tr>
+                                <td colspan="7" class="py-8 text-center text-slate-400">Đang tải danh sách mượn - trả...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: NGƯỜI DÙNG & PHÒNG BAN ================= -->
+        <section id="tab-users_rooms" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Danh sách giáo viên / người dùng -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base flex items-center">
+                                <i data-lucide="users-2" class="w-5 h-5 mr-2 text-blue-600"></i> Cán bộ, Giáo viên & Nhân viên
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Tìm kiếm nhanh mã cán bộ, họ tên, tổ chuyên môn phục vụ mượn trả.</p>
+                        </div>
+                        <button onclick="openAddUserModal()" class="admin-action px-3 py-1.5 text-xs font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition flex items-center shrink-0">
+                            <i data-lucide="user-plus" class="w-3.5 h-3.5 mr-1"></i> Thêm GV
+                        </button>
+                    </div>
+
+                    <!-- Search & Filter Controls for Users -->
+                    <div class="space-y-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="relative flex-1">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                                <input type="text" id="userSearchInput" oninput="filterUsersList()" placeholder="Tìm tên giáo viên, mã GV, SĐT..."
+                                       class="w-full pl-8 pr-7 py-1.5 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                <button type="button" id="userSearchClear" onclick="clearUserSearch()" class="hidden absolute right-2 top-2 text-slate-400 hover:text-slate-600">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            <select id="userDeptFilter" onchange="filterUsersList()" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[180px]">
+                                <option value="all">Tất cả tổ / ban</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 px-1">
+                            <span id="userCountBadge" class="font-medium text-blue-700">Đang tải...</span>
+                            <span class="italic text-slate-400">Cuộn danh sách để xem</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-[460px] border border-slate-100 rounded-xl">
+                        <table class="w-full text-left text-xs min-w-[580px]">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-3 py-2.5 whitespace-nowrap w-24">Mã GV</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[150px]">Họ tên & Liên hệ</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[110px]">Tổ / Phòng ban</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Vai trò</th>
+                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[80px]">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="py-6 text-center text-slate-400">Đang tải danh sách...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Danh sách phòng ban / vị trí sử dụng -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base flex items-center">
+                                <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-emerald-600"></i> Phòng học, Phòng chức năng & Kho
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Vị trí lắp đặt thiết bị. <span class="text-blue-600 font-semibold" id="roomEditHint">(Admin sửa trực tiếp Loại phòng)</span></p>
+                        </div>
+                        <button onclick="openAddLocationModal()" class="admin-action px-3 py-1.5 text-xs font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition flex items-center shrink-0">
+                            <i data-lucide="plus" class="w-3.5 h-3.5 mr-1"></i> Thêm phòng
+                        </button>
+                    </div>
+
+                    <!-- Search & Filter Controls for Locations -->
+                    <div class="space-y-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="relative flex-1">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                                <input type="text" id="locationSearchInput" oninput="filterLocationsList()" placeholder="Tìm mã phòng, tên phòng, phụ trách..."
+                                       class="w-full pl-8 pr-7 py-1.5 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                                <button type="button" id="locationSearchClear" onclick="clearLocationSearch()" class="hidden absolute right-2 top-2 text-slate-400 hover:text-slate-600">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            <select id="locationFloorFilter" onchange="filterLocationsList()" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-blue-700 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option value="all">🏢 Tất cả các tầng</option>
+                                <option value="Tầng 1">Tầng 1</option>
+                                <option value="Tầng 2">Tầng 2</option>
+                                <option value="Tầng 3">Tầng 3</option>
+                                <option value="Tầng 4">Tầng 4</option>
+                                <option value="Tầng 5">Tầng 5</option>
+                                <option value="Tầng 6">Tầng 6</option>
+                            </select>
+                            <select id="locationTypeFilter" onchange="filterLocationsList()" class="text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[150px]">
+                                <option value="all">Tất cả loại phòng</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 px-1">
+                            <span id="locationCountBadge" class="font-medium text-emerald-700">Đang tải...</span>
+                            <span class="italic text-slate-400">Click vào dropdown loại phòng để đổi</span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-[460px] border border-slate-100 rounded-xl">
+                        <table class="w-full text-left text-xs min-w-[650px]">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-3 py-2.5 whitespace-nowrap w-20">Tầng</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap w-24">Mã phòng</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Tên vị trí / phòng</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[180px]">Loại (Sửa trực tiếp)</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[120px]">Phụ trách</th>
+                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[80px]">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationsTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="6" class="py-6 text-center text-slate-400">Đang tải danh sách phòng...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 6: BÁO CÁO & THỐNG KÊ ================= -->
+        <section id="tab-reports" class="tab-content hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-2 text-blue-600"></i> Báo cáo Kiểm kê & Tần suất Sử dụng
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Xuất dữ liệu định dạng Excel (.xlsx) phục vụ báo cáo định kỳ cho Ban Giám Hiệu và Sở GD&ĐT.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="exportDevicesExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition flex items-center">
+                        <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Danh mục Thiết bị (Excel)
+                    </button>
+                    <button onclick="exportBorrowExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-emerald-800 bg-emerald-100 hover:bg-emerald-200 transition flex items-center">
+                        <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Sổ Mượn - Trả (Excel)
+                    </button>
+                    <button onclick="exportMovementExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-blue-800 bg-blue-100 hover:bg-blue-200 transition flex items-center">
+                        <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Lịch sử Di chuyển (Excel)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thống kê giáo viên mượn nhiều nhất -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center">
+                        <i data-lucide="award" class="w-4 h-4 mr-2 text-amber-500"></i> Top Giáo viên & Phòng ban mượn nhiều nhất
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-100">
+                                <tr>
+                                    <th class="py-2">Mã GV</th>
+                                    <th class="py-2">Họ tên giáo viên</th>
+                                    <th class="py-2">Bộ môn / Phòng ban</th>
+                                    <th class="py-2 text-right">Tổng lượt mượn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topTeachersReportTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="py-4 text-center text-slate-400">Đang tải dữ liệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                    <h4 class="font-bold text-slate-800 text-sm flex items-center">
+                        <i data-lucide="alert-octagon" class="w-4 h-4 mr-2 text-rose-500"></i> Danh sách Thiết bị hỏng / cần bảo dưỡng
+                    </h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="text-slate-400 uppercase border-b border-slate-100">
+                                <tr>
+                                    <th class="py-2">Mã TB</th>
+                                    <th class="py-2">Tên thiết bị</th>
+                                    <th class="py-2">Vị trí hiện tại</th>
+                                    <th class="py-2">Tình trạng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="brokenDevicesTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="py-4 text-center text-slate-400">Đang tải dữ liệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 7: HỆ THỐNG & NHẬT KÝ ================= -->
+        <section id="tab-settings" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Data Management & Backups -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-1">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-900 text-base flex items-center">
+                            <i data-lucide="database" class="w-5 h-5 mr-2 text-blue-600"></i> Sao lưu & Phục hồi
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">Đảm bảo an toàn cơ sở dữ liệu trường học.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <a href="/api/backup" download class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center justify-center">
+                            <i data-lucide="cloud-download" class="w-4 h-4 mr-2"></i> Tải bản sao lưu (JSON)
+                        </a>
+
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <label class="block text-xs font-semibold text-slate-700">Phục hồi từ bản sao lưu</label>
+                            <input type="file" id="restoreFileInput" accept=".json" class="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <button onclick="handleRestoreDatabase()" class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs rounded-lg transition flex items-center justify-center">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1.5"></i> Bắt đầu phục hồi
+                            </button>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-100">
+                            <button onclick="handleResetDemoData()" class="w-full py-2.5 px-4 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-medium text-xs rounded-xl transition flex items-center justify-center">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4 mr-2 text-amber-600"></i> Nạp lại dữ liệu mẫu trường học
+                            </button>
+                            <p class="text-[11px] text-slate-400 mt-1 text-center">Đặt lại dữ liệu mô phỏng gồm phòng tin học, thí nghiệm hóa, máy chiếu...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Logs -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 lg:col-span-2">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base flex items-center">
+                                <i data-lucide="shield-check" class="w-5 h-5 mr-2 text-emerald-600"></i> Nhật ký hoạt động hệ thống (Audit Logs)
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Theo dõi lịch sử thêm, xóa, mượn trả và di chuyển thiết bị của người dùng.</p>
+                        </div>
+                        <button onclick="loadLogs()" class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Làm mới">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-96">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-500 uppercase font-semibold sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2">Thời gian</th>
+                                    <th class="px-3 py-2">Người thực hiện</th>
+                                    <th class="px-3 py-2">Hành động</th>
+                                    <th class="px-3 py-2">Chi tiết hoạt động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityLogsTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="py-4 text-center text-slate-400">Đang tải nhật ký...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            Hệ thống Quản lý Thiết bị Trường học (QLTB) &bull; Thiết kế & phát triển phục vụ công tác chuyển đổi số học đường
+        </div>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- 1. MODAL THÊM / SỬA THIẾT BỊ -->
+    <div id="deviceModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                <h3 class="font-bold text-slate-900 text-base" id="deviceModalTitle">Thêm thiết bị mới</h3>
+                <button onclick="closeModal('deviceModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="deviceForm" onsubmit="handleDeviceSubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="deviceId">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã thiết bị <span class="text-red-500">*</span></label>
+                        <input type="text" id="deviceCode" required placeholder="Ví dụ: Sigma-PC-001, Sigma-M-001, Sigma-ROUTER-001"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <p class="text-[11px] text-slate-400 mt-0.5">Mã tài sản duy nhất (Tự động gợi ý theo danh mục)</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tên thiết bị (Gợi ý dữ liệu 2022) <span class="text-red-500">*</span></label>
+                        <input type="text" id="deviceName" list="standardDeviceList" onchange="handleStandardDeviceSelect(this.value)" required placeholder="Nhập hoặc chọn thiết bị chuẩn..."
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <datalist id="standardDeviceList"></datalist>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Danh mục phân loại <span class="text-red-500">*</span></label>
+                        <select id="deviceCategory" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">🏢 Tầng vị trí <span class="text-red-500">*</span></label>
+                        <select id="deviceFloor" onchange="onModalFloorChange(this.value, 'deviceLocation')" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-blue-700">
+                            <option value="all">-- Tất cả các tầng --</option>
+                            <option value="Tầng 1">Tầng 1 (1F...)</option>
+                            <option value="Tầng 2">Tầng 2 (2F...)</option>
+                            <option value="Tầng 3">Tầng 3 (3F...)</option>
+                            <option value="Tầng 4">Tầng 4 (4F...)</option>
+                            <option value="Tầng 5">Tầng 5 (5F...)</option>
+                            <option value="Tầng 6">Tầng 6 (6F...)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">📍 Phòng học / Vị trí cụ thể <span class="text-red-500">*</span></label>
+                        <select id="deviceLocation" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="relative">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">👤 Người sử dụng / Cán bộ phụ trách</label>
+                        <input type="hidden" id="deviceAssignedUser" value="">
+                        <div class="relative flex items-center">
+                            <i data-lucide="user-search" class="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none"></i>
+                            <input type="text" id="deviceAssignedUserSearch" 
+                                   autocomplete="off"
+                                   placeholder="Gõ tên (Sơn, Hằng...), mã GV hoặc SĐT..."
+                                   onfocus="openAssignedUserDropdown()"
+                                   oninput="searchAssignedUsers(this.value)"
+                                   class="w-full text-sm border border-slate-200 rounded-xl pl-9 pr-8 py-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                            <button type="button" id="deviceAssignedUserClear" onclick="clearAssignedUserCombobox()" 
+                                    class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200 transition">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        <!-- Floating Dropdown list with scroll -->
+                        <div id="deviceAssignedUserDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-56 overflow-y-auto z-50 divide-y divide-slate-100">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">Gõ trực tiếp tên GV hoặc mã để chọn nhanh</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">⚙️ Tình trạng sử dụng</label>
+                        <select id="deviceStatus" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium text-slate-800">
+                            <option value="Đang sử dụng">Đang sử dụng</option>
+                            <option value="Sẵn sàng">Sẵn sàng (Kho / Dự phòng)</option>
+                            <option value="Đang mượn">Đang mượn</option>
+                            <option value="Hỏng">Hỏng</option>
+                            <option value="Bảo trì">Bảo trì</option>
+                            <option value="Đã thanh lý">Đã thanh lý</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nguyên giá (VNĐ)</label>
+                        <input type="number" id="devicePrice" placeholder="Ví dụ: 15000000" min="0"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Ngày nhập</label>
+                        <input type="date" id="devicePurchaseDate"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nhà cung cấp / Đơn vị bàn giao</label>
+                    <input type="text" id="deviceSupplier" placeholder="Ví dụ: Công ty CP Tin học Sao Mai, Dự án Bộ GD&ĐT"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Thông số kỹ thuật / Cấu hình</label>
+                    <textarea id="deviceSpec" rows="2" placeholder="Ví dụ: Intel Core i5, 16GB RAM, SSD 512GB..."
+                              class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú thêm</label>
+                    <textarea id="deviceNotes" rows="2" placeholder="Ghi chú về phụ kiện kèm theo, số seri..."
+                              class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('deviceModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Lưu thiết bị</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. MODAL NHẬP THIẾT BỊ BẰNG FILE CSV -->
+    <div id="importModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="file-up" class="w-5 h-5 mr-2 text-blue-600"></i> Nhập thiết bị hàng loạt bằng File CSV
+                </h3>
+                <button onclick="closeModal('importModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="p-4 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-800 space-y-2">
+                    <p class="font-bold flex items-center">
+                        <i data-lucide="info" class="w-4 h-4 mr-1 text-blue-600"></i> Quy tắc nhập dữ liệu:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700 pl-1">
+                        <li>File CSV mã hóa UTF-8 với dấu phẩy ngăn cách.</li>
+                        <li><strong>Tránh trùng lặp mã thiết bị:</strong> Các mã trùng trong file hoặc đã có trong hệ thống sẽ được phát hiện và báo lỗi rõ ràng.</li>
+                        <li>Tải file mẫu chuẩn để điền dữ liệu đúng định dạng:</li>
+                    </ul>
+                    <a href="/download-csv-template" class="inline-flex items-center font-semibold text-blue-700 hover:text-blue-900 underline mt-1">
+                        <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i> Tải file CSV mẫu chuẩn tại đây
+                    </a>
+                </div>
+
+                <form id="importForm" onsubmit="handleImportSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Chọn file CSV từ máy tính</label>
+                        <input type="file" id="csvFileInput" accept=".csv" required
+                               class="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-slate-200 rounded-xl p-1 bg-slate-50">
+                    </div>
+
+                    <div id="importResultBox" class="hidden p-3 rounded-xl text-xs space-y-1"></div>
+
+                    <div class="pt-2 flex justify-end space-x-2">
+                        <button type="button" onclick="closeModal('importModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Đóng</button>
+                        <button type="submit" id="btnDoImport" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition flex items-center">
+                            <i data-lucide="upload" class="w-4 h-4 mr-1.5"></i> Bắt đầu nhập dữ liệu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL CHI TIẾT THIẾT BỊ & LỊCH SỬ DI CHUYỂN -->
+    <div id="deviceDetailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 font-bold" id="detailCodeBadge">TB-000</span>
+                    <h3 class="font-bold text-slate-900 text-base" id="detailNameTitle">Chi tiết thiết bị</h3>
+                </div>
+                <button onclick="closeModal('deviceDetailModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-5">
+                <!-- Info Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl text-xs border border-slate-200">
+                    <div>
+                        <span class="text-slate-400 block">Danh mục:</span>
+                        <span class="font-semibold text-slate-800" id="detailCategory">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Vị trí hiện tại:</span>
+                        <span class="font-bold text-indigo-700" id="detailLocation">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Người sử dụng:</span>
+                        <span class="font-semibold text-blue-700" id="detailAssignedUser">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Tình trạng sử dụng:</span>
+                        <span class="font-semibold" id="detailStatus">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Nguyên giá:</span>
+                        <span class="font-semibold text-slate-800" id="detailPrice">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Ngày nhập:</span>
+                        <span class="font-semibold text-slate-800" id="detailDate">-</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Nhà cung cấp:</span>
+                        <span class="font-semibold text-slate-800" id="detailSupplier">-</span>
+                    </div>
+                    <div class="sm:col-span-3">
+                        <span class="text-slate-400 block">Thông số kỹ thuật:</span>
+                        <p class="font-medium text-slate-800 mt-0.5" id="detailSpec">-</p>
+                    </div>
+                </div>
+
+                <!-- Lịch sử di chuyển của thiết bị này -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase flex items-center">
+                        <i data-lucide="truck" class="w-4 h-4 mr-1 text-blue-600"></i> Lịch sử di chuyển vị trí của thiết bị này
+                    </h4>
+                    <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-500 font-semibold sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2">Thời gian</th>
+                                    <th class="px-3 py-2">Vị trí trước</th>
+                                    <th class="px-3 py-2">Vị trí sau khi chuyển</th>
+                                    <th class="px-3 py-2">Người chuyển</th>
+                                    <th class="px-3 py-2">Lý do</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailMovementsTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="py-3 text-center text-slate-400">Chưa có lịch sử di chuyển</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Lịch sử mượn của thiết bị này -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase flex items-center">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 mr-1 text-emerald-600"></i> Lịch sử mượn - trả
+                    </h4>
+                    <div class="overflow-x-auto max-h-48 border border-slate-200 rounded-xl">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-500 font-semibold sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2">Mã phiếu</th>
+                                    <th class="px-3 py-2">Giáo viên mượn</th>
+                                    <th class="px-3 py-2">Ngày mượn</th>
+                                    <th class="px-3 py-2">Hạn trả</th>
+                                    <th class="px-3 py-2">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailBorrowsTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="py-3 text-center text-slate-400">Chưa có lượt mượn nào</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end">
+                    <button type="button" onclick="closeModal('deviceDetailModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL TẠO PHIẾU MƯỢN THIẾT BỊ -->
+    <div id="borrowModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="arrow-left-right" class="w-5 h-5 mr-2 text-emerald-600"></i> Tạo phiếu mượn thiết bị
+                </h3>
+                <button onclick="closeModal('borrowModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="borrowForm" onsubmit="handleBorrowSubmit(event)" class="p-5 space-y-4">
+                <div class="relative">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mã / Giáo viên mượn <span class="text-red-500">*</span></label>
+                    <input type="hidden" id="borrowUserCode" required value="">
+                    <div class="relative flex items-center">
+                        <i data-lucide="user-check" class="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none"></i>
+                        <input type="text" id="borrowUserCodeSearch" 
+                               autocomplete="off"
+                               placeholder="Gõ tên (Sơn, Hằng...), mã GV hoặc SĐT..."
+                               onfocus="openBorrowUserDropdown()"
+                               oninput="searchBorrowUsers(this.value)"
+                               class="w-full text-sm border border-slate-200 rounded-xl pl-9 pr-8 py-2.5 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition">
+                        <button type="button" id="borrowUserCodeClear" onclick="clearBorrowUserCombobox()" 
+                                class="hidden absolute right-2.5 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200 transition">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <!-- Floating Dropdown list with scroll -->
+                    <div id="borrowUserCodeDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-56 overflow-y-auto z-50 divide-y divide-slate-100">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Gõ tên hoặc mã giáo viên để lọc nhanh</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mã / Thiết bị cần mượn <span class="text-red-500">*</span></label>
+                    <select id="borrowDeviceCode" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="">-- Chọn thiết bị có sẵn --</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-1">Hệ thống chỉ cho phép mượn các thiết bị có trạng thái "Sẵn sàng" trong kho.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Ngày mượn</label>
+                        <input type="date" id="borrowDate" required
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Hạn trả dự kiến <span class="text-red-500">*</span></label>
+                        <input type="date" id="borrowExpectedReturn" required
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mục đích sử dụng</label>
+                    <input type="text" id="borrowPurpose" placeholder="Ví dụ: Giảng dạy tiết thực hành Hóa học 11A2..."
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="flex items-center space-x-2 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <input type="checkbox" id="borrowAutoApprove" class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4">
+                    <label for="borrowAutoApprove" class="text-xs font-medium text-slate-700">Duyệt ngay phiếu mượn (Bàn giao thiết bị ngay)</label>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('borrowModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition">Tạo phiếu mượn</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. MODAL GHI NHẬN TRẢ THIẾT BỊ -->
+    <div id="returnModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="check-square" class="w-5 h-5 mr-2 text-blue-600"></i> Ghi nhận trả thiết bị
+                </h3>
+                <button onclick="closeModal('returnModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="returnForm" onsubmit="handleReturnSubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="returnBorrowId">
+                <div class="p-3 bg-slate-50 rounded-xl text-xs space-y-1 border border-slate-200">
+                    <p><span class="text-slate-400">Mã phiếu:</span> <strong id="returnRequestCode">PM-000</strong></p>
+                    <p><span class="text-slate-400">Giáo viên:</span> <strong id="returnUserName">-</strong></p>
+                    <p><span class="text-slate-400">Thiết bị:</span> <strong id="returnDeviceName">-</strong></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Ngày hoàn trả thực tế <span class="text-red-500">*</span></label>
+                    <input type="date" id="returnActualDate" required
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Đánh giá tình trạng khi hoàn trả <span class="text-red-500">*</span></label>
+                    <select id="returnCondition" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <option value="Tốt">Tốt (Hoạt động hoàn hảo, nguyên vẹn)</option>
+                        <option value="Bình thường">Bình thường</option>
+                        <option value="Hư hỏng nhẹ">Hư hỏng nhẹ (Tự động chuyển trạng thái thiết bị sang HỎNG)</option>
+                        <option value="Hỏng nặng">Hỏng nặng (Cần sửa chữa thay thế linh kiện)</option>
+                        <option value="Mất phụ kiện">Mất phụ kiện / Thiếu dây cáp</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Ghi chú kiểm tra</label>
+                    <textarea id="returnNotes" rows="2" placeholder="Ghi chú chi tiết khi nhận bàn giao lại thiết bị..."
+                              class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('returnModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Xác nhận thu hồi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. MODAL THÊM GIÁO VIÊN / NGƯỜI DÙNG -->
+    <div id="userModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="user-plus" class="w-5 h-5 mr-2 text-blue-600"></i> Thêm Cán bộ / Giáo viên
+                </h3>
+                <button onclick="closeModal('userModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="userForm" onsubmit="handleUserSubmit(event)" class="p-5 space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã GV/CB <span class="text-red-500">*</span></label>
+                        <input type="text" id="userCodeInput" required placeholder="GV006, KT002"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Vai trò</label>
+                        <select id="userRoleInput" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="teacher">Giáo viên</option>
+                            <option value="admin">Quản trị thiết bị</option>
+                            <option value="technician">Kỹ thuật viên</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="userFullnameInput" required placeholder="Ví dụ: Nguyễn Thị Hoa"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tổ chuyên môn / Phòng ban <span class="text-red-500">*</span></label>
+                    <input type="text" id="userDeptInput" required placeholder="Ví dụ: Tổ Tự nhiên (Sinh học), Đoàn trường..."
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" id="userEmailInput" placeholder="hoa.nt@truong.edu.vn"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                        <input type="text" id="userPhoneInput" placeholder="0987654321"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('userModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Thêm người dùng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 7. MODAL THÊM PHÒNG BAN / VỊ TRÍ -->
+    <div id="locationModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-emerald-600"></i> Thêm Phòng học / Kho
+                </h3>
+                <button onclick="closeModal('locationModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="locationForm" onsubmit="handleLocationSubmit(event)" class="p-5 space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã phòng <span class="text-red-500">*</span></label>
+                        <input type="text" id="locCodeInput" required placeholder="1F22, 2F24..."
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">🏢 Tầng vị trí <span class="text-red-500">*</span></label>
+                        <select id="locFloorInput" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-blue-700">
+                            <option value="Tầng 1">Tầng 1</option>
+                            <option value="Tầng 2">Tầng 2</option>
+                            <option value="Tầng 3">Tầng 3</option>
+                            <option value="Tầng 4">Tầng 4</option>
+                            <option value="Tầng 5">Tầng 5</option>
+                            <option value="Tầng 6">Tầng 6</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Loại vị trí</label>
+                        <select id="locTypeInput" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="Phòng học & Lớp học">Phòng học & Lớp học</option>
+                            <option value="Phòng chức năng & Bộ môn">Phòng chức năng & Bộ môn</option>
+                            <option value="Văn phòng & Khối làm việc">Văn phòng & Khối làm việc</option>
+                            <option value="Kho & Kỹ thuật">Kho lưu trữ & Kỹ thuật</option>
+                            <option value="Khuôn viên, Sân bãi & Tiện ích">Khuôn viên & Sân bãi</option>
+                            <option value="Tiện ích & Phụ trợ">Tiện ích & Phụ trợ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên vị trí / phòng ban <span class="text-red-500">*</span></label>
+                    <input type="text" id="locNameInput" required placeholder="Ví dụ: Phòng Thực hành Tin học 03"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Người quản lý / Phụ trách phòng</label>
+                    <input type="text" id="locManagerInput" placeholder="Ví dụ: Thầy Hoàng (Tổ Tin học)"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mô tả đặc điểm</label>
+                    <textarea id="locDescInput" rows="2" placeholder="Ghi chú vị trí tầng, tòa nhà, sức chứa..."
+                              class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('locationModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition">Thêm vị trí</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. MODAL ĐĂNG NHẬP / ĐĂNG KÝ (AUTHENTICATION) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Modal Header with Tabs -->
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex space-x-1.5 bg-slate-200/70 p-1 rounded-xl">
+                    <button type="button" id="tabBtnLogin" onclick="switchAuthTab('login')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm transition">
+                        Đăng nhập
+                    </button>
+                    <button type="button" id="tabBtnRegister" onclick="switchAuthTab('register')" class="px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition">
+                        Đăng ký tài khoản
+                    </button>
+                </div>
+                <button onclick="closeModal('authModal')" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Form Đăng nhập -->
+            <form id="loginForm" onsubmit="handleAuthLogin(event)" class="p-5 space-y-4">
+                <div class="text-center pb-1">
+                    <h4 class="font-bold text-slate-900 text-lg">Đăng nhập hệ thống QLTB</h4>
+                    <p class="text-xs text-slate-500 mt-0.5">Truy cập để quản lý và kiểm kê thiết bị trường học</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên đăng nhập <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                        <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhập tên tài khoản..."
+                               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                        <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhập mật khẩu..."
+                               class="w-full pl-9 pr-10 py-2 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i data-lucide="eye" id="loginEyeIcon" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-600/20 transition flex items-center justify-center">
+                    <i data-lucide="log-in" class="w-4 h-4 mr-2"></i> Đăng nhập
+                </button>
+            </form>
+
+            <!-- Form Đăng ký -->
+            <form id="registerForm" onsubmit="handleAuthRegister(event)" class="p-5 space-y-3.5 hidden">
+                <div class="text-center pb-1">
+                    <h4 class="font-bold text-slate-900 text-lg">Đăng ký tài khoản mới</h4>
+                    <p class="text-xs text-slate-500 mt-0.5">Tạo tài khoản truy cập hệ thống</p>
+                </div>
+
+                <!-- Thông báo bảo mật phân quyền -->
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start space-x-2">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                    <div>
+                        <p class="font-bold">Lưu ý phân quyền bảo mật:</p>
+                        <p class="text-[11px] text-amber-700 mt-0.5">Tài khoản đăng ký mới mặc định có vai trò <strong>Khách (Guest - Chỉ xem)</strong>. Quyền Quản trị viên (Admin) chỉ do Ban Quản trị cấp sau khi duyệt.</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="regFullname" required placeholder="Ví dụ: Nguyễn Văn An"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên tài khoản (Username) <span class="text-red-500">*</span></label>
+                    <input type="text" id="regUsername" required placeholder="Tối thiểu 3 ký tự (chữ, số)"
+                           class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="password" id="regPassword" required placeholder="Ít nhất 4 ký tự"
+                                   class="w-full text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEyeIcon1')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+                                <i data-lucide="eye" id="regEyeIcon1" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Xác nhận MK <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <input type="password" id="regPasswordConfirm" required placeholder="Nhập lại mật khẩu"
+                                   class="w-full text-sm border border-slate-200 rounded-xl p-2.5 pr-8 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="button" onclick="togglePasswordVisibility('regPasswordConfirm', 'regEyeIcon2')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+                                <i data-lucide="eye" id="regEyeIcon2" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" id="regEmail" placeholder="email@truong.edu.vn"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                        <input type="text" id="regPhone" placeholder="0901234567"
+                               class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm transition flex items-center justify-center">
+                    <i data-lucide="user-check" class="w-4 h-4 mr-2"></i> Hoàn tất đăng ký & Đăng nhập
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 9. MODAL CHỈNH SỬA PHÒNG HỌC / VỊ TRÍ -->
+    <div id="editLocationModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="edit-3" class="w-5 h-5 mr-2 text-blue-600"></i> Chỉnh sửa Phòng học / Vị trí
+                </h3>
+                <button onclick="closeModal('editLocationModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="editLocationForm" onsubmit="handleEditLocationSubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="editLocId">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã phòng <span class="text-red-500">*</span></label>
+                        <input type="text" id="editLocCode" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">🏢 Tầng vị trí <span class="text-red-500">*</span></label>
+                        <select id="editLocFloor" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-semibold text-blue-700">
+                            <option value="Tầng 1">Tầng 1</option>
+                            <option value="Tầng 2">Tầng 2</option>
+                            <option value="Tầng 3">Tầng 3</option>
+                            <option value="Tầng 4">Tầng 4</option>
+                            <option value="Tầng 5">Tầng 5</option>
+                            <option value="Tầng 6">Tầng 6</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên vị trí / phòng học <span class="text-red-500">*</span></label>
+                    <input type="text" id="editLocName" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Loại vị trí / Phòng <span class="text-red-500">*</span></label>
+                    <select id="editLocType" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium text-slate-800">
+                        <option value="Phòng học & Lớp học">Phòng học & Lớp học</option>
+                        <option value="Phòng chức năng & Bộ môn">Phòng chức năng & Bộ môn</option>
+                        <option value="Văn phòng & Khối làm việc">Văn phòng & Khối làm việc</option>
+                        <option value="Kho & Kỹ thuật">Kho lưu trữ & Kỹ thuật</option>
+                        <option value="Khuôn viên, Sân bãi & Tiện ích">Khuôn viên & Sân bãi</option>
+                        <option value="Hội trường & Phòng sự kiện">Hội trường & Phòng sự kiện</option>
+                        <option value="Tiện ích & Phụ trợ">Tiện ích & Phụ trợ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Người quản lý / Phụ trách</label>
+                    <input type="text" id="editLocManager" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mô tả đặc điểm</label>
+                    <textarea id="editLocDesc" rows="2" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('editLocationModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Lưu cập nhật phòng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 10. MODAL DI CHUYỂN PHÂN LOẠI THIẾT BỊ -->
+    <div id="changeCategoryModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="tag" class="w-5 h-5 mr-2 text-purple-600"></i> Di chuyển phân loại
+                </h3>
+                <button onclick="closeModal('changeCategoryModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="changeCategoryForm" onsubmit="handleChangeCategorySubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="changeCatDeviceId">
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-100">
+                    <span class="text-xs text-purple-600 block mb-0.5">Thiết bị đang chọn:</span>
+                    <p class="text-sm font-bold text-slate-800" id="changeCatDeviceName">TB-001</p>
+                    <p class="text-xs text-slate-600 mt-1">Phân loại hiện tại: <span id="changeCatCurrentCat" class="font-semibold text-purple-700">Máy tính</span></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Chọn phân loại mới chuyển đến <span class="text-red-500">*</span></label>
+                    <select id="changeCatNewSelect" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-purple-500 focus:outline-none font-medium">
+                        <!-- Dynamic categories -->
+                    </select>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('changeCategoryModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-xl shadow-sm transition">Xác nhận chuyển</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 11. MODAL QUẢN LÝ PHÂN LOẠI / DANH MỤC -->
+    <div id="categoryManageModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-base flex items-center">
+                        <i data-lucide="folders" class="w-5 h-5 mr-2 text-purple-600"></i> Quản lý & Di chuyển phân loại
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Thêm mới, đổi tên hoặc xóa các nhóm danh mục thiết bị</p>
+                </div>
+                <button onclick="closeModal('categoryManageModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <!-- Form thêm phân loại mới -->
+                <form id="addCategoryForm" onsubmit="handleAddCategorySubmit(event)" class="flex gap-2">
+                    <input type="text" id="newCategoryName" required placeholder="Nhập tên phân loại mới..." class="flex-1 text-sm border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center whitespace-nowrap">
+                        <i data-lucide="plus" class="w-3.5 h-3.5 mr-1"></i> Thêm phân loại
+                    </button>
+                </form>
+
+                <!-- Danh sách phân loại hiện tại -->
+                <div class="overflow-y-auto max-h-64 border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-500 uppercase font-semibold sticky top-0">
+                            <tr>
+                                <th class="px-3 py-2">STT</th>
+                                <th class="px-3 py-2">Tên phân loại</th>
+                                <th class="px-3 py-2 text-right">Số thiết bị</th>
+                                <th class="px-3 py-2 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryManageTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="py-4 text-center text-slate-400">Đang tải danh mục...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. MODAL CHỈNH SỬA NGƯỜI DÙNG / GIÁO VIÊN -->
+    <div id="editUserModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-base flex items-center">
+                    <i data-lucide="user-cog" class="w-5 h-5 mr-2 text-blue-600"></i> Sửa Thông tin Cán bộ / Giáo viên
+                </h3>
+                <button onclick="closeModal('editUserModal')" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="editUserForm" onsubmit="handleEditUserSubmit(event)" class="p-5 space-y-4">
+                <input type="hidden" id="editUserId">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mã GV/CB <span class="text-red-500">*</span></label>
+                        <input type="text" id="editUserCode" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 uppercase focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Vai trò</label>
+                        <select id="editUserRole" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="teacher">Giáo viên</option>
+                            <option value="admin">Quản trị thiết bị</option>
+                            <option value="technician">Kỹ thuật viên</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="editUserFullname" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tổ chuyên môn / Phòng ban <span class="text-red-500">*</span></label>
+                    <input type="text" id="editUserDept" required class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" id="editUserEmail" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại</label>
+                        <input type="text" id="editUserPhone" class="w-full text-sm border border-slate-200 rounded-xl p-2.5 bg-slate-50 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+                    <button type="button" onclick="closeModal('editUserModal')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition">Hủy bỏ</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm transition">Lưu cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

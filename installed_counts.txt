@@ -1,0 +1,7 @@
+Total installed devices across all floors: 1495
+- Tầng 1: 42 phòng/vị trí, 278 thiết bị đã lắp đặt
+- Tầng 2: 33 phòng/vị trí, 226 thiết bị đã lắp đặt
+- Tầng 3: 42 phòng/vị trí, 612 thiết bị đã lắp đặt
+- Tầng 4: 36 phòng/vị trí, 169 thiết bị đã lắp đặt
+- Tầng 5: 31 phòng/vị trí, 85 thiết bị đã lắp đặt
+- Tầng 6: 15 phòng/vị trí, 125 thiết bị đã lắp đặt
