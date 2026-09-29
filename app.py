@@ -1665,6 +1665,7 @@ def list_standard_devices():
 
 # --- SYSTEM ACTIVITY LOGS & BACKUP/RESTORE ---
 @app.route('/api/logs', methods=['GET'])
+@admin_required
 def list_logs():
     conn = get_db()
     cursor = conn.cursor()
@@ -1674,6 +1675,7 @@ def list_logs():
     return jsonify(logs)
 
 @app.route('/api/backup', methods=['GET'])
+@superadmin_required
 def backup_data():
     conn = get_db()
     cursor = conn.cursor()

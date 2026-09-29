@@ -23,6 +23,17 @@ let state = {
     }
 };
 
+// Hàm chuyển đổi an toàn ký tự HTML tránh lỗi XSS và ReferenceError
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 // Chống lỗi "Unexpected token '<', '<!doctype'": Kiểm tra nếu API trả về trang HTML thay vì JSON
 (function () {
     const originalJson = Response.prototype.json;
@@ -621,6 +632,16 @@ function handleStandardDeviceSelect(devName) {
 
 // Chuyển đổi tab
 async function switchTab(tabName) {
+    // Bảo mật: Khách (Guest) không được phép truy cập tab Báo cáo hoặc Cài đặt & Nhật ký
+    if ((tabName === 'settings' || tabName === 'reports') && !canManage()) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Quyền truy cập bị giới hạn',
+            text: 'Chức năng ' + (tabName === 'settings' ? 'Cài đặt & Nhật ký hệ thống' : 'Báo cáo & Thống kê') + ' chỉ dành riêng cho Cán bộ Quản lý và Quản trị viên. Vui lòng đăng nhập để tiếp tục!'
+        });
+        return switchTab('dashboard');
+    }
+
     currentTab = tabName;
     document.querySelectorAll('.tab-btn').forEach(btn => {
         if (btn.dataset.tab === tabName) {
@@ -755,6 +776,11 @@ function updateAuthUI() {
         }
     });
 
+    // Nếu đang ở tab Báo cáo hoặc Cài đặt mà ở vai trò Khách (Guest), lập tức chuyển hướng về Dashboard
+    if (isGuest && (currentTab === 'settings' || currentTab === 'reports')) {
+        switchTab('dashboard');
+    }
+
     // Phần quản lý tài khoản & phân quyền (Chỉ SuperAdmin mới thấy)
     const accountSection = document.getElementById('accountManagementSection');
     if (accountSection) {
@@ -797,7 +823,11 @@ async function loadAccountsList() {
     if (!tbody || !isSuperAdmin()) return;
 
     try {
-        const res = await fetch('/api/auth/accounts');
+        const res = await fetch('/api/auth/accounts', {
+            headers: {
+                'X-User-Role': state.currentUser.role
+            }
+        });
         if (!res.ok) {
             tbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">Không có quyền truy cập danh sách tài khoản.</td></tr>`;
             return;
@@ -886,7 +916,10 @@ async function handleChangeAccountRole(accountId, newRole) {
     try {
         const res = await fetch(`/api/auth/accounts/${accountId}/role`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser.role
+            },
             body: JSON.stringify({ role: newRole })
         });
         const data = await res.json();
@@ -926,7 +959,10 @@ async function handleCreateAccount(event) {
     try {
         const res = await fetch('/api/auth/accounts', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser.role
+            },
             body: JSON.stringify({ username, fullname, password, role, email, phone })
         });
         const data = await res.json();
@@ -964,7 +1000,10 @@ async function handleResetPassword(event) {
     try {
         const res = await fetch(`/api/auth/accounts/${accountId}/reset-password`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser.role
+            },
             body: JSON.stringify({ new_password })
         });
         const data = await res.json();
@@ -1001,7 +1040,12 @@ async function handleDeleteAccount(accountId, username) {
     if (!result.isConfirmed) return;
 
     try {
-        const res = await fetch(`/api/auth/accounts/${accountId}`, { method: 'DELETE' });
+        const res = await fetch(`/api/auth/accounts/${accountId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-User-Role': state.currentUser.role
+            }
+        });
         const data = await res.json();
         if (!res.ok) {
             Swal.fire({ icon: 'error', title: 'Xóa thất bại', text: data.error });
@@ -3170,6 +3214,7 @@ async function handleLocationSubmit(event) {
 
 // ==================== BÁO CÁO & THỐNG KÊ ====================
 async function loadReports() {
+    if (!canManage()) return;
     try {
         const res = await fetch('/api/stats');
         const stats = await res.json();
@@ -3211,6 +3256,10 @@ async function loadReports() {
 
 // ==================== XUẤT EXCEL (SheetJS) ====================
 function exportDevicesExcel() {
+    if (!canManage()) {
+        Swal.fire({ icon: 'warning', title: 'Quyền truy cập bị từ chối', text: 'Chức năng xuất báo cáo Excel chỉ dành riêng cho Cán bộ Quản lý hoặc Quản trị viên!' });
+        return;
+    }
     if (!state.devices || state.devices.length === 0) {
         Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Không có dữ liệu thiết bị để xuất!' });
         return;
@@ -3237,6 +3286,10 @@ function exportDevicesExcel() {
 }
 
 function exportBorrowExcel() {
+    if (!canManage()) {
+        Swal.fire({ icon: 'warning', title: 'Quyền truy cập bị từ chối', text: 'Chức năng xuất báo cáo Excel chỉ dành riêng cho Cán bộ Quản lý hoặc Quản trị viên!' });
+        return;
+    }
     if (!state.borrowRequests || state.borrowRequests.length === 0) {
         Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Không có dữ liệu mượn trả để xuất!' });
         return;
@@ -3266,6 +3319,10 @@ function exportBorrowExcel() {
 }
 
 function exportMovementExcel() {
+    if (!canManage()) {
+        Swal.fire({ icon: 'warning', title: 'Quyền truy cập bị từ chối', text: 'Chức năng xuất báo cáo Excel chỉ dành riêng cho Cán bộ Quản lý hoặc Quản trị viên!' });
+        return;
+    }
     if (!state.movements || state.movements.length === 0) {
         Swal.fire({ icon: 'info', title: 'Thông báo', text: 'Không có dữ liệu di chuyển để xuất!' });
         return;
@@ -3290,11 +3347,23 @@ function exportMovementExcel() {
 
 // ==================== HỆ THỐNG & NHẬT KÝ ====================
 async function loadLogs() {
+    if (!canManage()) return;
     try {
-        const res = await fetch('/api/logs');
+        const res = await fetch('/api/logs', {
+            headers: {
+                'X-User-Role': state.currentUser.role
+            }
+        });
+        if (!res.ok) {
+            const data = await res.json();
+            const tbody = document.getElementById('activityLogsTable');
+            if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="py-4 text-center text-slate-400">${data.error || 'Chưa có nhật ký hoạt động.'}</td></tr>`;
+            return;
+        }
         const logs = await res.json();
 
         const tbody = document.getElementById('activityLogsTable');
+        if (!tbody) return;
         if (logs.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400">Chưa có nhật ký hoạt động.</td></tr>';
             return;

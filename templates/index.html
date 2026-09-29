@@ -125,11 +125,11 @@
                     <i data-lucide="users" class="w-4 h-4"></i>
                     <span>Người dùng & Phòng ban</span>
                 </button>
-                <button onclick="switchTab('reports')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="reports">
+                <button onclick="switchTab('reports')" class="tab-btn admin-only px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="reports">
                     <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
                     <span>Báo cáo & Thống kê</span>
                 </button>
-                <button onclick="switchTab('settings')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="settings">
+                <button onclick="switchTab('settings')" class="tab-btn admin-only px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="settings">
                     <i data-lucide="settings" class="w-4 h-4"></i>
                     <span>Hệ thống & Nhật ký</span>
                 </button>
@@ -728,13 +728,13 @@
                     <p class="text-xs text-slate-500 mt-1">Xuất dữ liệu định dạng Excel (.xlsx) phục vụ báo cáo định kỳ cho Ban Giám Hiệu và Sở GD&ĐT.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button onclick="exportDevicesExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition flex items-center">
+                    <button onclick="exportDevicesExcel()" class="admin-action px-3.5 py-2 text-xs font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition flex items-center">
                         <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Danh mục Thiết bị (Excel)
                     </button>
-                    <button onclick="exportBorrowExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-emerald-800 bg-emerald-100 hover:bg-emerald-200 transition flex items-center">
+                    <button onclick="exportBorrowExcel()" class="admin-action px-3.5 py-2 text-xs font-semibold rounded-xl text-emerald-800 bg-emerald-100 hover:bg-emerald-200 transition flex items-center">
                         <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Sổ Mượn - Trả (Excel)
                     </button>
-                    <button onclick="exportMovementExcel()" class="px-3.5 py-2 text-xs font-semibold rounded-xl text-blue-800 bg-blue-100 hover:bg-blue-200 transition flex items-center">
+                    <button onclick="exportMovementExcel()" class="admin-action px-3.5 py-2 text-xs font-semibold rounded-xl text-blue-800 bg-blue-100 hover:bg-blue-200 transition flex items-center">
                         <i data-lucide="download" class="w-4 h-4 mr-1.5"></i> Xuất Lịch sử Di chuyển (Excel)
                     </button>
                 </div>
