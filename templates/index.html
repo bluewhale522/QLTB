@@ -57,7 +57,7 @@
 
                 <!-- Quick Actions & User Switcher (Luôn hiển thị đầy đủ, không tràn màn hình mobile) -->
                 <div class="flex items-center space-x-1.5 sm:space-x-2.5 shrink-0">
-                    <button onclick="openBorrowModal()" title="Mượn thiết bị" class="inline-flex items-center px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition shrink-0 min-h-[36px]">
+                    <button onclick="openBorrowModal()" title="Mượn thiết bị" class="admin-only inline-flex items-center px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition shrink-0 min-h-[36px]">
                         <i data-lucide="arrow-left-right" class="w-4 h-4 sm:mr-1.5"></i>
                         <span class="hidden sm:inline">Mượn thiết bị</span>
                     </button>
@@ -95,7 +95,7 @@
             <div id="guestRoleBanner" class="hidden bg-amber-50 border-t border-amber-200 py-2.5 px-3 sm:px-4 text-xs text-amber-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div class="flex items-center space-x-2">
                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-200 text-amber-900 font-bold text-[10px] shrink-0">!</span>
-                    <span>Bạn đang duyệt hệ thống với vai trò <strong>Khách (Guest) - Chế độ chỉ xem</strong>. Bạn không có quyền thêm mới, chỉnh sửa hoặc xóa dữ liệu.</span>
+                    <span>Bạn đang duyệt hệ thống với vai trò <strong>Khách (Guest) - Chế độ tra cứu</strong>. Bạn có quyền xem tổng quan số lượng thiết bị, phân loại và vị trí phòng học của thiết bị.</span>
                 </div>
                 <button onclick="openAuthModal('login')" class="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-200/80 hover:bg-amber-200 font-bold text-amber-950 transition whitespace-nowrap text-xs shadow-sm">
                     <i data-lucide="log-in" class="w-3.5 h-3.5 mr-1.5"></i> Đăng nhập Quản trị để chỉnh sửa &rarr;
@@ -110,20 +110,20 @@
                 </button>
                 <button onclick="switchTab('devices')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="devices">
                     <i data-lucide="cpu" class="w-4 h-4"></i>
-                    <span>Quản lý thiết bị</span>
+                    <span id="devicesTabLabel">Tra cứu thiết bị</span>
                 </button>
-                <button onclick="switchTab('movements')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="movements">
+                <button onclick="switchTab('movements')" class="tab-btn admin-only px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="movements">
                     <i data-lucide="truck" class="w-4 h-4"></i>
                     <span>Di chuyển vị trí</span>
                 </button>
-                <button onclick="switchTab('borrow')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="borrow">
+                <button onclick="switchTab('borrow')" class="tab-btn admin-only px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="borrow">
                     <i data-lucide="clipboard-list" class="w-4 h-4"></i>
                     <span>Mượn - Trả thiết bị</span>
                     <span id="borrowBadge" class="hidden text-xs px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">0</span>
                 </button>
                 <button onclick="switchTab('users_rooms')" class="tab-btn px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="users_rooms">
-                    <i data-lucide="users" class="w-4 h-4"></i>
-                    <span>Người dùng & Phòng ban</span>
+                    <i data-lucide="map-pin" class="w-4 h-4" id="usersRoomsTabIcon"></i>
+                    <span id="usersRoomsTabLabel">Phòng học & Vị trí</span>
                 </button>
                 <button onclick="switchTab('reports')" class="tab-btn admin-only px-3 py-2 rounded-lg flex items-center space-x-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition whitespace-nowrap" data-tab="reports">
                     <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
@@ -598,9 +598,9 @@
 
         <!-- ================= TAB 5: NGƯỜI DÙNG & PHÒNG BAN ================= -->
         <section id="tab-users_rooms" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Danh sách giáo viên / người dùng -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
+            <div id="usersRoomsGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Danh sách giáo viên / người dùng (Bảo mật: Chỉ hiển thị cho Quản lý & Admin, ẩn với Guest) -->
+                <div id="usersManagementCard" class="admin-only bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
                             <h3 class="font-bold text-slate-900 text-base flex items-center">
@@ -654,13 +654,13 @@
                 </div>
 
                 <!-- Danh sách phòng ban / vị trí sử dụng -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5">
+                <div id="locationsManagementCard" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3.5 col-span-1 lg:col-span-2">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
                             <h3 class="font-bold text-slate-900 text-base flex items-center">
                                 <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-emerald-600"></i> Phòng học, Phòng chức năng & Kho
                             </h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Vị trí lắp đặt thiết bị. <span class="text-blue-600 font-semibold" id="roomEditHint">(Admin sửa trực tiếp Loại phòng)</span></p>
+                            <p class="text-xs text-slate-500 mt-0.5">Vị trí lắp đặt thiết bị. <span class="text-blue-600 font-semibold" id="roomEditHint">(Tra cứu thiết bị đang đặt tại các phòng)</span></p>
                         </div>
                         <button onclick="openAddLocationModal()" class="admin-action px-3 py-1.5 text-xs font-semibold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition flex items-center shrink-0">
                             <i data-lucide="plus" class="w-3.5 h-3.5 mr-1"></i> Thêm phòng
@@ -693,7 +693,7 @@
                         </div>
                         <div class="flex justify-between items-center text-[11px] text-slate-500 px-1">
                             <span id="locationCountBadge" class="font-medium text-emerald-700">Đang tải...</span>
-                            <span class="italic text-slate-400">Click vào dropdown loại phòng để đổi</span>
+                            <span class="italic text-slate-400">Xem vị trí và số lượng thiết bị theo từng phòng</span>
                         </div>
                     </div>
 
@@ -704,9 +704,9 @@
                                     <th class="px-3 py-2.5 whitespace-nowrap w-20">Tầng</th>
                                     <th class="px-3 py-2.5 whitespace-nowrap w-24">Mã phòng</th>
                                     <th class="px-3 py-2.5 whitespace-nowrap min-w-[140px]">Tên vị trí / phòng</th>
-                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[180px]">Loại (Sửa trực tiếp)</th>
-                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[120px]">Phụ trách</th>
-                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[80px]">Thao tác</th>
+                                    <th class="px-3 py-2.5 whitespace-nowrap min-w-[150px]">Loại phòng</th>
+                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[95px]">Thiết bị</th>
+                                    <th class="px-3 py-2.5 text-center whitespace-nowrap min-w-[110px]">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="locationsTableBody" class="divide-y divide-slate-100">

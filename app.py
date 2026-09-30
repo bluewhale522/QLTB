@@ -918,6 +918,7 @@ def move_device():
     })
 
 @app.route('/api/movements', methods=['GET'])
+@admin_required
 def get_movements():
     search = request.args.get('search', '').strip()
     conn = get_db()
@@ -1068,6 +1069,7 @@ def import_csv():
 
 # --- API MƯỢN - TRẢ THIẾT BỊ (BORROW & RETURN) ---
 @app.route('/api/borrow', methods=['GET'])
+@admin_required
 def list_borrow_requests():
     status = safe_clean(request.args.get('status'))
     search = safe_clean(request.args.get('search'))
@@ -1101,6 +1103,7 @@ def list_borrow_requests():
     return jsonify(result)
 
 @app.route('/api/borrow', methods=['POST'])
+@admin_required
 def create_borrow_request():
     data = request.json or {}
     user_code = safe_upper(data.get('user_code'))
@@ -1299,17 +1302,36 @@ def return_borrow(borrow_id):
 # --- API USERS & LOCATIONS & CATEGORIES ---
 @app.route('/api/users', methods=['GET'])
 def list_users():
+    acc = get_current_account()
+    is_staff = acc.get('role') in ('admin', 'manager')
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT u.*, a.id as account_id, a.username as account_username, a.role as account_role 
-        FROM users u 
-        LEFT JOIN accounts a ON (u.account_id IS NOT NULL AND u.account_id = a.id) 
-                             OR LOWER(u.code) = LOWER(a.username) 
-                             OR (u.email IS NOT NULL AND u.email != '' AND LOWER(u.email) = LOWER(a.email))
-        ORDER BY u.department ASC, u.fullname ASC
-    """)
-    users = [dict_from_row(r) for r in cursor.fetchall()]
+    if is_staff:
+        cursor.execute("""
+            SELECT u.*, a.id as account_id, a.username as account_username, a.role as account_role 
+            FROM users u 
+            LEFT JOIN accounts a ON (u.account_id IS NOT NULL AND u.account_id = a.id) 
+                                 OR LOWER(u.code) = LOWER(a.username) 
+                                 OR (u.email IS NOT NULL AND u.email != '' AND LOWER(u.email) = LOWER(a.email))
+            ORDER BY u.department ASC, u.fullname ASC
+        """)
+        users = [dict_from_row(r) for r in cursor.fetchall()]
+    else:
+        # Bảo mật: Khách (Guest) tuyệt đối KHÔNG ĐƯỢC PHÉP xem số điện thoại và thông tin tài khoản cán bộ
+        cursor.execute("""
+            SELECT id, code, fullname, department, role, created_at 
+            FROM users 
+            ORDER BY department ASC, fullname ASC
+        """)
+        users = []
+        for r in cursor.fetchall():
+            row = dict_from_row(r)
+            row['phone'] = ''
+            row['email'] = ''
+            row['account_id'] = None
+            row['account_username'] = None
+            row['account_role'] = None
+            users.append(row)
     conn.close()
     return jsonify(users)
 
@@ -1511,10 +1533,17 @@ def list_locations():
     floor = safe_clean(request.args.get('floor'))
     conn = get_db()
     cursor = conn.cursor()
+    query = """
+        SELECT l.*, COUNT(d.id) as device_count 
+        FROM locations l 
+        LEFT JOIN devices d ON d.current_location = l.name 
+    """
+    params = []
     if floor and floor != 'all':
-        cursor.execute("SELECT * FROM locations WHERE floor = ? ORDER BY code ASC", (floor,))
-    else:
-        cursor.execute("SELECT * FROM locations ORDER BY floor ASC, code ASC")
+        query += " WHERE l.floor = ?"
+        params.append(floor)
+    query += " GROUP BY l.id ORDER BY l.floor ASC, l.code ASC"
+    cursor.execute(query, params)
     locations = [dict_from_row(r) for r in cursor.fetchall()]
     conn.close()
     return jsonify(locations)

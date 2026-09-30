@@ -128,14 +128,21 @@ async function loadInitialData() {
     updateAuthUI();
 
     try {
-        const [catRes, locRes, userRes] = await Promise.all([
+        const fetches = [
             fetch('/api/categories'),
-            fetch('/api/locations'),
-            fetch('/api/users')
-        ]);
+            fetch('/api/locations')
+        ];
+        if (canManage()) {
+            fetches.push(fetch('/api/users'));
+        }
+        const [catRes, locRes, userRes] = await Promise.all(fetches);
         state.categories = await catRes.json();
         state.locations = await locRes.json();
-        state.users = await userRes.json();
+        if (userRes && userRes.ok) {
+            state.users = await userRes.json();
+        } else {
+            state.users = [];
+        }
         console.log(`[QLTB] Loaded: ${state.categories.length} categories, ${state.locations.length} locations, ${state.users.length} users`);
     } catch (err) {
         console.error('Lỗi khi tải dữ liệu cơ bản:', err);
@@ -254,7 +261,8 @@ function searchAssignedUsers(query) {
     } else {
         html += filtered.map(u => {
             const initials = u.fullname.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
-            const displayText = `[${u.code}] ${u.fullname} - ${u.department}${u.phone ? ` (${u.phone})` : ''}`;
+            const showPhone = canManage() && u.phone;
+            const displayText = `[${u.code}] ${u.fullname} - ${u.department}${showPhone ? ` (${u.phone})` : ''}`;
             const escapedName = u.fullname.replace(/'/g, "\\'");
             const escapedDisplay = displayText.replace(/'/g, "\\'");
 
@@ -270,7 +278,7 @@ function searchAssignedUsers(query) {
                                 <span class="font-bold text-slate-900">${u.fullname}</span>
                                 <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 text-blue-700 border border-slate-200">${u.code}</span>
                             </div>
-                            <p class="text-[11px] text-slate-500">${u.department} ${u.phone ? `&bull; 📞 ${u.phone}` : ''}</p>
+                            <p class="text-[11px] text-slate-500">${u.department} ${showPhone ? `&bull; 📞 ${u.phone}` : ''}</p>
                         </div>
                     </div>
                     <span class="text-[10px] text-blue-600 font-semibold">Chọn</span>
@@ -306,7 +314,8 @@ function setAssignedUserCombobox(fullname) {
     }
     const u = (state.users || []).find(x => x.fullname === fullname);
     if (u) {
-        selectAssignedUser(u.fullname, `[${u.code}] ${u.fullname} - ${u.department}${u.phone ? ` (${u.phone})` : ''}`);
+        const showPhone = canManage() && u.phone;
+        selectAssignedUser(u.fullname, `[${u.code}] ${u.fullname} - ${u.department}${showPhone ? ` (${u.phone})` : ''}`);
     } else {
         selectAssignedUser(fullname, fullname);
     }
@@ -349,7 +358,8 @@ function searchBorrowUsers(query) {
     } else {
         html = filtered.map(u => {
             const initials = u.fullname.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
-            const displayText = `[${u.code}] ${u.fullname} - ${u.department}${u.phone ? ` (${u.phone})` : ''}`;
+            const showPhone = canManage() && u.phone;
+            const displayText = `[${u.code}] ${u.fullname} - ${u.department}${showPhone ? ` (${u.phone})` : ''}`;
             const escapedCode = u.code.replace(/'/g, "\\'");
             const escapedDisplay = displayText.replace(/'/g, "\\'");
 
@@ -365,7 +375,7 @@ function searchBorrowUsers(query) {
                                 <span class="font-bold text-slate-900">${u.fullname}</span>
                                 <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${u.code}</span>
                             </div>
-                            <p class="text-[11px] text-slate-500">${u.department} ${u.phone ? `&bull; 📞 ${u.phone}` : ''}</p>
+                            <p class="text-[11px] text-slate-500">${u.department} ${showPhone ? `&bull; 📞 ${u.phone}` : ''}</p>
                         </div>
                     </div>
                     <span class="text-[10px] text-emerald-700 font-semibold">Chọn</span>
@@ -401,7 +411,8 @@ function setBorrowUserCombobox(userCode) {
     }
     const u = (state.users || []).find(x => x.code === userCode);
     if (u) {
-        selectBorrowUser(u.code, `[${u.code}] ${u.fullname} - ${u.department}${u.phone ? ` (${u.phone})` : ''}`);
+        const showPhone = canManage() && u.phone;
+        selectBorrowUser(u.code, `[${u.code}] ${u.fullname} - ${u.department}${showPhone ? ` (${u.phone})` : ''}`);
     } else {
         selectBorrowUser(userCode, userCode);
     }
@@ -632,12 +643,13 @@ function handleStandardDeviceSelect(devName) {
 
 // Chuyển đổi tab
 async function switchTab(tabName) {
-    // Bảo mật: Khách (Guest) không được phép truy cập tab Báo cáo hoặc Cài đặt & Nhật ký
-    if ((tabName === 'settings' || tabName === 'reports') && !canManage()) {
+    // Bảo mật: Khách (Guest) chỉ có quyền xem Tổng quan, Tra cứu thiết bị, và Phòng học & Vị trí
+    const isGuest = !canManage();
+    if (isGuest && (tabName === 'settings' || tabName === 'reports' || tabName === 'movements' || tabName === 'borrow')) {
         Swal.fire({
             icon: 'warning',
             title: 'Quyền truy cập bị giới hạn',
-            text: 'Chức năng ' + (tabName === 'settings' ? 'Cài đặt & Nhật ký hệ thống' : 'Báo cáo & Thống kê') + ' chỉ dành riêng cho Cán bộ Quản lý và Quản trị viên. Vui lòng đăng nhập để tiếp tục!'
+            text: 'Vai trò Khách (Guest) chỉ có quyền xem Tổng quan số lượng thiết bị, phân loại danh mục và tra cứu thiết bị trong các phòng học. Vui lòng đăng nhập Quản trị để sử dụng chức năng này!'
         });
         return switchTab('dashboard');
     }
@@ -665,7 +677,9 @@ async function switchTab(tabName) {
     }
     else if (tabName === 'borrow') await loadBorrowRequests();
     else if (tabName === 'users_rooms') {
-        await loadUsers();
+        if (canManage()) {
+            await loadUsers();
+        }
         await loadLocations();
     }
     else if (tabName === 'reports') await loadReports();
@@ -675,6 +689,21 @@ async function switchTab(tabName) {
     }
 
     lucide.createIcons();
+}
+
+// Chuyển nhanh sang tab Thiết bị để xem các thiết bị đang ở phòng cụ thể
+function viewDevicesInRoom(roomName) {
+    switchTab('devices');
+    const floorFilter = document.getElementById('deviceFloorFilter');
+    if (floorFilter) {
+        floorFilter.value = 'all';
+    }
+    updateLocationFilterByFloor('all');
+    const locFilter = document.getElementById('deviceLocationFilter');
+    if (locFilter) {
+        locFilter.value = roomName;
+    }
+    loadDevices();
 }
 
 // Kiểm tra quyền thao tác: Admin hoặc Manager được phép chỉnh sửa dữ liệu
@@ -767,6 +796,32 @@ function updateAuthUI() {
         }
     }
 
+    // Cập nhật nhãn và icon tab tùy theo vai trò Guest hay Admin
+    const devicesTabLabel = document.getElementById('devicesTabLabel');
+    if (devicesTabLabel) {
+        devicesTabLabel.innerText = isGuest ? 'Tra cứu thiết bị' : 'Quản lý thiết bị';
+    }
+    const usersRoomsTabLabel = document.getElementById('usersRoomsTabLabel');
+    if (usersRoomsTabLabel) {
+        usersRoomsTabLabel.innerText = isGuest ? 'Phòng học & Vị trí' : 'Người dùng & Phòng ban';
+    }
+    const usersRoomsTabIcon = document.getElementById('usersRoomsTabIcon');
+    if (usersRoomsTabIcon) {
+        usersRoomsTabIcon.setAttribute('data-lucide', isGuest ? 'map-pin' : 'users');
+    }
+
+    // Điều chỉnh độ rộng thẻ Phòng học: Toàn màn hình nếu là Guest (vì ẩn phần Cán bộ)
+    const locCard = document.getElementById('locationsManagementCard');
+    if (locCard) {
+        if (isGuest) {
+            locCard.classList.remove('col-span-1');
+            locCard.classList.add('col-span-1', 'lg:col-span-2');
+        } else {
+            locCard.classList.remove('lg:col-span-2');
+            locCard.classList.add('col-span-1');
+        }
+    }
+
     // Ẩn / hiện các nút thao tác chỉnh sửa
     document.querySelectorAll('.admin-action, .admin-only').forEach(el => {
         if (isGuest) {
@@ -776,8 +831,8 @@ function updateAuthUI() {
         }
     });
 
-    // Nếu đang ở tab Báo cáo hoặc Cài đặt mà ở vai trò Khách (Guest), lập tức chuyển hướng về Dashboard
-    if (isGuest && (currentTab === 'settings' || currentTab === 'reports')) {
+    // Nếu đang ở các tab bị giới hạn mà ở vai trò Khách (Guest), lập tức chuyển hướng về Dashboard
+    if (isGuest && (currentTab === 'settings' || currentTab === 'reports' || currentTab === 'movements' || currentTab === 'borrow')) {
         switchTab('dashboard');
     }
 
@@ -2243,6 +2298,14 @@ async function loadBorrowRequests() {
 }
 
 function openBorrowModal() {
+    if (!canManage()) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Yêu cầu đăng nhập',
+            text: 'Chức năng mượn thiết bị chỉ dành riêng cho Cán bộ, Giáo viên và Quản trị viên. Vui lòng đăng nhập tài khoản để tiếp tục!'
+        });
+        return;
+    }
     document.getElementById('borrowForm').reset();
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('borrowDate').value = today;
@@ -2413,6 +2476,7 @@ async function handleReturnSubmit(event) {
 
 // ==================== USERS & ROOMS ====================
 async function loadUsers() {
+    if (!canManage()) return;
     try {
         const res = await fetch('/api/users');
         const users = await res.json();
@@ -2435,6 +2499,7 @@ async function loadUsers() {
 }
 
 function renderUsers() {
+    if (!canManage()) return;
     const q = (document.getElementById('userSearchInput')?.value || '').trim().toLowerCase();
     const dept = document.getElementById('userDeptFilter')?.value || 'all';
     const clearBtn = document.getElementById('userSearchClear');
@@ -2446,7 +2511,7 @@ function renderUsers() {
         const nameMatch = (u.fullname || '').toLowerCase().includes(q);
         const codeMatch = (u.code || '').toLowerCase().includes(q);
         const deptMatch = (u.department || '').toLowerCase().includes(q);
-        const phoneMatch = (u.phone || '').includes(q);
+        const phoneMatch = canManage() && (u.phone || '').includes(q);
         return nameMatch || codeMatch || deptMatch || phoneMatch;
     });
 
@@ -2508,7 +2573,7 @@ function renderUsers() {
                 <td class="px-3 py-2.5 font-semibold text-blue-600 whitespace-nowrap">${u.code}</td>
                 <td class="px-3 py-2.5 font-medium text-slate-900 whitespace-nowrap">
                     <div>${u.fullname}</div>
-                    ${u.phone ? `<span class="block text-[11px] text-slate-400">📞 ${u.phone}</span>` : ''}
+                    ${canManage() && u.phone ? `<span class="block text-[11px] text-slate-400">📞 ${u.phone}</span>` : ''}
                 </td>
                 <td class="px-3 py-2.5 text-slate-600 font-medium whitespace-nowrap">${u.department || '---'}</td>
                 <td class="px-3 py-2.5 whitespace-nowrap">${accountBadge}</td>
@@ -2610,8 +2675,16 @@ function renderLocations() {
             </span>
         `;
 
+        const devCount = (l.device_count !== undefined && l.device_count !== null) ? l.device_count : 0;
+        const devCountBadge = (devCount > 0)
+            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800 border border-blue-200">${devCount} thiết bị</span>`
+            : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] text-slate-400 bg-slate-100 border border-slate-200">0 thiết bị</span>`;
+
+        const viewDevBtn = `<button onclick="viewDevicesInRoom('${l.name.replace(/'/g, "\\'")}')" title="Xem các thiết bị đang đặt tại phòng này" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition inline-flex items-center whitespace-nowrap"><i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i> Xem thiết bị</button>`;
+
         const actionButtons = isAdmin ? `
             <div class="flex items-center justify-center space-x-1">
+                ${viewDevBtn}
                 <button onclick="openEditLocationModal(${l.id})" title="Chỉnh sửa chi tiết phòng" class="p-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded transition">
                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                 </button>
@@ -2620,7 +2693,9 @@ function renderLocations() {
                 </button>
             </div>
         ` : `
-            <span class="text-slate-400 text-[11px] italic">Chỉ xem</span>
+            <div class="flex items-center justify-center">
+                ${viewDevBtn}
+            </div>
         `;
 
         return `
@@ -2633,7 +2708,7 @@ function renderLocations() {
                 <td class="px-3 py-2.5 font-semibold text-emerald-600 whitespace-nowrap">${l.code}</td>
                 <td class="px-3 py-2.5 font-medium text-slate-900 whitespace-nowrap">${l.name}</td>
                 <td class="px-3 py-2.5 whitespace-nowrap">${roomTypeCell}</td>
-                <td class="px-3 py-2.5 text-slate-600 whitespace-nowrap">${l.manager_name || '-'}</td>
+                <td class="px-3 py-2.5 text-center whitespace-nowrap">${devCountBadge}</td>
                 <td class="px-3 py-2.5 text-center whitespace-nowrap">${actionButtons}</td>
             </tr>
         `;
