@@ -1679,7 +1679,7 @@ def list_logs():
 def backup_data():
     conn = get_db()
     cursor = conn.cursor()
-    tables = ['users', 'locations', 'categories', 'devices', 'device_movements', 'borrow_requests', 'activity_logs']
+    tables = ['users', 'locations', 'categories', 'devices', 'device_movements', 'borrow_requests', 'activity_logs', 'accounts']
     backup = {}
     for t in tables:
         cursor.execute(f"SELECT * FROM {t}")
@@ -1689,13 +1689,13 @@ def backup_data():
     backup['meta'] = {
         'app': 'QLTB - Quản lý thiết bị trường học',
         'export_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        'version': '1.0'
+        'version': '2.0-pro'
     }
 
     response = Response(
         json.dumps(backup, ensure_ascii=False, indent=2),
         mimetype='application/json',
-        headers={'Content-Disposition': f'attachment;filename=qltb_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'}
+        headers={'Content-Disposition': f'attachment;filename=qltb_full_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'}
     )
     return response
 
@@ -1715,26 +1715,33 @@ def restore_data():
     cursor = conn.cursor()
 
     try:
-        tables = ['device_movements', 'borrow_requests', 'devices', 'users', 'locations', 'categories', 'activity_logs']
+        tables = ['device_movements', 'borrow_requests', 'devices', 'users', 'locations', 'categories', 'activity_logs', 'accounts']
         for t in tables:
             cursor.execute(f"DELETE FROM {t}")
+
+        # Khôi phục tài khoản
+        for a in data.get('accounts', []):
+            cursor.execute("""
+                INSERT INTO accounts (id, username, password_hash, fullname, role, email, phone, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (a.get('id'), a.get('username'), a.get('password_hash'), a.get('fullname'), a.get('role', 'guest'), a.get('email'), a.get('phone'), a.get('created_at')))
 
         for cat in data.get('categories', []):
             cursor.execute("INSERT INTO categories (id, name, icon) VALUES (?, ?, ?)", (cat.get('id'), cat.get('name'), cat.get('icon', 'package')))
 
         for loc in data.get('locations', []):
-            cursor.execute("INSERT INTO locations (id, code, name, type, manager_name, description) VALUES (?, ?, ?, ?, ?, ?)",
-                           (loc.get('id'), loc.get('code'), loc.get('name'), loc.get('type'), loc.get('manager_name'), loc.get('description')))
+            cursor.execute("INSERT INTO locations (id, code, name, type, floor, manager_name, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                           (loc.get('id'), loc.get('code'), loc.get('name'), loc.get('type'), loc.get('floor', 'Tầng 1'), loc.get('manager_name'), loc.get('description')))
 
         for u in data.get('users', []):
-            cursor.execute("INSERT INTO users (id, code, fullname, email, phone, role, department) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                           (u.get('id'), u.get('code'), u.get('fullname'), u.get('email'), u.get('phone'), u.get('role'), u.get('department')))
+            cursor.execute("INSERT INTO users (id, code, fullname, email, phone, role, department, account_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                           (u.get('id'), u.get('code'), u.get('fullname'), u.get('email'), u.get('phone'), u.get('role'), u.get('department'), u.get('account_id')))
 
         for d in data.get('devices', []):
             cursor.execute("""
-                INSERT INTO devices (id, code, name, category, current_location, status, price, purchase_date, supplier, specification, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (d.get('id'), d.get('code'), d.get('name'), d.get('category'), d.get('current_location'), d.get('status'), d.get('price'), d.get('purchase_date'), d.get('supplier'), d.get('specification'), d.get('notes')))
+                INSERT INTO devices (id, code, name, category, current_location, status, price, purchase_date, supplier, specification, notes, assigned_user)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (d.get('id'), d.get('code'), d.get('name'), d.get('category'), d.get('current_location'), d.get('status'), d.get('price'), d.get('purchase_date'), d.get('supplier'), d.get('specification'), d.get('notes'), d.get('assigned_user')))
 
         for m in data.get('device_movements', []):
             cursor.execute("""
@@ -1747,6 +1754,12 @@ def restore_data():
                 INSERT INTO borrow_requests (id, request_code, user_code, user_name, department, device_code, device_name, borrow_date, expected_return_date, actual_return_date, purpose, status, return_condition, notes, approved_by)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (b.get('id'), b.get('request_code'), b.get('user_code'), b.get('user_name'), b.get('department'), b.get('device_code'), b.get('device_name'), b.get('borrow_date'), b.get('expected_return_date'), b.get('actual_return_date'), b.get('purpose'), b.get('status'), b.get('return_condition'), b.get('notes'), b.get('approved_by')))
+
+        for l in data.get('activity_logs', []):
+            cursor.execute("""
+                INSERT INTO activity_logs (id, user_name, action, target_type, details, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (l.get('id'), l.get('user_name'), l.get('action'), l.get('target_type'), l.get('details'), l.get('created_at')))
 
         conn.commit()
     except Exception as e:
