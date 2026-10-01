@@ -40,7 +40,11 @@ def get_github_status(conn):
     branch = os.environ.get('GITHUB_BRANCH') or get_setting(conn, 'github_branch', DEFAULT_BRANCH)
     
     token = os.environ.get('GITHUB_TOKEN') or get_setting(conn, 'github_token', '')
-    auto_sync = get_setting(conn, 'github_auto_sync', '0') == '1'
+    saved_auto = get_setting(conn, 'github_auto_sync')
+    if saved_auto is not None:
+        auto_sync = (saved_auto == '1')
+    else:
+        auto_sync = bool(token)
     last_sync = get_setting(conn, 'github_last_sync', '')
     last_sha = get_setting(conn, 'github_last_sha', '')
     
@@ -272,7 +276,7 @@ def trigger_async_github_sync(get_db_fn, log_fn=None):
     global _last_auto_sync
     import time
     now = time.time()
-    if now - _last_auto_sync < 120:
+    if now - _last_auto_sync < 30:
         return
     _last_auto_sync = now
 
