@@ -195,8 +195,21 @@ function populateDropdowns() {
     const devCatSelect = document.getElementById('deviceCategory');
     const devCatFilter = document.getElementById('deviceCategoryFilter');
     if (devCatSelect) {
-        devCatSelect.innerHTML = state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-        devCatSelect.onchange = () => updateSuggestedCode();
+        const currentVal = devCatSelect.value;
+        let opts = state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        opts += `<option value="__NEW__" class="font-bold text-purple-600 bg-purple-50">+ Thêm danh mục mới...</option>`;
+        devCatSelect.innerHTML = opts;
+        if (currentVal && state.categories.some(c => c.name === currentVal)) {
+            devCatSelect.value = currentVal;
+        }
+        devCatSelect.onchange = (e) => {
+            if (e.target.value === '__NEW__') {
+                e.target.value = currentVal || (state.categories[0] ? state.categories[0].name : '');
+                quickAddNewCategory('deviceCategory');
+            } else {
+                updateSuggestedCode();
+            }
+        };
     }
     if (devCatFilter) {
         devCatFilter.innerHTML = '<option value="all">Tất cả danh mục</option>' +
@@ -1602,7 +1615,16 @@ function openEditDeviceModal(id) {
     document.getElementById('deviceModalTitle').innerText = `Sửa thông tin thiết bị: ${d.code}`;
     document.getElementById('deviceCode').value = d.code;
     document.getElementById('deviceName').value = d.name;
-    document.getElementById('deviceCategory').value = d.category;
+    const catSelect = document.getElementById('deviceCategory');
+    if (catSelect) {
+        if (d.category && !state.categories.some(c => c.name === d.category)) {
+            const opt = document.createElement('option');
+            opt.value = d.category;
+            opt.textContent = d.category;
+            catSelect.insertBefore(opt, catSelect.firstChild);
+        }
+        catSelect.value = d.category;
+    }
 
     // Nhận diện tầng của thiết bị này
     const matchedLoc = state.locations.find(l => l.name === d.current_location);
@@ -2907,12 +2929,101 @@ function openChangeCategoryModal(deviceId) {
     document.getElementById('changeCatDeviceName').innerText = `${d.code} - ${d.name}`;
     document.getElementById('changeCatCurrentCat').innerText = d.category;
 
-    const selectEl = document.getElementById('changeCatNewSelect');
-    selectEl.innerHTML = state.categories.map(c => `
-        <option value="${c.name}" ${c.name === d.category ? 'selected' : ''}>${c.name}</option>
-    `).join('');
+    renderChangeCatDropdown(d.category);
 
     openModal('changeCategoryModal');
+}
+
+function renderChangeCatDropdown(selectedCat) {
+    const selectEl = document.getElementById('changeCatNewSelect');
+    if (!selectEl) return;
+    let opts = state.categories.map(c => `
+        <option value="${c.name}" ${c.name === selectedCat ? 'selected' : ''}>${c.name}</option>
+    `).join('');
+    opts += `<option value="__NEW__" class="font-bold text-purple-600 bg-purple-50">+ Thêm danh mục mới...</option>`;
+    selectEl.innerHTML = opts;
+    selectEl.onchange = (e) => {
+        if (e.target.value === '__NEW__') {
+            e.target.value = selectedCat || (state.categories[0] ? state.categories[0].name : '');
+            quickAddNewCategory('changeCatNewSelect');
+        }
+    };
+}
+
+// Thêm nhanh danh mục phân loại mới từ bất kỳ modal nào
+async function quickAddNewCategory(targetSelectId = 'deviceCategory') {
+    const { value: catName } = await Swal.fire({
+        title: 'Thêm danh mục phân loại mới',
+        input: 'text',
+        inputPlaceholder: 'Nhập tên danh mục (ví dụ: Thiết bị văn phòng, Máy scan, Loa kéo...)',
+        showCancelButton: true,
+        confirmButtonText: 'Tạo danh mục',
+        cancelButtonText: 'Hủy bỏ',
+        confirmButtonColor: '#9333ea',
+        inputValidator: (val) => {
+            if (!val || !val.trim()) return 'Vui lòng nhập tên danh mục!';
+            const exists = (state.categories || []).some(c => c.name.toLowerCase() === val.trim().toLowerCase());
+            if (exists) return `Danh mục "${val.trim()}" đã tồn tại trong hệ thống!`;
+        }
+    });
+
+    if (!catName || !catName.trim()) return null;
+
+    const trimmedName = catName.trim();
+
+    try {
+        const res = await fetch('/api/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser ? state.currentUser.role : 'admin'
+            },
+            body: JSON.stringify({ name: trimmedName })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error || 'Không thể tạo danh mục!' });
+            return null;
+        }
+
+        // Tải lại danh mục từ server
+        const catRes = await fetch('/api/categories');
+        if (catRes.ok) {
+            state.categories = await catRes.json();
+        } else {
+            state.categories.push({ id: Date.now(), name: trimmedName, icon: 'package' });
+        }
+
+        populateDropdowns();
+
+        // Cập nhật lại dropdown đang gọi
+        if (targetSelectId === 'changeCatNewSelect') {
+            renderChangeCatDropdown(trimmedName);
+            const selectEl = document.getElementById('changeCatNewSelect');
+            if (selectEl) selectEl.value = trimmedName;
+        } else {
+            const targetSelect = document.getElementById(targetSelectId);
+            if (targetSelect) targetSelect.value = trimmedName;
+        }
+
+        if (targetSelectId === 'deviceCategory') {
+            updateSuggestedCode();
+        }
+
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: `Đã thêm danh mục "${trimmedName}" thành công!`,
+            showConfirmButton: false,
+            timer: 2000
+        });
+
+        return trimmedName;
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+        return null;
+    }
 }
 
 async function handleChangeCategorySubmit(event) {
@@ -3565,4 +3676,168 @@ function formatDate(dateStr) {
 function getFormattedTimestamp() {
     const now = new Date();
     return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+}
+
+// ==================== ĐỒNG BỘ CSDL LÊN GITHUB ====================
+async function openGithubSyncModal() {
+    try {
+        const res = await fetch('/api/github-sync/status', {
+            headers: { 'X-User-Role': state.currentUser ? state.currentUser.role : 'admin' }
+        });
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Chỉ Quản trị viên mới có quyền cấu hình đồng bộ GitHub!' });
+            return;
+        }
+        const data = await res.json();
+        renderGithubSyncModalData(data);
+        openModal('githubSyncModal');
+    } catch (err) {
+        console.error('Lỗi mở GitHub Sync:', err);
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+    }
+}
+
+function renderGithubSyncModalData(data) {
+    const repoText = document.getElementById('ghSyncRepoText');
+    const repoLink = document.getElementById('ghSyncRepoLink');
+    if (repoText && repoLink) {
+        repoText.innerText = `${data.owner}/${data.repo}`;
+        repoLink.href = data.repo_url;
+    }
+    const branchEl = document.getElementById('ghSyncBranch');
+    if (branchEl) branchEl.innerText = data.branch;
+
+    const lastTimeEl = document.getElementById('ghSyncLastTime');
+    if (lastTimeEl) lastTimeEl.innerText = data.last_sync ? data.last_sync : 'Chưa đồng bộ lần nào';
+
+    const lastShaEl = document.getElementById('ghSyncLastSha');
+    if (lastShaEl) {
+        if (data.last_sha) {
+            lastShaEl.innerHTML = `<a href="https://github.com/${data.owner}/${data.repo}/commit/${data.last_sha}" target="_blank" class="hover:underline flex items-center">${data.last_sha.substring(0, 7)} <i data-lucide="external-link" class="w-3 h-3 ml-1"></i></a>`;
+        } else {
+            lastShaEl.innerText = '-';
+        }
+    }
+
+    const tokenStatusEl = document.getElementById('ghSyncTokenStatus');
+    if (tokenStatusEl) {
+        if (data.has_token) {
+            tokenStatusEl.className = 'inline-flex items-center px-2 py-0.5 rounded-full font-bold text-[10px] bg-emerald-100 text-emerald-800';
+            tokenStatusEl.innerText = data.is_env_token ? 'Đã kết nối qua ENV (Bảo mật)' : `Đã lưu Token (${data.masked_token})`;
+        } else {
+            tokenStatusEl.className = 'inline-flex items-center px-2 py-0.5 rounded-full font-bold text-[10px] bg-amber-100 text-amber-800';
+            tokenStatusEl.innerText = 'Chưa có Token';
+        }
+    }
+
+    const autoCheck = document.getElementById('ghSyncAutoCheck');
+    if (autoCheck) {
+        autoCheck.checked = Boolean(data.auto_sync);
+    }
+
+    lucide.createIcons();
+}
+
+async function handleSaveGithubConfig(event) {
+    event.preventDefault();
+    const tokenInput = document.getElementById('ghSyncTokenInput');
+    const tokenVal = tokenInput ? tokenInput.value.trim() : '';
+    const autoCheck = document.getElementById('ghSyncAutoCheck');
+    const autoSyncVal = autoCheck ? autoCheck.checked : false;
+
+    try {
+        const payload = {
+            auto_sync: autoSyncVal
+        };
+        if (tokenVal) {
+            payload.token = tokenVal;
+        }
+
+        const res = await fetch('/api/github-sync/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser ? state.currentUser.role : 'admin'
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            return;
+        }
+
+        if (tokenInput) tokenInput.value = '';
+        renderGithubSyncModalData(data.status);
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 2000 });
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+    }
+}
+
+async function handleRunGithubSync() {
+    const btn = document.getElementById('btnRunGhSync');
+    const originalText = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 mr-1.5 animate-spin"></i> Đang đồng bộ...`;
+        lucide.createIcons();
+    }
+
+    try {
+        const res = await fetch('/api/github-sync/run', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Role': state.currentUser ? state.currentUser.role : 'admin'
+            },
+            body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Đồng bộ thất bại',
+                text: data.error || 'Có lỗi xảy ra khi đẩy dữ liệu lên GitHub!',
+                footer: '<span class="text-xs text-slate-500">Hãy kiểm tra xem GitHub Token đã có quyền repo chưa nhé.</span>'
+            });
+            return;
+        }
+
+        // Lấy lại status mới
+        const statusRes = await fetch('/api/github-sync/status', {
+            headers: { 'X-User-Role': state.currentUser ? state.currentUser.role : 'admin' }
+        });
+        if (statusRes.ok) {
+            renderGithubSyncModalData(await statusRes.json());
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Đồng bộ thành công!',
+            html: `
+                <p class="text-sm text-slate-600 mb-3">Toàn bộ CSDL và file snapshot JSON đã được commit an toàn vào repository GitHub.</p>
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono text-slate-700">
+                    Commit SHA: <strong>${data.commit_sha}</strong>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Xem trên GitHub',
+            cancelButtonText: 'Đóng',
+            confirmButtonColor: '#2563eb'
+        }).then((result) => {
+            if (result.isConfirmed && data.commit_url) {
+                window.open(data.commit_url, '_blank');
+            }
+        });
+
+    } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            lucide.createIcons();
+        }
+    }
 }

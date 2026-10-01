@@ -147,6 +147,15 @@ def init_db():
     )
     ''')
 
+    # Bảng cấu hình hệ thống (GitHub Sync, Auto-sync, cài đặt chung)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS system_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    ''')
+
     # Tạo tài khoản mặc định nếu chưa có
     cursor.execute("SELECT COUNT(*) as count FROM accounts")
     if cursor.fetchone()['count'] == 0:
@@ -161,6 +170,14 @@ def init_db():
             INSERT INTO accounts (username, password_hash, fullname, role, email, phone)
             VALUES (?, ?, ?, ?, ?, ?)
         """, ('guest', guest_pass, 'Khách vãng lai (Chỉ xem)', 'guest', 'guest@truong.edu.vn', '0900000000'))
+
+    # Tự động đồng bộ các danh mục thực tế đang có trong bảng thiết bị vào bảng danh mục
+    cursor.execute("""
+        INSERT OR IGNORE INTO categories (name, icon)
+        SELECT DISTINCT category, 'package'
+        FROM devices
+        WHERE category IS NOT NULL AND TRIM(category) != ''
+    """)
 
     conn.commit()
     conn.close()

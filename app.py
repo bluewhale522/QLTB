@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_db, init_db, log_activity
 from seed_data import seed_database
 from sync_json import sync_add_device_to_json, sync_move_device_in_json
+from github_sync import get_github_status, save_github_config, sync_database_to_github, trigger_async_github_sync
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'qltb-school-equipment-secret-key-2026'
@@ -605,6 +606,10 @@ def get_device_category_prefix(category_name):
     if 'chấm công' in c or 'thẻ' in c: return 'CC'
     if 'server' in c or 'máy chủ' in c: return 'SRV'
     if 'suất ăn' in c: return 'SA'
+    if 'văn phòng' in c: return 'VP'
+    if 'thí nghiệm' in c: return 'TN'
+    if 'thể thao' in c: return 'TT'
+    if 'điện tử' in c: return 'DT'
     return 'TB'
 
 @app.route('/api/devices/suggest-code', methods=['GET'])
@@ -694,6 +699,8 @@ def add_device():
     """, (code, name, category, current_location, status, price, purchase_date, supplier, specification, notes, assigned_user, now_str, now_str))
 
     new_id = cursor.lastrowid
+    # Tự động lưu danh mục vào bảng categories nếu chưa tồn tại
+    cursor.execute("INSERT OR IGNORE INTO categories (name, icon) VALUES (?, 'package')", (category,))
     conn.commit()
     conn.close()
 
@@ -712,6 +719,7 @@ def add_device():
         print(f"[SYNC_ADD_ERROR] {e}")
 
     log_activity("Thêm thiết bị", f"Thêm mới thiết bị {code} - {name} tại vị trí {current_location}", "device")
+    trigger_async_github_sync(get_db, log_activity)
     return jsonify({'success': True, 'id': new_id, 'message': f'Thêm thiết bị {code} thành công!'})
 
 @app.route('/api/devices/<int:device_id>', methods=['PUT'])
@@ -766,6 +774,9 @@ def update_device(device_id):
         WHERE id = ?
     """, (code, name, category, current_location, status, price, purchase_date, supplier, specification, notes, assigned_user, now_str, device_id))
 
+    # Tự động lưu danh mục vào bảng categories nếu chưa tồn tại
+    cursor.execute("INSERT OR IGNORE INTO categories (name, icon) VALUES (?, 'package')", (category,))
+
     conn.commit()
     conn.close()
 
@@ -777,6 +788,7 @@ def update_device(device_id):
             print(f"[SYNC_MOVE_ERROR] {e}")
 
     log_activity("Cập nhật thiết bị", f"Cập nhật thông tin thiết bị {code} - {name}", "device")
+    trigger_async_github_sync(get_db, log_activity)
     return jsonify({'success': True, 'message': 'Cập nhật thiết bị thành công!'})
 
 @app.route('/api/devices/<int:device_id>', methods=['DELETE'])
@@ -800,6 +812,7 @@ def delete_device(device_id):
     conn.close()
 
     log_activity("Xóa thiết bị", f"Xóa thiết bị {device['code']} - {device['name']}", "device")
+    trigger_async_github_sync(get_db, log_activity)
     return jsonify({'success': True, 'message': f'Đã xóa thiết bị {device["code"]}!'})
 
 # --- API DI CHUYỂN PHÂN LOẠI THIẾT BỊ ---
@@ -824,6 +837,9 @@ def change_device_category():
         if cursor.rowcount > 0:
             updated_count += 1
 
+    conn.commit()
+    # Tự động lưu danh mục vào bảng categories nếu chưa tồn tại
+    cursor.execute("INSERT OR IGNORE INTO categories (name, icon) VALUES (?, 'package')", (new_category,))
     conn.commit()
     conn.close()
 
@@ -1799,6 +1815,46 @@ def restore_data():
     conn.close()
     log_activity("Phục hồi dữ liệu", "Phục hồi thành công cơ sở dữ liệu từ file backup JSON", "system")
     return jsonify({'success': True, 'message': 'Đã phục hồi dữ liệu thành công!'})
+
+# --- API ĐỒNG BỘ CSDL LÊN GITHUB (CHỐNG MẤT DỮ LIỆU KHI RENDER NGỦ ĐÔNG) ---
+@app.route('/api/github-sync/status', methods=['GET'])
+@admin_required
+def github_sync_status():
+    conn = get_db()
+    status = get_github_status(conn)
+    conn.close()
+    return jsonify(status)
+
+@app.route('/api/github-sync/config', methods=['POST'])
+@admin_required
+def github_sync_config():
+    data = request.json or {}
+    token = data.get('token')
+    auto_sync = data.get('auto_sync')
+    owner = data.get('owner')
+    repo = data.get('repo')
+    branch = data.get('branch')
+
+    conn = get_db()
+    save_github_config(conn, token=token, auto_sync=auto_sync, owner=owner, repo=repo, branch=branch)
+    status = get_github_status(conn)
+    conn.close()
+    return jsonify({'success': True, 'message': 'Đã lưu cấu hình GitHub Sync thành công!', 'status': status})
+
+@app.route('/api/github-sync/run', methods=['POST'])
+@admin_required
+def github_sync_run():
+    data = request.json or {}
+    custom_msg = data.get('message')
+    conn = get_db()
+    try:
+        res = sync_database_to_github(conn, commit_message=custom_msg)
+        log_activity("Đồng bộ GitHub", f"Đồng bộ CSDL lên GitHub ({res['commit_sha'][:7]})", "system")
+        conn.close()
+        return jsonify(res)
+    except Exception as e:
+        conn.close()
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/reset-demo', methods=['POST'])
 @superadmin_required
