@@ -78,7 +78,12 @@
                         </div>
 
                         <!-- Auth Action Buttons (Không bao giờ bị tràn khỏi mép màn hình trên điện thoại) -->
-                        <div class="flex items-center space-x-1 shrink-0">
+                        <div class="flex items-center space-x-1.5 shrink-0">
+                            <!-- Nút Lưu GitHub ngay trên Header cho Admin -->
+                            <button onclick="openGithubSyncModal()" id="btnNavGithubSync" class="admin-action px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition flex items-center min-h-[36px] shrink-0" title="Đồng bộ CSDL lên GitHub chống mất dữ liệu khi Render ngủ đông">
+                                <i data-lucide="cloud-upload" class="w-4 h-4 mr-1 text-blue-400"></i>
+                                <span>Lưu GitHub</span>
+                            </button>
                             <button onclick="openAuthModal('login')" id="btnAuthSwitch" title="Đăng nhập tài khoản" class="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-600/20 transition flex items-center min-h-[36px] shrink-0">
                                 <i data-lucide="log-in" class="w-4 h-4 mr-1 shrink-0"></i>
                                 <span id="btnAuthText">Đăng nhập</span>
@@ -802,8 +807,12 @@
                     </div>
 
                     <div class="space-y-3">
-                        <a href="/api/backup" download class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs rounded-xl shadow-sm transition flex items-center justify-center">
-                            <i data-lucide="cloud-download" class="w-4 h-4 mr-2"></i> Tải bản sao lưu (JSON)
+                        <button onclick="openGithubSyncModal()" class="w-full py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl shadow-sm transition flex items-center justify-center border border-slate-700">
+                            <i data-lucide="cloud-upload" class="w-4 h-4 mr-2 text-blue-400"></i> Đồng bộ CSDL lên GitHub (Chống mất dữ liệu)
+                        </button>
+
+                        <a href="/api/backup" download class="w-full py-2 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs rounded-xl border border-slate-200 transition flex items-center justify-center">
+                            <i data-lucide="cloud-download" class="w-4 h-4 mr-2 text-slate-600"></i> Tải bản sao lưu (JSON)
                         </a>
 
                         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
@@ -2044,6 +2053,6 @@
     </div>
 
     <!-- MAIN JAVASCRIPT -->
-    <script src="/static/js/app.js"></script>
+    <script src="/static/js/app.js?v=20261001_v2"></script>
 </body>
 </html>
